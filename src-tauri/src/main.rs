@@ -13,7 +13,7 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn get_verses(bible: State<Bible>, book_name: String, ch_num: i32) -> Option<Vec<Verse>>{   
+fn get_verses(bible: State<Bible>, book_name: String, ch_num: i32) -> Option<Vec<Verse>> {   
 
     let book = bible.get_book_by_name(&book_name)?;
     let ch = book.get_chapter(ch_num)?;
@@ -21,6 +21,18 @@ fn get_verses(bible: State<Bible>, book_name: String, ch_num: i32) -> Option<Vec
     Some(ch.get_all_verses())
 
 }
+
+/*
+#[tauri::command]
+fn get_book_and_chapter(bible: State<Bible>, book_name: String, ch_num: i32) -> Option<Vec<Verse>> {
+    
+    let book = bible.get_book_by_name(&book_name)?;
+    let ch = book.get_chapter(ch_num)?;
+
+    Some(ch.get_all_verses())
+
+}
+*/
 
 fn main() {
     
@@ -30,6 +42,7 @@ fn main() {
         .manage(bible)
         .invoke_handler(tauri::generate_handler![greet])
         .invoke_handler(tauri::generate_handler![get_verses])
+        //.invoke_handler(tauri::generate_handler![get_book_and_chapter])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
