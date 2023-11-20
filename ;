@@ -3,11 +3,6 @@ import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 import ScriptureSearchBox from "./Components/ScriptureSearchBox";
 
-type Verse = {
-    number: number,
-    text: String
-}
-
 function App() {
   const [verses, setVerses] = useState<any>([]);
 
@@ -32,7 +27,7 @@ function App() {
   return (
     <div className="container">
     <ScriptureSearchBox performSearch={searchForBook}/>
-    {verses?.map((verse : Verse) => <div className="font-light">{verse.number} | {verse.text}</div>)}
+    {verses?.map(verse => <div className="font-light">{verse.number} | {verse.text}</div>)}
     </div>
   );
 }

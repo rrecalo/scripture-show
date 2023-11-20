@@ -5,7 +5,6 @@ mod modules;
 use modules::bible::*;
 use tauri::State;
 use modules::bible_reader::create_from_xml;
-use tauri::command;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
