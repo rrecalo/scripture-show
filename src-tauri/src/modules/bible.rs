@@ -27,7 +27,7 @@ pub struct Verse {
 
 impl Book {
 
-    pub fn get_chapter(&self, query: i32) -> Chapter {
+    pub fn get_chapter(&self, query: i32) -> Option<Chapter> {
 
         let mut chapter_match: Option<Chapter> = None;
         for ch in self.chapters.iter(){
@@ -36,14 +36,14 @@ impl Book {
             }
        }
 
-        chapter_match.unwrap()
+        chapter_match
     }
 
 }
 
 impl Chapter {
     
-    pub fn get_verse(&self, query: i32) -> Verse {
+    pub fn get_verse(&self, query: i32) -> Option<Verse> {
 
         let mut verse_match: Option<Verse> = None;
         for verse in self.verses.iter(){
@@ -52,7 +52,7 @@ impl Chapter {
             }
        }
 
-        verse_match.unwrap()
+        verse_match
     }
 
     pub fn get_all_verses(&self) -> Vec<Verse> {
@@ -62,7 +62,7 @@ impl Chapter {
 
 impl Bible {
     
-    pub fn get_book_by_name(&self, query: &str) -> Book {
+    pub fn get_book_by_name(&self, query: &str) -> Option<Book> {
 
         let mut book_match: Option<Book> = None;
 
@@ -73,7 +73,7 @@ impl Bible {
             }
         }
 
-        book_match.unwrap()
+        book_match
     }
 
 }

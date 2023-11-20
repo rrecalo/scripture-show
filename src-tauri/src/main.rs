@@ -13,11 +13,12 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-fn get_verses(bible: State<Bible>, book_name: String, ch_num: i32) -> Vec<Verse>{
-   
-    let book = bible.get_book_by_name(&book_name);
-    let ch = book.get_chapter(ch_num);
-    ch.get_all_verses()
+fn get_verses(bible: State<Bible>, book_name: String, ch_num: i32) -> Option<Vec<Verse>>{   
+
+    let book = bible.get_book_by_name(&book_name)?;
+    let ch = book.get_chapter(ch_num)?;
+
+    Some(ch.get_all_verses())
 
 }
 
