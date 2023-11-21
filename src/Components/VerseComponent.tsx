@@ -12,7 +12,7 @@ export default function VerseComponent({verse, selectVerse, selectedVerse} : Ver
 
 
     return (
-        <div className={`${verse.number === selectedVerse?.number ? 'bg-neutral-200' : ''} select-none cursor-default`} onClick={()=>selectVerse(verse)}>
+        <div className={`${verse?.text === selectedVerse?.text ? 'bg-neutral-200' : ''} select-none cursor-default`} onClick={()=>selectVerse(verse)}>
             {verse.number} | {verse.text}
         </div>
     )

@@ -21,6 +21,8 @@ pub struct Chapter {
 
 #[derive(Clone, Serialize)]
 pub struct Verse {
+    pub book_name: String,
+    pub chapter: i32,
     pub number: i32,
     pub text: String,
 }

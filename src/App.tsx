@@ -2,13 +2,22 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 import Verse from "./types/Verse";
+import Book from "./types/Book";
 import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
 import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearchResults";
 import ScriptureQueue from "./Components/ScriptureQueue";
 
+type GetVersesResult = {
+    book_name: String,
+    chapter_num: number,
+    verses: Verse[]
+}
+
 function App() {
 
   const [verses, setVerses] = useState<Verse[]>([]);
+  const [book, setBook] = useState<String>();
+  const [chapter, setChapter] = useState<number>();
   const [shownVerse, setShownVerse] = useState<Verse>();
 
 
@@ -18,7 +27,7 @@ function App() {
   //}
   
   useEffect(()=>{
-      invoke("get_verses", {bookName:"john",chNum: 1}).then(res=>setVerses(res));
+      invoke("get_verses", {bookName:"john",chNum: 1}).then(res=>setVerses(res.verses));
       },[]);
 
   useEffect(()=>{
@@ -47,7 +56,8 @@ function App() {
     //'1 jo 3' will also work since the string is split as shown
     //{book_name}[space]{ch_num}
     if(first_space > 0 && last_space > 0 && first_space !== last_space){
-        ch_num = searchQuery.slice(last_space+1, last_space+2);
+        //ch_num = searchQuery.slice(last_space+1, last_space+2);
+        ch_num = searchQuery.slice(last_space+1, searchQuery.length);
         book_name = searchQuery.slice(0, last_space);
 
     }
@@ -56,7 +66,8 @@ function App() {
         //catches queries for non-numbered book names followed by a chapter number
         //{book_name (non number start)}[space]{ch_num}
         if(!starts_with_num && first_space > 0){
-        ch_num = searchQuery.slice(first_space+1, first_space+2);
+        //ch_num = searchQuery.slice(first_space+1, first_space+2);
+        ch_num = searchQuery.slice(last_space+1, searchQuery.length);
         book_name = searchQuery.slice(0, first_space);
         }
         //catches just book name queries that have no spaces
@@ -66,9 +77,13 @@ function App() {
         }
     }
 
-    let new_verses = await invoke("get_verses", {bookName: book_name, chNum: parseInt(ch_num)});
+    let new_verses = await invoke("get_verses", {bookName: book_name, chNum: parseInt(ch_num)}) as GetVersesResult;
 
-    setVerses(new_verses);
+    if(new_verses){
+    setVerses(new_verses?.verses);
+    setBook(new_verses?.book_name);
+    setChapter(new_verses?.chapter_num);
+    }
   }
 
   function handleChangeShownVerse(newVerseToShow: Verse){
@@ -78,7 +93,7 @@ function App() {
   return (
     <div className="container flex flex-row min-w-screen w-screen h-screen mx-auto">
         <div className="flex flex-col w-4/12 h-full overflow-y-auto">
-            <ScriptureSearch performSearch={searchForBook}/>
+            <ScriptureSearch performSearch={searchForBook} currentBook={book} currentChapter={chapter}/>
             <ScriptureSearchResults verses={verses} changeSelectedVerse={handleChangeShownVerse}/>
         </div>
         <div className="flex flex-col w-3/12 h-full">
@@ -87,7 +102,10 @@ function App() {
 
         <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100">
            <div className="p-2">Monitoring</div>
-           <div id="display">{shownVerse?.number} | {shownVerse?.text}</div>
+           <div className="p-3">
+            <div id="display" className="text-2xl">{shownVerse?.text}</div>
+            <div className="font-bold text-sm">{shownVerse?.book_name} {shownVerse?.chapter + ":" + shownVerse?.number}</div>
+           </div>
         </div>
     </div>
   );

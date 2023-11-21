@@ -79,8 +79,9 @@ pub fn create_from_xml(path: &str) -> Bible{
                         Ok(Event::Eof) => break,
                         Ok(Event::Text(e)) =>{
                             let inside_text = e.unescape().unwrap().into_owned();
-                            let cur_chap = bible.books.last_mut().unwrap().chapters.last_mut().unwrap();
-                            cur_chap.verses.push(Verse{number:verse, text:inside_text});
+                            let cur_book = bible.books.last_mut().unwrap();
+                            let cur_chap = cur_book.chapters.last_mut().unwrap();
+                            cur_chap.verses.push(Verse{book_name: cur_book.name.clone(), chapter: cur_chap.number, number:verse, text:inside_text});
                         }
                         _ => (),
                         }

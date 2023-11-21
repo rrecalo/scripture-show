@@ -5,6 +5,7 @@ mod modules;
 use modules::bible::*;
 use tauri::State;
 use modules::bible_reader::create_from_xml;
+use serde::Serialize;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -12,13 +13,20 @@ fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
+#[derive(Serialize)]
+struct GetVersesResult{
+    book_name: String,
+    chapter_num: i32,
+    verses: Vec<Verse>
+}
+
 #[tauri::command]
-fn get_verses(bible: State<Bible>, book_name: String, ch_num: i32) -> Option<Vec<Verse>> {   
+fn get_verses(bible: State<Bible>, book_name: String, ch_num: i32) -> Option<GetVersesResult> {   
 
     let book = bible.get_book_by_name(&book_name)?;
     let ch = book.get_chapter(ch_num)?;
 
-    Some(ch.get_all_verses())
+    Some(GetVersesResult{book_name: book.name, chapter_num: ch_num, verses:ch.get_all_verses()})
 
 }
 
