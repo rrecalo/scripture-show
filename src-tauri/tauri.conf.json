@@ -11,7 +11,7 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false,
+      "all": true,
       "shell": {
         "all": false,
         "open": true
@@ -35,6 +35,7 @@
     "windows": [
       {
         "fullscreen": false,
+        "maximized": false,
         "resizable": true,
         "title": "scripture-show",
         "width": 800,

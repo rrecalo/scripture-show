@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
-import ScriptureSearchBox from "./Components/ScriptureSearchBox";
-
-type Verse = {
-    number: number,
-    text: String
-}
+import Verse from "./types/Verse";
+import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
+import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearchResults";
+import ScriptureQueue from "./Components/ScriptureQueue";
 
 function App() {
-  const [verses, setVerses] = useState<any>([]);
+
+  const [verses, setVerses] = useState<Verse[]>([]);
+  const [shownVerse, setShownVerse] = useState<Verse>();
+
 
   //async function greet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
@@ -70,10 +71,24 @@ function App() {
     setVerses(new_verses);
   }
 
+  function handleChangeShownVerse(newVerseToShow: Verse){
+    setShownVerse(newVerseToShow);
+  }
+
   return (
-    <div className="container">
-    <ScriptureSearchBox performSearch={searchForBook}/>
-    {verses?.map((verse : Verse) => <div className="font-light">{verse.number} | {verse.text}</div>)}
+    <div className="container flex flex-row min-w-screen w-screen h-screen mx-auto">
+        <div className="flex flex-col w-4/12 h-full overflow-y-auto">
+            <ScriptureSearch performSearch={searchForBook}/>
+            <ScriptureSearchResults verses={verses} changeSelectedVerse={handleChangeShownVerse}/>
+        </div>
+        <div className="flex flex-col w-3/12 h-full">
+            <ScriptureQueue queue={""} />
+        </div>
+
+        <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100">
+           <div className="p-2">Monitoring</div>
+           <div id="display">{shownVerse?.number} | {shownVerse?.text}</div>
+        </div>
     </div>
   );
 }

@@ -13,7 +13,7 @@ export default function ScriptureSearchBox({performSearch}){
 
     return (
 
-        <input className="outline-none"
+        <input className="outline-none w-full h-fit"
         onKeyDown={(e)=>handleKeyDown(e)}
         value={searchValue} onChange={(e)=>setSearchValue(e.target.value)}
         placeholder="Search for a book..."></input>
