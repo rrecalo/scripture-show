@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
 import Verse from "./types/Verse";
-import Book from "./types/Book";
 import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
 import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearchResults";
 import ScriptureQueue from "./Components/ScriptureQueue";
+import DisplayMonitor from "./Components/DisplayMonitor";
 
 type GetVersesResult = {
     book_name: String,
@@ -101,11 +101,7 @@ function App() {
         </div>
 
         <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100">
-           <div className="p-2">Monitoring</div>
-           <div className="p-3">
-            <div id="display" className="text-2xl">{shownVerse?.text}</div>
-            <div className="font-bold text-sm">{shownVerse?.book_name} {shownVerse?.chapter + ":" + shownVerse?.number}</div>
-           </div>
+            <DisplayMonitor verseToDisplay={shownVerse}/> 
         </div>
     </div>
   );
