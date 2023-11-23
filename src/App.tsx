@@ -96,8 +96,6 @@ function App() {
     setShownVerse(newVerseToShow);
   }
 
-  
-
   return (
     <div className="container flex flex-row min-w-screen w-screen h-screen mx-auto">
         <div className="flex flex-col w-4/12 h-full overflow-y-auto">
