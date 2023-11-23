@@ -6,6 +6,8 @@ import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
 import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearchResults";
 import ScriptureQueue from "./Components/ScriptureQueue";
 import DisplayMonitor from "./Components/DisplayMonitor";
+import { availableMonitors } from '@tauri-apps/api/window';
+import { WebviewWindow } from '@tauri-apps/api/window';
 
 type GetVersesResult = {
     book_name: String,
@@ -19,15 +21,14 @@ function App() {
   const [book, setBook] = useState<String>();
   const [chapter, setChapter] = useState<number>();
   const [shownVerse, setShownVerse] = useState<Verse>();
+  const [displayOpened, setDisplayOpened] = useState<Boolean>(false);
 
-
-  //async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    //setGreetMsg(await invoke("greet", { name }));
-  //}
-  
   useEffect(()=>{
-      invoke("get_verses", {bookName:"john",chNum: 1}).then(res=>setVerses(res.verses));
+    invoke("get_verses", {bookName:"john",chNum: 1}).then(res=>setVerses(res.verses));
+    if(!displayOpened){
+        invoke("open_display_monitor");
+        setDisplayOpened(true);
+    }
       },[]);
 
   useEffect(()=>{
@@ -89,6 +90,8 @@ function App() {
   function handleChangeShownVerse(newVerseToShow: Verse){
     setShownVerse(newVerseToShow);
   }
+
+  
 
   return (
     <div className="container flex flex-row min-w-screen w-screen h-screen mx-auto">

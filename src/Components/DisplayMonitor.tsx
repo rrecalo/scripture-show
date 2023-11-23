@@ -12,13 +12,14 @@ export default function DisplayMonitor({verseToDisplay} : DisplayMonitorProps){
         },[verseToDisplay]);
 
     return (
+        verseToDisplay ? 
         <>
-        <div className="p-2">Monitoring</div>
-           <div className="p-3">
+        <div className="p-3">
             <div id="display" className="text-2xl">{verseToDisplay?.text}</div>
             <div className="font-bold text-sm">{verseToDisplay?.book_name || ""} 
             {" "}{(verseToDisplay?.chapter) + ":" + (verseToDisplay?.number)}</div>
         </div>
         </>
+        : <></>
     )
 }
