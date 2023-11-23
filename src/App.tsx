@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
+import { emit } from '@tauri-apps/api/event';
 import "./App.css";
 import Verse from "./types/Verse";
 import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
 import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearchResults";
 import ScriptureQueue from "./Components/ScriptureQueue";
 import DisplayMonitor from "./Components/DisplayMonitor";
-import { availableMonitors } from '@tauri-apps/api/window';
-import { WebviewWindow } from '@tauri-apps/api/window';
 
 type GetVersesResult = {
     book_name: String,
@@ -24,12 +23,18 @@ function App() {
   const [displayOpened, setDisplayOpened] = useState<Boolean>(false);
 
   useEffect(()=>{
-    invoke("get_verses", {bookName:"john",chNum: 1}).then(res=>setVerses(res.verses));
+    invoke("get_verses", {bookName:"john",chNum: 1}).then(res=>setVerses(res.verses as Verse[]));
     if(!displayOpened){
         invoke("open_display_monitor");
         setDisplayOpened(true);
     }
       },[]);
+
+  useEffect(()=>{
+    if(shownVerse){
+        emit('display_verse', shownVerse);
+    }
+  }, [shownVerse]);
 
   useEffect(()=>{
     //console.log(verses);
