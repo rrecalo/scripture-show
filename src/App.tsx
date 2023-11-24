@@ -11,17 +11,25 @@ import DisplayMonitor from "./Components/DisplayMonitor";
 type GetVersesResult = {
     book_name: String,
     chapter_num: number,
+    verses: Verse[],
+    translation: TranslatedVerseData
+}
+type TranslatedVerseData = {
+    book_name: String,
+    chapter_num: number,
     verses: Verse[]
 }
 
 function App() {
 
   const [verses, setVerses] = useState<Verse[]>([]);
+  const [translatedVerseData, setTranslatedVerseData] = useState<TranslatedVerseData>();
   const [book, setBook] = useState<String>();
   const [chapter, setChapter] = useState<number>();
   const [shownVerses, setShownVerses] = useState<Verse[]>();
   const [displayOpened, setDisplayOpened] = useState<Boolean>(false);
   const [verseCount, setVerseCount] = useState<number>(2);
+  const [showTranslation, setShowTranslation] = useState<Boolean>(true);
 
   useEffect(()=>{
     invoke("get_verses", {bookName:"john",chNum: 1}).then(res=>setVerses(res.verses as Verse[]));
@@ -33,13 +41,23 @@ function App() {
 
   useEffect(()=>{
     if(shownVerses){
-        emit('display_verse', shownVerses);
+        emit('display_verse', {eng: shownVerses, ro:  getTranslation(shownVerses)});
     }
   }, [shownVerses]);
 
   useEffect(()=>{
     //console.log(verses);
   }, [verses]);
+
+    function getTranslation(verses: Verse[]){
+        let translatedVerses:any[] = [];
+        verses.forEach(verse => {
+            translatedVerses.push(translatedVerseData?.verses.find(some => some.number === verse.number));
+        });
+    
+        return translatedVerses;
+
+    }
 
     async function searchForBook(searchQuery: String){
 
@@ -84,9 +102,11 @@ function App() {
         }
     }
 
-    let new_verses = await invoke("get_verses", {bookName: book_name, chNum: parseInt(ch_num)}) as GetVersesResult;
+    let new_verses = await invoke("get_verses", {bookName: book_name, chNum: parseInt(ch_num), translations:["ro"]}) as GetVersesResult;
 
     if(new_verses){
+    console.log(new_verses);
+    setTranslatedVerseData(new_verses?.translation as TranslatedVerseData);
     setVerses(new_verses?.verses);
     setBook(new_verses?.book_name);
     setChapter(new_verses?.chapter_num);

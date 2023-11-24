@@ -9,6 +9,7 @@ type MonitorProps = {
 export default function Monitor(){
 
     const [versesToDisplay, setVersesToDisplay] = useState<Verse[]>();
+    const [translatedVerses, setTranslatedVerses] = useState<Verse[]>();
 
     useEffect(()=>{
         console.log(versesToDisplay);
@@ -17,7 +18,8 @@ export default function Monitor(){
     useEffect(()=>{
         listen('display_verse', (event) =>
         {   
-            setVersesToDisplay(event.payload as Verse[]);
+            setVersesToDisplay(event.payload.eng as Verse[]);
+            setTranslatedVerses(event.payload.ro as Verse[]);
         });
     },[]);
     
@@ -25,7 +27,7 @@ export default function Monitor(){
         return (
         versesToDisplay ? 
         <>
-        <div className="p-10 w-full h-[100vh] flex flex-col justify-center items-center">
+        <div className="p-10 w-full h-[100vh] flex flex-col justify-around items-center">
             <div className=''>
                 {versesToDisplay.map(verseToDisplay => (
                 <>
@@ -38,6 +40,23 @@ export default function Monitor(){
                 {versesToDisplay.at(versesToDisplay.length-1) ?
                 <>
                 {"-"}{versesToDisplay?.at(versesToDisplay.length-1)?.number}
+                </>
+                 : <></>
+                }
+                </div>
+            </div>
+            <div className=''>
+                {translatedVerses?.map(verseToDisplay => (
+                <>
+                <p className="text-6xl inline pe-6">
+                    <span className='text-xs font-light'>{verseToDisplay?.number}</span>
+                    {verseToDisplay?.text}</p>
+                </>
+                ))}
+                <div className="font-bold text-lg mt-5">{translatedVerses?.at(0)?.book_name || "" }{" "}{(translatedVerses?.at(0).chapter) + ":" + (translatedVerses?.at(0).number)}
+                {translatedVerses?.at(translatedVerses.length-1) ?
+                <>
+                {"-"}{translatedVerses?.at(translatedVerses.length-1)?.number}
                 </>
                  : <></>
                 }
