@@ -32,7 +32,7 @@ function App() {
   const [showTranslation, setShowTranslation] = useState<Boolean>(true);
 
   useEffect(()=>{
-    invoke("get_verses", {bookName:"john",chNum: 1, translations:["ro"]}).then(res=>setVerses(res.verses as Verse[]));
+    searchForBook("genesis");
     if(!displayOpened){
         invoke("open_display_monitor");
         setDisplayOpened(true);
@@ -117,18 +117,19 @@ function App() {
 
   return (
     <div className="container flex flex-row min-w-screen w-screen h-screen mx-auto">
-        <div className="flex flex-col w-4/12 h-full overflow-y-auto">
+        <div className="flex flex-col w-7/12 h-full overflow-y-auto">
             <ScriptureSearch performSearch={searchForBook} currentBook={book} currentChapter={chapter}/>
             <ScriptureSearchResults verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
         </div>
+        {/*
         <div className="flex flex-col w-3/12 h-full">
             <ScriptureQueue queue={""} />
         </div>
-
+        */}
         <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100">
-            {/*
+            
             <DisplayMonitor verseToDisplay={shownVerses?.at(0)}/>
-            */}
+            
         </div>
     </div>
   );

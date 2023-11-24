@@ -31,12 +31,12 @@ export default function Monitor(){
             <div className=''>
                 {versesToDisplay.map(verseToDisplay => (
                 <>
-                <p className="text-6xl inline pe-6">
-                    <span className='text-xs font-light'>{verseToDisplay?.number}</span>
+                <p className="text-5xl inline pe-3 font-light">
+                    <span className='text-base font-bold'>{verseToDisplay?.number}</span>
                     {verseToDisplay?.text}</p>
                 </>
                 ))}
-                <div className="font-bold text-lg mt-5">{versesToDisplay?.at(0)?.book_name || "" }{" "}{(versesToDisplay?.at(0)?.chapter) + ":" + (versesToDisplay?.at(0)?.number)}
+                <div className="font-bold text-xl mt-5">{versesToDisplay?.at(0)?.book_name || "" }{" "}{(versesToDisplay?.at(0)?.chapter) + ":" + (versesToDisplay?.at(0)?.number)}
                 {versesToDisplay.at(versesToDisplay.length-1) ?
                 <>
                 {"-"}{versesToDisplay?.at(versesToDisplay.length-1)?.number}
@@ -48,12 +48,12 @@ export default function Monitor(){
             <div className=''>
                 {translatedVerses?.map(verseToDisplay => (
                 <>
-                <p className="text-6xl inline pe-6">
-                    <span className='text-xs font-light'>{verseToDisplay?.number}</span>
+                <p className="text-5xl inline pe-3 font-light">
+                    <span className='text-base font-bold'>{verseToDisplay?.number}</span>
                     {verseToDisplay?.text}</p>
                 </>
                 ))}
-                <div className="font-bold text-lg mt-5">{translatedVerses?.at(0)?.book_name || "" }{" "}{(translatedVerses?.at(0)?.chapter) + ":" + (translatedVerses?.at(0)?.number)}
+                <div className="font-bold text-xl mt-5">{translatedVerses?.at(0)?.book_name || "" }{" "}{(translatedVerses?.at(0)?.chapter) + ":" + (translatedVerses?.at(0)?.number)}
                 {translatedVerses?.at(translatedVerses.length-1) ?
                 <>
                 {"-"}{translatedVerses?.at(translatedVerses.length-1)?.number}

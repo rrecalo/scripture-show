@@ -47,13 +47,20 @@ export default function ScriptureSearchResults({verses, changeSelectedVerse, ver
                 let newVerse = verses.find(someVerse => someVerse.number === selectedVerse?.number - verseCount);
                 setSelectedVerse(newVerse);
             }
+            else if(selectedVerse && selectedVerse.number <= verseCount){
+                let newVerse = verses.find(someVerse => someVerse.number === 1);
+                setSelectedVerse(newVerse);
+            }
         }
         if(e.key === "ArrowRight"){
             if(selectedVerse && (verses.length - selectedVerse.number >= verseCount)){
                 let newVerse = verses.find(someVerse => someVerse.number === selectedVerse?.number + verseCount);
                 setSelectedVerse(newVerse);
             }
-
+            else if (selectedVerse && (verses.length - selectedVerse.number < verseCount)){
+                let newVerse = verses.find(someVerse => someVerse.number === verses.length);
+                setSelectedVerse(newVerse);
+            }
         }
     }
 
