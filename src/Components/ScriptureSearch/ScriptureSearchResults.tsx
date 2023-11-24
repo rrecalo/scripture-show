@@ -5,9 +5,10 @@ import {useEffect, useState} from 'react';
 type ScriptureSearchResultsProps = {
     verses: Verse[],
     changeSelectedVerse: Function,
+    verseCount: number,
 }
 
-export default function ScriptureSearchResults({verses, changeSelectedVerse} : ScriptureSearchResultsProps){
+export default function ScriptureSearchResults({verses, changeSelectedVerse, verseCount} : ScriptureSearchResultsProps){
 
     const [selectedVerse, setSelectedVerse] = useState<Verse>();
   
@@ -16,10 +17,25 @@ export default function ScriptureSearchResults({verses, changeSelectedVerse} : S
     }, []);
 
     useEffect(()=>{
-        selectedVerse ? changeSelectedVerse(selectedVerse) : {};
+        if(selectedVerse){
+        let nextVerses = getNextVerses(selectedVerse, 2);
+        nextVerses.unshift(selectedVerse);
+        changeSelectedVerse(nextVerses);
+        }
         document.addEventListener('keydown', handleKey);
         return () => {document.removeEventListener('keydown', handleKey);}
         }, [selectedVerse]);
+
+    function getNextVerses(startingVerse: Verse | undefined, nextVerseCount: number){
+
+        let nextVerses = [];
+
+        for(let i = 1; i < nextVerseCount; i++){
+            nextVerses.push(verses.find(some => some.number === (startingVerse?.number + i)));
+        }
+
+        return nextVerses 
+    }
 
     function selectVerse(verse: Verse){
         setSelectedVerse(verse);
@@ -27,16 +43,14 @@ export default function ScriptureSearchResults({verses, changeSelectedVerse} : S
 
     function handleKey(e: any){
         if(e.key === "ArrowLeft"){
-            if(selectedVerse && selectedVerse.number > 1){
-                let newVerse = verses.find(someVerse => someVerse.number === selectedVerse?.number - 1);
-                changeSelectedVerse(newVerse);
+            if(selectedVerse && selectedVerse.number > verseCount){
+                let newVerse = verses.find(someVerse => someVerse.number === selectedVerse?.number - verseCount);
                 setSelectedVerse(newVerse);
             }
         }
         if(e.key === "ArrowRight"){
-            if(selectedVerse && selectedVerse.number < verses.length){
-                let newVerse = verses.find(someVerse => someVerse.number === selectedVerse?.number + 1);
-                changeSelectedVerse(newVerse);
+            if(selectedVerse && (verses.length - selectedVerse.number >= verseCount)){
+                let newVerse = verses.find(someVerse => someVerse.number === selectedVerse?.number + verseCount);
                 setSelectedVerse(newVerse);
             }
 

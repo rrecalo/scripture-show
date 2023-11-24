@@ -19,8 +19,9 @@ function App() {
   const [verses, setVerses] = useState<Verse[]>([]);
   const [book, setBook] = useState<String>();
   const [chapter, setChapter] = useState<number>();
-  const [shownVerse, setShownVerse] = useState<Verse>();
+  const [shownVerses, setShownVerses] = useState<Verse[]>();
   const [displayOpened, setDisplayOpened] = useState<Boolean>(false);
+  const [verseCount, setVerseCount] = useState<number>(2);
 
   useEffect(()=>{
     invoke("get_verses", {bookName:"john",chNum: 1}).then(res=>setVerses(res.verses as Verse[]));
@@ -31,10 +32,10 @@ function App() {
       },[]);
 
   useEffect(()=>{
-    if(shownVerse){
-        emit('display_verse', shownVerse);
+    if(shownVerses){
+        emit('display_verse', shownVerses);
     }
-  }, [shownVerse]);
+  }, [shownVerses]);
 
   useEffect(()=>{
     //console.log(verses);
@@ -92,22 +93,22 @@ function App() {
     }
   }
 
-  function handleChangeShownVerse(newVerseToShow: Verse){
-    setShownVerse(newVerseToShow);
+  function handleChangeShownVerse(newVersesToShow: Verse[]){
+    setShownVerses(newVersesToShow);
   }
 
   return (
     <div className="container flex flex-row min-w-screen w-screen h-screen mx-auto">
         <div className="flex flex-col w-4/12 h-full overflow-y-auto">
             <ScriptureSearch performSearch={searchForBook} currentBook={book} currentChapter={chapter}/>
-            <ScriptureSearchResults verses={verses} changeSelectedVerse={handleChangeShownVerse}/>
+            <ScriptureSearchResults verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
         </div>
         <div className="flex flex-col w-3/12 h-full">
             <ScriptureQueue queue={""} />
         </div>
 
         <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100">
-            <DisplayMonitor verseToDisplay={shownVerse}/> 
+            <DisplayMonitor verseToDisplay={shownVerses?.at(0)}/>
         </div>
     </div>
   );
