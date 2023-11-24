@@ -6,14 +6,14 @@ export default function ScriptureSearchBox({performSearch}){
 
     function handleKeyDown(e: any){
         if(e.key === "Enter"){
-            e.preventDefault();
+            //e.preventDefault();
             performSearch(searchValue);
         }
     }
 
     return (
 
-        <input className="outline-none w-full h-fit" autoComplete="off"
+        <input className="outline-none w-full h-fit"
         onKeyDown={(e)=>handleKeyDown(e)}
         value={searchValue} onChange={(e)=>setSearchValue(e.target.value)}
         placeholder="Search for a book..."></input>

@@ -12,7 +12,7 @@ type GetVersesResult = {
     book_name: String,
     chapter_num: number,
     verses: Verse[],
-    translation: TranslatedVerseData
+    translation: any
 }
 type TranslatedVerseData = {
     book_name: String,
@@ -32,7 +32,7 @@ function App() {
   const [showTranslation, setShowTranslation] = useState<Boolean>(true);
 
   useEffect(()=>{
-    invoke("get_verses", {bookName:"john",chNum: 1}).then(res=>setVerses(res.verses as Verse[]));
+    invoke("get_verses", {bookName:"john",chNum: 1, translations:["ro"]}).then(res=>setVerses(res.verses as Verse[]));
     if(!displayOpened){
         invoke("open_display_monitor");
         setDisplayOpened(true);
@@ -46,7 +46,7 @@ function App() {
   }, [shownVerses]);
 
   useEffect(()=>{
-    //console.log(verses);
+    console.log(verses);
   }, [verses]);
 
     function getTranslation(verses: Verse[]){
@@ -60,7 +60,6 @@ function App() {
     }
 
     async function searchForBook(searchQuery: String){
-
     searchQuery = searchQuery.toLowerCase();
     let starts_with_num = false;
     if(!isNaN(parseInt(searchQuery.charAt(0)))){
@@ -102,10 +101,9 @@ function App() {
         }
     }
 
-    let new_verses = await invoke("get_verses", {bookName: book_name, chNum: parseInt(ch_num), translations:["ro"]}) as GetVersesResult;
+    let new_verses = await invoke("get_verses", {bookName: book_name, chNum: parseInt(ch_num), translations:["ro"]});
 
     if(new_verses){
-    console.log(new_verses);
     setTranslatedVerseData(new_verses?.translation as TranslatedVerseData);
     setVerses(new_verses?.verses);
     setBook(new_verses?.book_name);

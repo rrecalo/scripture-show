@@ -28,12 +28,11 @@ struct GetVersesResult{
     book_name: String,
     chapter_num: i32,
     verses: Vec<Verse>,
-    translation: Option<VerseTranslation>
+    translation: VerseTranslation
 }
 
 #[tauri::command]
 fn get_verses(bible: State<Bibles>, book_name: String, ch_num: i32, translations: Vec<String>) -> Option<GetVersesResult> {   
-
     let book = bible.esv.get_book_by_name(&book_name)?;
     let ch = book.get_chapter(ch_num)?;
 
@@ -41,20 +40,20 @@ fn get_verses(bible: State<Bibles>, book_name: String, ch_num: i32, translations
 
     for translation in translations.iter(){
         if translation == &"ro" {
-            println!("{}", translation);
-            let ro_book = bible.ro.get_book_by_name(&book_name)?;
+
+            let book_num: usize = bible.esv.books.iter().position(|b| b.name == book.clone().name).expect("book number could not be extrapolated!");
+            let ro_book: &Book = &bible.ro.books.get(book_num).expect("could not get RO translation of book at given index!");
             let ro_ch = ro_book.get_chapter(ch_num)?;
 
             alt_lang = Some(VerseTranslation {
-                book_name: ro_book.name,
+                book_name: ro_book.clone().name,
                 chapter_num: ro_ch.number,
                 verses: ro_ch.get_all_verses(),
             });
         };
     };
 
-
-    Some(GetVersesResult{book_name: book.name, chapter_num: ch_num, verses:ch.get_all_verses(), translation: alt_lang})
+    Some(GetVersesResult{book_name: book.name, chapter_num: ch_num, verses:ch.get_all_verses(), translation: alt_lang.expect("No RO translation found!!!")})
 
 }
 
