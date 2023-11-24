@@ -18,8 +18,8 @@ export default function Monitor(){
     useEffect(()=>{
         listen('display_verse', (event) =>
         {   
-            setVersesToDisplay(event.payload.eng as Verse[]);
-            setTranslatedVerses(event.payload.ro as Verse[]);
+            setVersesToDisplay(event?.payload?.eng as Verse[]);
+            setTranslatedVerses(event?.payload?.ro as Verse[]);
         });
     },[]);
     
@@ -36,7 +36,7 @@ export default function Monitor(){
                     {verseToDisplay?.text}</p>
                 </>
                 ))}
-                <div className="font-bold text-lg mt-5">{versesToDisplay?.at(0)?.book_name || "" }{" "}{(versesToDisplay?.at(0).chapter) + ":" + (versesToDisplay?.at(0).number)}
+                <div className="font-bold text-lg mt-5">{versesToDisplay?.at(0)?.book_name || "" }{" "}{(versesToDisplay?.at(0)?.chapter) + ":" + (versesToDisplay?.at(0)?.number)}
                 {versesToDisplay.at(versesToDisplay.length-1) ?
                 <>
                 {"-"}{versesToDisplay?.at(versesToDisplay.length-1)?.number}
@@ -53,7 +53,7 @@ export default function Monitor(){
                     {verseToDisplay?.text}</p>
                 </>
                 ))}
-                <div className="font-bold text-lg mt-5">{translatedVerses?.at(0)?.book_name || "" }{" "}{(translatedVerses?.at(0).chapter) + ":" + (translatedVerses?.at(0).number)}
+                <div className="font-bold text-lg mt-5">{translatedVerses?.at(0)?.book_name || "" }{" "}{(translatedVerses?.at(0)?.chapter) + ":" + (translatedVerses?.at(0)?.number)}
                 {translatedVerses?.at(translatedVerses.length-1) ?
                 <>
                 {"-"}{translatedVerses?.at(translatedVerses.length-1)?.number}
