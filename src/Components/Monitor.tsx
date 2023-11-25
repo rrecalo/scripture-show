@@ -28,7 +28,7 @@ export default function Monitor(){
         versesToDisplay ? 
         <>
         <div className="p-10 w-full h-[100vh] flex flex-col justify-around items-center">
-            <div className=''>
+            <div className='w-full'>
                 {versesToDisplay.map(verseToDisplay => (
                 <>
                 <p className="text-5xl inline pe-3 font-light">
@@ -45,7 +45,7 @@ export default function Monitor(){
                 }
                 </div>
             </div>
-            <div className=''>
+            <div className='w-full'>
                 {translatedVerses?.map(verseToDisplay => (
                 <>
                 <p className="text-5xl inline pe-3 font-light">
