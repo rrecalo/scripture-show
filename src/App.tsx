@@ -47,12 +47,13 @@ function App() {
 
   useEffect(()=>{
     if(shownVerses){
+        //shownVerses.forEach(verse=>console.log(verse.chapter));
         emit('display_verse', {eng: shownVerses, ro:  getTranslation(shownVerses)});
     }
   }, [shownVerses]);
 
   useEffect(()=>{
-    console.log(verses);
+    //console.log(verses);
   }, [verses]);
 
     function getTranslation(verses: Verse[]){

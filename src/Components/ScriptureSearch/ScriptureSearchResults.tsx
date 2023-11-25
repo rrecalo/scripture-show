@@ -11,20 +11,26 @@ type ScriptureSearchResultsProps = {
 export default function ScriptureSearchResults({verses, changeSelectedVerse, verseCount} : ScriptureSearchResultsProps){
 
     const [selectedVerse, setSelectedVerse] = useState<Verse>();
-  
-    useEffect(()=>{
-        
-    }, []);
+    const [startAtFirst, setStartAtFirst] = useState<Boolean>(false);
 
     useEffect(()=>{
         if(selectedVerse){
-        let nextVerses = getNextVerses(selectedVerse, 2);
-        nextVerses.unshift(selectedVerse);
-        changeSelectedVerse(nextVerses);
+            setStartAtFirst(true);
+        }
+    }, [verses]);
+
+    useEffect(()=>{
+        if(selectedVerse){
+            console.log(startAtFirst);
+            let nextVerses = getNextVerses(selectedVerse, 2);
+            nextVerses.unshift(selectedVerse);
+            if(!startAtFirst){
+            changeSelectedVerse(nextVerses);
+            }
         }
         document.addEventListener('keydown', handleKey);
         return () => {document.removeEventListener('keydown', handleKey);}
-        }, [selectedVerse]);
+        }, [selectedVerse, startAtFirst]);
 
     function getNextVerses(startingVerse: Verse | undefined, nextVerseCount: number){
 
@@ -38,12 +44,21 @@ export default function ScriptureSearchResults({verses, changeSelectedVerse, ver
     }
 
     function selectVerse(verse: Verse){
-        setSelectedVerse(verse);
+        if(startAtFirst){
+            setStartAtFirst(false, setSelectedVerse(verse));
+        }
+        else{
+            setSelectedVerse(verse);
+        }
     }
 
     function handleKey(e: any){
         if(e.key === "ArrowLeft"){
-            if(selectedVerse && selectedVerse.number > verseCount){
+            if(startAtFirst){
+                setSelectedVerse(verses[0]);
+                setStartAtFirst(false);
+            }
+            else if(selectedVerse && selectedVerse.number > verseCount){
                 let newVerse = verses.find(someVerse => someVerse.number === selectedVerse?.number - verseCount);
                 setSelectedVerse(newVerse);
             }
@@ -53,7 +68,11 @@ export default function ScriptureSearchResults({verses, changeSelectedVerse, ver
             }
         }
         if(e.key === "ArrowRight"){
-            if(selectedVerse && (verses.length - selectedVerse.number >= verseCount)){
+            if(startAtFirst){
+                setSelectedVerse(verses[0]);
+                setStartAtFirst(false);
+            }
+            else if(selectedVerse && (verses.length - selectedVerse.number >= verseCount)){
                 let newVerse = verses.find(someVerse => someVerse.number === selectedVerse?.number + verseCount);
                 setSelectedVerse(newVerse);
             }
