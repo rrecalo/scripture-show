@@ -6,6 +6,7 @@ import Verse from "./types/Verse";
 import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
 import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearchResults";
 import ScriptureQueue from "./Components/ScriptureQueue";
+import BookSelection from "./Components/BookSelection";
 import DisplayMonitor from "./Components/DisplayMonitor";
 
 type GetVersesResult = {
@@ -30,6 +31,7 @@ function App() {
   const [displayOpened, setDisplayOpened] = useState<Boolean>(false);
   const [verseCount, setVerseCount] = useState<number>(2);
   const [showTranslation, setShowTranslation] = useState<Boolean>(true);
+  const [bookList, setBookList] = useState<String[]>();
 
   useEffect(()=>{
     searchForBook("genesis");
@@ -37,6 +39,10 @@ function App() {
         invoke("open_display_monitor");
         setDisplayOpened(true);
     }
+    (invoke("get_book_list", {version: "esv"}) as Promise<String[]>).then(
+    (books : String[]) =>{
+        setBookList(books);
+    });
       },[]);
 
   useEffect(()=>{
@@ -117,6 +123,9 @@ function App() {
 
   return (
     <div className="container flex flex-row min-w-screen w-screen h-screen mx-auto">
+        <div id="book_list_container" className="border-black border-r overflow-y-auto w-fit overflow-x-hidden">
+            {bookList?.map(bookName => <BookSelection bookName={bookName} activeBookName={verses[0].book_name} />)}
+        </div>
         <div className="flex flex-col w-7/12 h-full overflow-y-auto">
             <ScriptureSearch performSearch={searchForBook} currentBook={book} currentChapter={chapter}/>
             <ScriptureSearchResults verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
@@ -126,6 +135,7 @@ function App() {
             <ScriptureQueue queue={""} />
         </div>
         */}
+        
         <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100">
             
             <DisplayMonitor verseToDisplay={shownVerses?.at(0)}/>

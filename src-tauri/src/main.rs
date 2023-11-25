@@ -3,7 +3,7 @@
 
 mod modules;
 use modules::bible::*;
-use tauri::{State, WindowBuilder, Manager, PhysicalPosition, LogicalPosition};
+use tauri::{State, WindowBuilder, Manager, PhysicalPosition, LogicalPosition, http::status::StatusCode, Error};
 
 use modules::bible_reader::create_from_xml;
 use serde::Serialize;
@@ -105,6 +105,31 @@ fn get_book_and_chapter(bible: State<Bible>, book_name: String, ch_num: i32) -> 
 }
 */
 
+#[derive(Serialize)]
+enum ApplicationError{
+    BadVersion(&'static str),
+}
+
+#[tauri::command]
+fn get_book_list(bible: State<Bibles>, version: &str) -> Result<Vec<String>, ApplicationError> {
+    
+    match version {
+        "esv" => {
+            
+            let book_names = bible.esv.books.clone().iter().map(|b| b.name.clone()).collect();
+            Ok(book_names)
+        }
+        "ro" => {
+            let book_names = bible.esv.books.clone().iter().map(|b| b.name.clone()).collect();
+            Ok(book_names)
+        }
+        _ => {
+            Err(ApplicationError::BadVersion("Bad bible version name received!"))
+        }
+    }
+
+}
+
 struct Bibles{
     esv: Bible,
     ro: Bible,
@@ -116,7 +141,7 @@ fn main() {
         
     tauri::Builder::default()
         .manage(bible_data)
-        .invoke_handler(tauri::generate_handler![get_verses, open_display_monitor])
+        .invoke_handler(tauri::generate_handler![get_verses, open_display_monitor, get_book_list])
         //.invoke_handler(tauri::generate_handler![get_book_and_chapter])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
