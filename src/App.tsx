@@ -124,7 +124,7 @@ function App() {
   return (
     <div className="container flex flex-row min-w-screen w-screen h-screen mx-auto">
         <div id="book_list_container" className="border-black border-r overflow-y-auto w-fit overflow-x-hidden">
-            {bookList?.map(bookName => <BookSelection bookName={bookName} activeBookName={verses[0].book_name} />)}
+            {bookList?.map(bookName => <BookSelection bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
         </div>
         <div className="flex flex-col w-7/12 h-full overflow-y-auto">
             <ScriptureSearch performSearch={searchForBook} currentBook={book} currentChapter={chapter}/>

@@ -2,11 +2,16 @@
 type BookSelectionProps = {
     bookName: String,
     activeBookName: String,
+    openBook: Function
 }
 
-export default function BookSelection({bookName, activeBookName} : BookSelectionProps){
+export default function BookSelection({bookName, activeBookName, openBook} : BookSelectionProps){
+
+    
 
     return (
-        <div className={`ps-1 font-light text-sm w-full pe-8 whitespace-nowrap ${activeBookName === bookName ? 'bg-neutral-300' : ''}`}>{bookName}</div>
+        <div className={`ps-1 font-light text-sm w-full pe-8 whitespace-nowrap select-none ${activeBookName === bookName ? 'bg-neutral-300' : ''}`}
+        onClick={()=>openBook(bookName)}
+        >{bookName}</div>
     )
 }
