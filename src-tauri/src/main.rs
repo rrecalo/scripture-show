@@ -3,7 +3,7 @@
 
 mod modules;
 use modules::bible::*;
-use tauri::{State, WindowBuilder, Manager, PhysicalPosition, LogicalPosition, http::status::StatusCode, Error};
+use tauri::{State, WindowBuilder, Manager, PhysicalPosition, LogicalPosition, http::status::StatusCode, Error, Monitor, Window};
 
 use modules::bible_reader::create_from_xml;
 use serde::Serialize;
@@ -58,14 +58,32 @@ fn get_verses(bible: State<Bibles>, book_name: String, ch_num: i32, translations
 }
 
 #[tauri::command]
-async fn open_display_monitor(app: tauri::AppHandle) -> bool {
+async fn open_display_monitor(app: tauri::AppHandle, monitor_name: String) -> bool {
 
-  let window = tauri::WindowBuilder::new(&app, "display_monitor", tauri::WindowUrl::App("monitor.html".into()))
+  let mut new_window: Option<_> = None;
+  let wins = app.clone().windows();
+    for window in wins.iter(){
+        if &window.1.label() == &"display_monitor" {
+            //let _ = window.1.close();
+            new_window = Some(window.1);
+
+        }   
+    };
+
+  let window = match new_window{
+        Some(win) => win.clone(),
+        None => tauri::WindowBuilder::new(&app, "display_monitor", tauri::WindowUrl::App("monitor.html".into()))
     .build()
-    .unwrap();
+    .unwrap()
 
-  let alt_monitor = get_non_primary_monitor(window.clone()).unwrap();
-  
+  };
+
+  let mut alt_monitor: tauri::Monitor = window.primary_monitor().unwrap().unwrap();
+  for monitor in window.available_monitors().expect("could not fetch available monitors!"){
+        if monitor.name().unwrap() == &monitor_name {
+            alt_monitor = monitor.clone();
+        }
+  }
 
   let _ = window.set_position(PhysicalPosition {
       x:alt_monitor.position().x,
@@ -73,6 +91,8 @@ async fn open_display_monitor(app: tauri::AppHandle) -> bool {
   });
 
   let _ = window.set_fullscreen(true);
+
+  println!("Chosen Monitor : {0} | Projecting To : {1}", monitor_name, alt_monitor.name().unwrap());
 
   true
 
@@ -91,19 +111,6 @@ fn get_non_primary_monitor(window: tauri::Window) -> Option<tauri::Monitor> {
     None
         
 }
-
-
-/*
-#[tauri::command]
-fn get_book_and_chapter(bible: State<Bible>, book_name: String, ch_num: i32) -> Option<Vec<Verse>> {
-    
-    let book = bible.get_book_by_name(&book_name)?;
-    let ch = book.get_chapter(ch_num)?;
-
-    Some(ch.get_all_verses())
-
-}
-*/
 
 #[derive(Serialize)]
 enum ApplicationError{

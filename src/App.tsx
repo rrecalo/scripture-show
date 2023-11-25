@@ -5,9 +5,9 @@ import "./App.css";
 import Verse from "./types/Verse";
 import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
 import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearchResults";
-import ScriptureQueue from "./Components/ScriptureQueue";
 import BookSelection from "./Components/BookSelection";
 import DisplayMonitor from "./Components/DisplayMonitor";
+import ChooseMonitor from "./Components/ChooseMonitor";
 
 type GetVersesResult = {
     book_name: String,
@@ -36,7 +36,7 @@ function App() {
   useEffect(()=>{
     searchForBook("genesis");
     if(!displayOpened){
-        invoke("open_display_monitor");
+        //invoke("open_display_monitor");
         setDisplayOpened(true);
     }
     (invoke("get_book_list", {version: "esv"}) as Promise<String[]>).then(
@@ -140,7 +140,7 @@ function App() {
         <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100">
             
             <DisplayMonitor verseToDisplay={shownVerses?.at(0)}/>
-            
+            <ChooseMonitor />
         </div>
     </div>
   );
