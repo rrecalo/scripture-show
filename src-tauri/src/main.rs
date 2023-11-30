@@ -60,6 +60,9 @@ fn get_verses(bible: State<Bibles>, book_name: String, ch_num: i32, translations
 #[tauri::command]
 async fn open_display_monitor(app: tauri::AppHandle, monitor_name: String) -> bool {
 
+
+    
+
   let mut new_window: Option<_> = None;
   let wins = app.clone().windows();
     for window in wins.iter(){
@@ -67,7 +70,10 @@ async fn open_display_monitor(app: tauri::AppHandle, monitor_name: String) -> bo
             //let _ = window.1.close();
             new_window = Some(window.1);
 
-        }   
+        } 
+        if &window.1.label() == &"choose_output" {
+            let _ = &window.1.close();
+        }
     };
 
   let window = match new_window{
@@ -91,6 +97,7 @@ async fn open_display_monitor(app: tauri::AppHandle, monitor_name: String) -> bo
   });
 
   let _ = window.set_fullscreen(true);
+  let _ = window.set_title("Verse Display");
 
   println!("Chosen Monitor : {0} | Projecting To : {1}", monitor_name, alt_monitor.name().unwrap());
 
@@ -114,7 +121,7 @@ fn get_non_primary_monitor(window: tauri::Window) -> Option<tauri::Monitor> {
 
 #[derive(Serialize)]
 enum ApplicationError{
-    BadVersion(&'static str),
+    BadVersionName(&'static str),
 }
 
 #[tauri::command]
@@ -131,7 +138,7 @@ fn get_book_list(bible: State<Bibles>, version: &str) -> Result<Vec<String>, App
             Ok(book_names)
         }
         _ => {
-            Err(ApplicationError::BadVersion("Bad bible version name received!"))
+            Err(ApplicationError::BadVersionName("Bad bible version name received!"))
         }
     }
 

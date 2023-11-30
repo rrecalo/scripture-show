@@ -140,7 +140,6 @@ function App() {
         <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100">
             
             <DisplayMonitor verseToDisplay={shownVerses?.at(0)}/>
-            <ChooseMonitor />
         </div>
     </div>
   );
