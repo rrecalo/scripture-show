@@ -14,7 +14,7 @@ export default function DisplayMonitor({verseToDisplay} : DisplayMonitorProps){
     return (
         verseToDisplay ? 
         <>
-        <div className="p-3">
+        <div className="p-3 dark:text-neutral-50">
             <div id="display" className="text-2xl">{verseToDisplay?.text}</div>
             <div className="font-bold text-sm">{verseToDisplay?.book_name || ""} 
             {" "}{(verseToDisplay?.chapter) + ":" + (verseToDisplay?.number)}</div>

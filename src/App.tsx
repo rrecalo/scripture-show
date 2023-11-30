@@ -7,7 +7,7 @@ import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
 import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearchResults";
 import BookSelection from "./Components/BookSelection";
 import DisplayMonitor from "./Components/DisplayMonitor";
-import ChooseMonitor from "./Components/ChooseMonitor";
+import DarkModeSelector from "./Components/DarkModeSelector";
 
 type GetVersesResult = {
     book_name: String,
@@ -31,6 +31,7 @@ function App() {
   const [displayOpened, setDisplayOpened] = useState<Boolean>(false);
   const [verseCount, setVerseCount] = useState<number>(2);
   const [showTranslation, setShowTranslation] = useState<Boolean>(true);
+  const [darkMode, setDarkMode] = useState<Boolean>(true);
   const [bookList, setBookList] = useState<String[]>();
 
   useEffect(()=>{
@@ -123,8 +124,8 @@ function App() {
   }
 
   return (
-    <div className="container flex flex-row min-w-screen w-screen h-screen mx-auto">
-        <div id="book_list_container" className="border-black border-r overflow-y-auto w-fit overflow-x-hidden">
+    <div className={`container flex flex-row min-w-screen w-screen h-screen mx-auto ${darkMode ? 'dark' : ''}`}>
+        <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-2 overflow-y-auto w-fit overflow-x-hidden">
             {bookList?.map(bookName => <BookSelection bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
         </div>
         <div className="flex flex-col w-7/12 h-full overflow-y-auto">
@@ -137,8 +138,10 @@ function App() {
         </div>
         */}
         
-        <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100">
-            
+        <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100 dark:bg-neutral-900">
+            <div className="p-2">
+                <DarkModeSelector darkMode={darkMode} toggleDarkMode={()=>{setDarkMode(!darkMode)}}/> 
+            </div>
             <DisplayMonitor verseToDisplay={shownVerses?.at(0)}/>
         </div>
     </div>

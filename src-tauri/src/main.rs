@@ -96,7 +96,7 @@ async fn open_display_monitor(app: tauri::AppHandle, monitor_name: String) -> bo
       y:0
   });
 
-  let _ = window.set_fullscreen(true);
+  let _ = window.set_fullscreen(false);
   let _ = window.set_title("Verse Display");
 
   println!("Chosen Monitor : {0} | Projecting To : {1}", monitor_name, alt_monitor.name().unwrap());
