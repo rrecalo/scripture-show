@@ -8,7 +8,7 @@ import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearch
 import BookSelection from "./Components/BookSelection";
 import DisplayMonitor from "./Components/DisplayMonitor";
 
-type GetVersesResult = {
+export type GetVersesResult = {
     book_name: String,
     chapter_num: number,
     verses: Verse[],
@@ -35,7 +35,7 @@ function App() {
 
 
   useEffect(()=>{
-    searchForBook("genesis");
+    searchForBook("genesis", true);
     if(!displayOpened){
         //invoke("open_display_monitor");
         setDisplayOpened(true);
@@ -84,7 +84,7 @@ function App() {
 
     }
 
-    async function searchForBook(searchQuery: String){
+    async function searchForBook(searchQuery: String, acceptChoice: boolean){
     searchQuery = searchQuery.toLowerCase();
     let starts_with_num = false;
     if(!isNaN(parseInt(searchQuery.charAt(0)))){
@@ -93,7 +93,6 @@ function App() {
     
     let first_space = searchQuery.indexOf(" ");
     let last_space = searchQuery.lastIndexOf(" ");
-    
     //default values if somehow the query string won't match any of the
     //filtering below
     let ch_num = "1";
@@ -108,7 +107,6 @@ function App() {
         //ch_num = searchQuery.slice(last_space+1, last_space+2);
         ch_num = searchQuery.slice(last_space+1, searchQuery.length);
         book_name = searchQuery.slice(0, last_space);
-
     }
     //if there is only ONE space, get the ch num provided (if any);
     else{
@@ -125,14 +123,18 @@ function App() {
             book_name = searchQuery.toString();
         }
     }
-
+    console.log(book_name);
     let new_verses = await invoke("get_verses", {bookName: book_name, chNum: parseInt(ch_num), translations:["ro"]}) as GetVersesResult;
-
-    if(new_verses){
-    setTranslatedVerseData(new_verses?.translation as TranslatedVerseData);
-    setVerses(new_verses?.verses);
-    setBook(new_verses?.book_name);
-    setChapter(new_verses?.chapter_num);
+    if(acceptChoice){
+        if(new_verses){
+        setTranslatedVerseData(new_verses?.translation as TranslatedVerseData);
+        setVerses(new_verses?.verses);
+        setBook(new_verses?.book_name);
+        setChapter(new_verses?.chapter_num);
+        }
+    }
+    else{
+        return searchQuery === "" ? undefined : new_verses;
     }
   }
 

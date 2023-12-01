@@ -4,11 +4,11 @@ export default function ScriptureSearch({performSearch, currentBook, currentChap
 
 
     function decrementChapter(){
-        performSearch(currentBook+" "+(currentChapter-1));
+        performSearch(currentBook+" "+(currentChapter-1), true);
     }
 
     function incrementChapter(){
-        performSearch(currentBook+" "+(currentChapter+1));
+        performSearch(currentBook+" "+(currentChapter+1), true);
     }
 
     return (
