@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react'
 import Verse from '../types/Verse'
 import { listen} from '@tauri-apps/api/event'
 
-type MonitorProps = {
-    versesToDisplay : Verse
+type DisplayVerseEvent = {
+    payload: {
+        eng: Verse[],
+        ro: Verse[]
+    }
 }
 
 export default function Monitor(){
@@ -16,10 +19,12 @@ export default function Monitor(){
         },[versesToDisplay]);
     
     useEffect(()=>{
-        listen('display_verse', (event) =>
+        listen('display_verse', (event : DisplayVerseEvent) =>
         {   
-            setVersesToDisplay(event?.payload?.eng as Verse[]);
-            setTranslatedVerses(event?.payload?.ro as Verse[]);
+            if(event){
+                setVersesToDisplay(event.payload.eng as Verse[]);
+                setTranslatedVerses(event.payload.ro as Verse[]);
+            }
         });
     },[]);
     

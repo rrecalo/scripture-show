@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import { appWindow } from '@tauri-apps/api/window';
 import { emit, listen } from '@tauri-apps/api/event';
 import "./App.css";
 import Verse from "./types/Verse";
@@ -8,7 +7,6 @@ import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
 import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearchResults";
 import BookSelection from "./Components/BookSelection";
 import DisplayMonitor from "./Components/DisplayMonitor";
-import DarkModeSelector from "./Components/DarkModeSelector";
 
 type GetVersesResult = {
     book_name: String,
@@ -31,7 +29,7 @@ function App() {
   const [shownVerses, setShownVerses] = useState<Verse[]>();
   const [displayOpened, setDisplayOpened] = useState<Boolean>(false);
   const [verseCount, setVerseCount] = useState<number>(2);
-  const [showTranslation, setShowTranslation] = useState<Boolean>(true);
+  //const [showTranslation, setShowTranslation] = useState<Boolean>(true);
   const [darkMode, setDarkMode] = useState<Boolean>(true);
   const [bookList, setBookList] = useState<String[]>();
 
@@ -62,11 +60,8 @@ function App() {
     listen("theme_request", (_)=>{
         emit('theme_update', darkMode);
     });
+    emit('theme_update', darkMode);
       },[]);
-
-  useEffect(()=>{
-    //emit('theme_update', darkMode);
-  }, [darkMode]);
 
   useEffect(()=>{
     if(shownVerses){

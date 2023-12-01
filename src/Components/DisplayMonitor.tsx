@@ -8,7 +8,6 @@ type DisplayMonitorProps = {
 export default function DisplayMonitor({verseToDisplay} : DisplayMonitorProps){
 
     useEffect(()=>{
-        //console.log(verseToDisplay);
         },[verseToDisplay]);
 
     return (

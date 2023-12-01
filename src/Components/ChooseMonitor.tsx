@@ -21,9 +21,6 @@ export default function ChooseMonitor(){
         emit("theme_request", "choose_output");
     },[]);
 
-    useEffect(()=>{
-    },[monitors]);
-
     function handleMonitorChoice(monitor: Monitor){
         console.log(monitor);
         invoke("open_display_monitor", {monitorName: monitor.name});
