@@ -170,38 +170,11 @@ fn init_menu() -> Menu{
 fn main() {
     
     let bible_data: Bibles = Bibles { esv: create_from_xml("./ESV.xml"), ro: create_from_xml("./ro.xml")};
-    /*
-     *
-     *,
-    "windows": [
-      {
-        "label":"main",
-        "fullscreen": false,
-        "maximized": false,
-        "resizable": true,
-        "title": "Scripture Show",
-        "width": 1280,
-        "height": 720,
-        "url":"../index.html"
-      },
-      {
-        "label":"choose_output",
-        "fullscreen": false,
-        "maximized": false,
-        "resizable": false,
-        "title": "Choose Output Display",
-        "width": 600,
-        "height": 400,
-        "url":"../choose_output.html"
-      }
-      
-    ]
-    */
     let menu = init_menu();
 
        tauri::Builder::default()
         .setup(|app| {
-            WindowBuilder::new(
+            let main_window = WindowBuilder::new(
                 app,
                 "main".to_string(),
                 tauri::WindowUrl::App("index.html".into()),)
@@ -216,6 +189,23 @@ fn main() {
                 .title("Choose Display Output")
                 .inner_size(400.0, 200.0)
                 .build()?;
+
+            //let main = main_window.clone();
+            let app_handle = app.handle();
+            main_window.on_menu_event(move |event| {
+                match event.menu_item_id() {
+                "quit" => {
+                    std::process::exit(0);
+                },
+                "dark" => {
+                    app_handle.emit_to("main", "dark_mode", true).unwrap();
+                },
+                "light" => {
+                    app_handle.emit_to("main", "dark_mode", false).unwrap();
+                }
+                _ => {}
+                }
+            });
             Ok(())
         })
         .manage(bible_data)

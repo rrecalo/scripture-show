@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
-import { emit } from '@tauri-apps/api/event';
+import { appWindow } from '@tauri-apps/api/window';
+import { emit, listen } from '@tauri-apps/api/event';
 import "./App.css";
 import Verse from "./types/Verse";
 import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
@@ -34,6 +35,7 @@ function App() {
   const [darkMode, setDarkMode] = useState<Boolean>(true);
   const [bookList, setBookList] = useState<String[]>();
 
+
   useEffect(()=>{
     searchForBook("genesis");
     if(!displayOpened){
@@ -43,6 +45,15 @@ function App() {
     (invoke("get_book_list", {version: "esv"}) as Promise<String[]>).then(
     (books : String[]) =>{
         setBookList(books);
+    });
+
+    listen("dark_mode", (event)=>{
+        if(event.payload){
+            setDarkMode(true);
+        }
+        else{
+            setDarkMode(false);
+        }
     });
       },[]);
 
@@ -139,9 +150,6 @@ function App() {
         */}
         
         <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100 dark:bg-neutral-900">
-            <div className="p-2">
-                <DarkModeSelector darkMode={darkMode} toggleDarkMode={()=>{setDarkMode(!darkMode)}}/> 
-            </div>
             <DisplayMonitor verseToDisplay={shownVerses?.at(0)}/>
         </div>
     </div>
