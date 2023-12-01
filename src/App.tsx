@@ -135,7 +135,7 @@ function App() {
   }
 
   return (
-    <div className={`container flex flex-row min-w-screen w-screen h-screen mx-auto ${darkMode ? 'dark' : ''}`}>
+    <div className={`container flex flex-row min-w-screen w-screen h-screen mx-auto ${darkMode ? 'dark bg-neutral-900' : ''}`}>
         <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-2 overflow-y-auto w-fit overflow-x-hidden">
             {bookList?.map(bookName => <BookSelection bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
         </div>
