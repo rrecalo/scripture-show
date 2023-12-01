@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { emit, listen } from '@tauri-apps/api/event';
 import "./App.css";
+import {BaseDirectory, createDir, readBinaryFile, writeBinaryFile} from '@tauri-apps/api/fs';
 import Verse from "./types/Verse";
 import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
 import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearchResults";
 import BookSelection from "./Components/BookSelection";
 import DisplayMonitor from "./Components/DisplayMonitor";
+import { fs } from "@tauri-apps/api";
 
 export type GetVersesResult = {
     book_name: String,
@@ -22,6 +24,8 @@ type TranslatedVerseData = {
 
 function App() {
 
+  const appName = "scripture-show";
+  const jsonConfigName = "scripture-show-config.json";
   const [verses, setVerses] = useState<Verse[]>([]);
   const [translatedVerseData, setTranslatedVerseData] = useState<TranslatedVerseData>();
   const [book, setBook] = useState<String>();
@@ -30,7 +34,7 @@ function App() {
   const [displayOpened, setDisplayOpened] = useState<Boolean>(false);
   const [verseCount, setVerseCount] = useState<number>(2);
   //const [showTranslation, setShowTranslation] = useState<Boolean>(true);
-  const [darkMode, setDarkMode] = useState<Boolean>(true);
+  const [darkMode, setDarkMode] = useState<Boolean>();
   const [bookList, setBookList] = useState<String[]>();
 
 
@@ -48,9 +52,11 @@ function App() {
     listen("dark_mode", (event)=>{
         if(event.payload){
             setDarkMode(true);
+            savePreferences({darkMode: true});
         }
         else{
             setDarkMode(false);
+            savePreferences({darkMode: false});
         }
     });
     listen("open_choose_output_window", (_)=>{
@@ -61,18 +67,45 @@ function App() {
         emit('theme_update', darkMode);
     });
     emit('theme_update', darkMode);
+    loadPreferences();
       },[]);
 
   useEffect(()=>{
     if(shownVerses){
-        //shownVerses.forEach(verse=>console.log(verse.chapter));
         emit('display_verse', {eng: shownVerses, ro:  getTranslation(shownVerses)});
     }
   }, [shownVerses]);
 
   useEffect(()=>{
-    //console.log(verses);
-  }, [verses]);
+    emit('theme_update', darkMode);
+  },[darkMode])
+
+
+    function loadPreferences(){
+        const decoder = new TextDecoder();
+        readBinaryFile(jsonConfigName, {dir:BaseDirectory.AppConfig}).then(
+        res => {
+            if(res){
+            const prefs = JSON.parse(decoder.decode(res));
+            setDarkMode(prefs.darkMode);
+            }
+        });
+    }
+
+    function savePreferences(preferences : any){
+      const encoder = new TextEncoder();
+      const prefsString = JSON.stringify(preferences);
+      const encodedPrefs = encoder.encode(prefsString);
+      console.log(BaseDirectory.Config);
+      fs.exists(appName, {dir: BaseDirectory.Config}).then(exists =>
+        {
+        if(!exists){
+            createDir(appName, {dir: BaseDirectory.Config });
+        }
+        
+        writeBinaryFile(jsonConfigName, encodedPrefs, {dir: BaseDirectory.AppConfig});
+        });
+    }
 
     function getTranslation(verses: Verse[]){
         let translatedVerses:any[] = [];

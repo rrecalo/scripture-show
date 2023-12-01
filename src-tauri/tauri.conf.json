@@ -11,6 +11,13 @@
   },
   "tauri": {
     "allowlist": {
+      "path":{
+        "all": true
+      },
+      "fs":{
+          "all":true,
+          "scope":["$APP/*", "$DESKTOP/*", "*/*", "*", "*/.config/*", "$CONFIG/*"]
+      },
       "all": true,
       "shell": {
         "all": false,
@@ -20,7 +27,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri.dev",
+      "identifier": "scripture-show",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
