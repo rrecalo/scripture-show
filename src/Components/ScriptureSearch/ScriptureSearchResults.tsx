@@ -84,7 +84,7 @@ export default function ScriptureSearchResults({verses, changeSelectedVerse, ver
     }
 
     return (
-        <div id="search_results" className="flex flex-col px-2 w-full overflow-auto select-none dark:bg-neutral-900">
+        <div id="search_results" className="flex flex-col px-0 w-full overflow-auto select-none dark:bg-neutral-900">
             {verses?.map((verse : Verse) => <VerseComponent key={verse.number} className="font-light" verse={verse} selectVerse={selectVerse} selectedVerse={selectedVerse}/>)}
         </div>
     )
