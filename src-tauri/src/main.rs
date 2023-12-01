@@ -61,8 +61,6 @@ fn get_verses(bible: State<Bibles>, book_name: String, ch_num: i32, translations
 async fn open_display_monitor(app: tauri::AppHandle, monitor_name: String) -> bool {
 
 
-    
-
   let mut new_window: Option<_> = None;
   let wins = app.clone().windows();
     for window in wins.iter(){
@@ -122,6 +120,7 @@ fn get_non_primary_monitor(window: tauri::Window) -> Option<tauri::Monitor> {
 #[derive(Serialize)]
 enum ApplicationError{
     BadVersionName(&'static str),
+    NewWindowError(&'static str),
 }
 
 #[tauri::command]
@@ -144,6 +143,23 @@ fn get_book_list(bible: State<Bibles>, version: &str) -> Result<Vec<String>, App
 
 }
 
+#[tauri::command]
+fn open_choose_output_window(app: tauri::AppHandle) -> Result<bool, ApplicationError>{
+
+    let new_window = tauri::WindowBuilder::new(&app, "choose_output",
+        tauri::WindowUrl::App("../choose_output.html".into()),)
+        .title("Choose Display Output")
+        .inner_size(400.0, 200.0)
+        .build();
+     
+    match new_window {
+        Ok(win) => Ok(true),
+        Err(_) => Err(ApplicationError::NewWindowError("Err: Could not open window, maybe it already exists?"))
+    }
+
+}
+
+
 struct Bibles{
     esv: Bible,
     ro: Bible,
@@ -160,7 +176,8 @@ fn init_menu() -> Menu{
     let light = CustomMenuItem::new("light".to_string(), "Light");
     let theme_submenu = Submenu::new("Theme", Menu::new().add_item(dark).add_item(light));
     let prefs_submenu = Submenu::new("Preferences", Menu::new().add_submenu(theme_submenu));
-    let settings_submenu = Submenu::new("Settings", Menu::new().add_submenu(prefs_submenu));
+    let choose_output = CustomMenuItem::new("open_choose_output_window".to_string(), "Choose Output");
+    let settings_submenu = Submenu::new("Settings", Menu::new().add_submenu(prefs_submenu).add_item(choose_output));
     Menu::new()
     .add_submenu(file_submenu)
     .add_submenu(settings_submenu)
@@ -202,6 +219,9 @@ fn main() {
                 },
                 "light" => {
                     app_handle.emit_to("main", "dark_mode", false).unwrap();
+                },
+                "open_choose_output_window" => {
+                    app_handle.emit_to("main", "open_choose_output_window", {}).unwrap();
                 }
                 _ => {}
                 }
@@ -209,7 +229,8 @@ fn main() {
             Ok(())
         })
         .manage(bible_data)
-        .invoke_handler(tauri::generate_handler![get_verses, open_display_monitor, get_book_list])
+        .invoke_handler(tauri::generate_handler![get_verses, open_display_monitor, get_book_list,
+        open_choose_output_window])
         //.invoke_handler(tauri::generate_handler![get_book_and_chapter])
         //.menu(menu)
         .run(tauri::generate_context!())

@@ -55,7 +55,18 @@ function App() {
             setDarkMode(false);
         }
     });
+    listen("open_choose_output_window", (_)=>{
+        invoke("open_choose_output_window").then((response)=>{console.log(response)});;
+    });
+    
+    listen("theme_request", (_)=>{
+        emit('theme_update', darkMode);
+    });
       },[]);
+
+  useEffect(()=>{
+    //emit('theme_update', darkMode);
+  }, [darkMode]);
 
   useEffect(()=>{
     if(shownVerses){
