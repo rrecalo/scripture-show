@@ -3,7 +3,7 @@
 
 mod modules;
 use modules::bible::*;
-use tauri::{State, WindowBuilder, Manager, PhysicalPosition, LogicalPosition, http::status::StatusCode, Error, Monitor, Window};
+use tauri::{State, WindowBuilder, Manager, PhysicalPosition, LogicalPosition, http::status::StatusCode, Error, Monitor, Window, Menu, MenuItem, Submenu, CustomMenuItem};
 
 use modules::bible_reader::create_from_xml;
 use serde::Serialize;
@@ -149,14 +149,79 @@ struct Bibles{
     ro: Bible,
 }
 
+fn init_menu() -> Menu{
+    
+    // here `"quit".to_string()` defines the menu item id, and the second parameter is the menu item label.
+    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
+    let file_submenu = Submenu::new("File", Menu::new().add_item(quit));
+
+
+    let dark = CustomMenuItem::new("dark".to_string(), "Dark");
+    let light = CustomMenuItem::new("light".to_string(), "Light");
+    let theme_submenu = Submenu::new("Theme", Menu::new().add_item(dark).add_item(light));
+    let prefs_submenu = Submenu::new("Preferences", Menu::new().add_submenu(theme_submenu));
+    let settings_submenu = Submenu::new("Settings", Menu::new().add_submenu(prefs_submenu));
+    Menu::new()
+    .add_submenu(file_submenu)
+    .add_submenu(settings_submenu)
+
+}
+
 fn main() {
     
     let bible_data: Bibles = Bibles { esv: create_from_xml("./ESV.xml"), ro: create_from_xml("./ro.xml")};
-        
-    tauri::Builder::default()
+    /*
+     *
+     *,
+    "windows": [
+      {
+        "label":"main",
+        "fullscreen": false,
+        "maximized": false,
+        "resizable": true,
+        "title": "Scripture Show",
+        "width": 1280,
+        "height": 720,
+        "url":"../index.html"
+      },
+      {
+        "label":"choose_output",
+        "fullscreen": false,
+        "maximized": false,
+        "resizable": false,
+        "title": "Choose Output Display",
+        "width": 600,
+        "height": 400,
+        "url":"../choose_output.html"
+      }
+      
+    ]
+    */
+    let menu = init_menu();
+
+       tauri::Builder::default()
+        .setup(|app| {
+            WindowBuilder::new(
+                app,
+                "main".to_string(),
+                tauri::WindowUrl::App("index.html".into()),)
+            .title("Scripture Show")
+            .inner_size(1280.0, 720.0)
+            .menu(menu)
+            .build()?;
+            WindowBuilder::new(
+                app,
+                "choose_output",
+                tauri::WindowUrl::App("../choose_output.html".into()),)
+                .title("Choose Display Output")
+                .inner_size(400.0, 200.0)
+                .build()?;
+            Ok(())
+        })
         .manage(bible_data)
         .invoke_handler(tauri::generate_handler![get_verses, open_display_monitor, get_book_list])
         //.invoke_handler(tauri::generate_handler![get_book_and_chapter])
+        //.menu(menu)
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 

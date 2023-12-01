@@ -31,28 +31,6 @@
     },
     "security": {
       "csp": null
-    },
-    "windows": [
-      {
-        "label":"main",
-        "fullscreen": false,
-        "maximized": false,
-        "resizable": true,
-        "title": "Scripture Show",
-        "width": 1280,
-        "height": 720,
-        "url":"../index.html"
-      },
-      {
-        "label":"choose_output",
-        "fullscreen": false,
-        "maximized": false,
-        "resizable": false,
-        "title": "Choose Output Display",
-        "width": 600,
-        "height": 400,
-        "url":"../choose_output.html"
-      }
-    ]
+    }
   }
 }
