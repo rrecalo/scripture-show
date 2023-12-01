@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import Verse from '../types/Verse'
 
 type DisplayMonitorProps = {
-    verseToDisplay : Verse
+    verseToDisplay : Verse | undefined
 }
 
 export default function DisplayMonitor({verseToDisplay} : DisplayMonitorProps){

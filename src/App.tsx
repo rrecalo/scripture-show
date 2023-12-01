@@ -150,7 +150,7 @@ function App() {
         */}
         
         <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100 dark:bg-neutral-900">
-            <DisplayMonitor verseToDisplay={shownVerses?.at(0)}/>
+            <DisplayMonitor verseToDisplay={shownVerses?.slice(0, 1)[0]}/>
         </div>
     </div>
   );
