@@ -63,9 +63,7 @@ function App() {
         invoke("open_choose_output_window").then((response)=>{console.log(response)});;
     });
     
-    listen("theme_request", (_)=>{
-        emit('theme_update', darkMode);
-    });
+
     emit('theme_update', darkMode);
     loadPreferences();
       },[]);
@@ -77,6 +75,11 @@ function App() {
   }, [shownVerses]);
 
   useEffect(()=>{
+    listen("theme_request", (_)=>{
+        if(darkMode !== undefined && darkMode !== null){
+            emit('theme_update', darkMode);
+        }
+    });
     emit('theme_update', darkMode);
   },[darkMode])
 
