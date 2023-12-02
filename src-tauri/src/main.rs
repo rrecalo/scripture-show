@@ -186,11 +186,16 @@ fn init_menu() -> Menu{
 
 fn main() {
     
-    let bible_data: Bibles = Bibles { esv: create_from_xml("./ESV.xml"), ro: create_from_xml("./ro.xml")};
+    //let bible_data: Bibles = Bibles { esv: create_from_xml("./ESV.xml"), ro: create_from_xml("./ro.xml")};
     let menu = init_menu();
 
        tauri::Builder::default()
         .setup(|app| {
+            let resources_path = app.path_resolver().resource_dir().expect("Failed to get resource directory");
+            let esv_path = resources_path.clone().join("_up_/resources/ESV.xml");
+            let ro_path = resources_path.clone().join("_up_/resources/ro.xml");
+            let bible_data: Bibles = Bibles { esv: create_from_xml(esv_path), ro: create_from_xml(ro_path)};
+            app.manage(bible_data);
             let main_window = WindowBuilder::new(
                 app,
                 "main".to_string(),
@@ -202,7 +207,7 @@ fn main() {
             WindowBuilder::new(
                 app,
                 "choose_output",
-                tauri::WindowUrl::App("../choose_output.html".into()),)
+                tauri::WindowUrl::App("choose_output.html".into()),)
                 .title("Choose Display Output")
                 .inner_size(400.0, 200.0)
                 .build()?;
@@ -228,7 +233,7 @@ fn main() {
             });
             Ok(())
         })
-        .manage(bible_data)
+        //.manage(bible_data)
         .invoke_handler(tauri::generate_handler![get_verses, open_display_monitor, get_book_list,
         open_choose_output_window])
         //.invoke_handler(tauri::generate_handler![get_book_and_chapter])

@@ -1,9 +1,8 @@
 use quick_xml::{Reader, events::Event};
 use std::fs::File;
-use std::io::{BufReader, Read};
-use quick_xml::events::{BytesStart};
+use std::io::BufReader;
+use std::path::PathBuf;
 use crate::modules::bible::*;
-use std::time::Instant;
 
 //pass path argument as "./FILE_NAME.xml"
 //reads xml in the format as following:
@@ -11,11 +10,11 @@ use std::time::Instant;
 //Books with the <b> tag and the 'n' attribute (name of the book)
 //Chapters with <c> tag and the 'n' attribute (number of the chapter)
 //Verses with the <v> tag and the 'n' attribute (number of the verse)
-pub fn create_from_xml(path: &str) -> Bible{
+pub fn create_from_xml(path: PathBuf) -> Bible{
     //path -> "./ESV.xml"
     //let start = Instant::now();
-    let file_path = path;
-    let file = File::open(file_path).expect("Failed to open ESV.xml");
+    let file_path = path.clone();
+    let file = File::open(path).expect(&("Failed to open ESV.xml : current dir = ".to_owned() + file_path.clone().to_str().unwrap()));
     let reader = BufReader::new(file);
     let mut xml_reader = Reader::from_reader(reader);
 
