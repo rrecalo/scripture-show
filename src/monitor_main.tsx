@@ -1,8 +1,7 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import "./styles.css";
-import Monitor from "./Components/Monitor";
+import ProjectionDisplay from './Components/ProjectionDisplay';
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-    <Monitor/>
+    <ProjectionDisplay/>
 );

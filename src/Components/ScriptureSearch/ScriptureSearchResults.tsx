@@ -22,10 +22,11 @@ export default function ScriptureSearchResults({verses, changeSelectedVerse, ver
     useEffect(()=>{
         if(selectedVerse){
             console.log(startAtFirst);
-            let nextVerses = getNextVerses(selectedVerse, 2);
+            //let nextVerses = [];
+            let nextVerses = getNextVerses(selectedVerse, verseCount);
             nextVerses.unshift(selectedVerse);
             if(!startAtFirst){
-            changeSelectedVerse(nextVerses);
+                changeSelectedVerse(nextVerses);
             }
         }
         document.addEventListener('keydown', handleKey);
@@ -35,7 +36,7 @@ export default function ScriptureSearchResults({verses, changeSelectedVerse, ver
     function getNextVerses(startingVerse: Verse | undefined, nextVerseCount: number){
 
         let nextVerses = [];
-
+        
         for(let i = 1; i < nextVerseCount; i++){
             nextVerses.push(verses.find(some => some.number === (startingVerse?.number + i)));
         }

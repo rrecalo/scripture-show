@@ -7,7 +7,7 @@ import Verse from "./types/Verse";
 import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
 import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearchResults";
 import BookSelection from "./Components/BookSelection";
-import DisplayMonitor from "./Components/DisplayMonitor";
+import MonitoringDisplay from './Components/MonitoringDisplay';
 import { fs } from "@tauri-apps/api";
 
 export type GetVersesResult = {
@@ -32,7 +32,7 @@ function App() {
   const [chapter, setChapter] = useState<number>();
   const [shownVerses, setShownVerses] = useState<Verse[]>();
   const [displayOpened, setDisplayOpened] = useState<Boolean>(false);
-  const [verseCount, setVerseCount] = useState<number>(2);
+  const [verseCount, setVerseCount] = useState<number>(1);
   //const [showTranslation, setShowTranslation] = useState<Boolean>(true);
   const [darkMode, setDarkMode] = useState<Boolean>();
   const [bookList, setBookList] = useState<String[]>();
@@ -194,7 +194,7 @@ function App() {
         */}
         
         <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100 dark:bg-neutral-900">
-            <DisplayMonitor verseToDisplay={shownVerses?.slice(0, 1)[0]}/>
+            <MonitoringDisplay verseToDisplay={shownVerses?.slice(0, 1)[0]}/>
         </div>
     </div>
   );
