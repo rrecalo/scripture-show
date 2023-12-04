@@ -57,6 +57,8 @@ export default function Monitor(){
         return (
                 <>
                     <div className='flex flex-col justify-around items-start w-full h-full'> 
+                        {
+                        config.translations.includes("esv") ?
                         <div>
                             {versesToDisplay?.map((verseToDisplay) =>
                             (
@@ -67,6 +69,8 @@ export default function Monitor(){
                                 )
                             )}
                         </div>
+                        : <></>
+                        }
                         {
                         config?.translations.includes("ro") ?
                         <div>
@@ -87,12 +91,15 @@ export default function Monitor(){
     }
     function renderMetadata(){
         
-        let eng_book_name = versesToDisplay?.[0]?.book_name;
+        let eng_book_name = config?.translations.includes("esv") ? versesToDisplay?.[0]?.book_name : ""; 
         let ro_book_name = config?.translations.includes("ro") ? translatedVerses?.[0]?.book_name : "";
 
         if(versesToDisplay){
         return (
-            <div className="font-bold text-[1rem] 2xl:text-[2.5rem] mt-0">{eng_book_name || "" }{" | " + ro_book_name}{" "}{(versesToDisplay?.at(0)?.chapter) + ":" + (versesToDisplay?.at(0)?.number)}
+            <div className="font-bold text-[1rem] 2xl:text-[2.5rem] mt-0">{eng_book_name || "" }
+            {config?.translations.length == 1 ? "" : " | "}
+            {ro_book_name}{" "}{config?.translations.length == 2 ? " " : " | "}
+            {(versesToDisplay?.at(0)?.chapter) + ":" + (versesToDisplay?.at(0)?.number)}
                 {versesToDisplay?.[versesToDisplay.length-1] ?
                 <>
                 {
