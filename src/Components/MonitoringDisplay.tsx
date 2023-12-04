@@ -8,9 +8,9 @@ type DisplayMonitorProps = {
 }
 
 
-type ProjectionConfiguration = {
+export type ProjectionConfiguration = {
     verseCount : number | 1,
-    fontSize: string,
+    fontSize: number,
     translations: string[],
 
 }

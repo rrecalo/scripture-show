@@ -9,6 +9,8 @@ import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearch
 import BookSelection from "./Components/BookSelection";
 import MonitoringDisplay from './Components/MonitoringDisplay';
 import { fs } from "@tauri-apps/api";
+import { ProjectionConfiguration } from "./Components/MonitoringDisplay";
+import ProjectionControls from "./Components/ProjectionControls";
 
 export type GetVersesResult = {
     book_name: String,
@@ -36,7 +38,11 @@ function App() {
   //const [showTranslation, setShowTranslation] = useState<Boolean>(true);
   const [darkMode, setDarkMode] = useState<Boolean>();
   const [bookList, setBookList] = useState<String[]>();
-
+  const [projectionConfig, setProjectionConfig] = useState<ProjectionConfiguration>({
+    verseCount : 1,
+    fontSize: 24,
+    translations: ["esv", "ro"]
+  });
 
   useEffect(()=>{
     searchForBook("genesis", true);
@@ -195,6 +201,9 @@ function App() {
         
         <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100 dark:bg-neutral-900">
             <MonitoringDisplay verseToDisplay={shownVerses?.slice(0, 1)[0]}/>
+            <div className="p-5 w-full h-full flex justify-start items-start">
+            <ProjectionControls config={projectionConfig} setConfig={setProjectionConfig}/>
+            </div>
         </div>
     </div>
   );
