@@ -28,6 +28,9 @@ function App() {
 
   const appName = "scripture-show";
   const jsonConfigName = "scripture-show-config.json";
+  const defaultVerseCount = 1;
+  const defaultFontSize = 36;
+  const defaultTranslations = ["esv", "ro"];
   const [verses, setVerses] = useState<Verse[]>([]);
   const [translatedVerseData, setTranslatedVerseData] = useState<TranslatedVerseData>();
   const [book, setBook] = useState<String>();
@@ -35,20 +38,18 @@ function App() {
   const [shownVerses, setShownVerses] = useState<Verse[]>();
   const [displayOpened, setDisplayOpened] = useState<Boolean>(false);
   const [verseCount, setVerseCount] = useState<number>(1);
-  //const [showTranslation, setShowTranslation] = useState<Boolean>(true);
   const [darkMode, setDarkMode] = useState<Boolean>();
   const [bookList, setBookList] = useState<String[]>();
   const [projectionConfig, setProjectionConfig] = useState<ProjectionConfiguration>(
   {
-      verseCount:1,
-      fontSize:24,
-      translations: ["esv", "ro"]
+      verseCount: defaultVerseCount,
+      fontSize: defaultFontSize,
+      translations: defaultTranslations,
   });
 
   useEffect(()=>{
     searchForBook("genesis", true);
     if(!displayOpened){
-        //invoke("open_display_monitor");
         setDisplayOpened(true);
     }
     (invoke("get_book_list", {version: "esv"}) as Promise<String[]>).then(

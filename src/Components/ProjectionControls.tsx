@@ -1,4 +1,5 @@
 import { ProjectionConfiguration } from "./MonitoringDisplay";
+import { useState, useEffect } from "react";
 
 type ProjectionControlsProps = {
     config: ProjectionConfiguration,
@@ -7,9 +8,45 @@ type ProjectionControlsProps = {
 
 export default function ProjectionControls({config, setConfig} : ProjectionControlsProps){
 
+    const [translationCountWarning, setTranslationCountWarning] = useState<boolean>(false);
+    const [fontLimitWarning, setFontLimitWarning] = useState<boolean>(false);
+    const [verseLimitWarning, setVerseLimitWarning] = useState<boolean>(false);
+    const fontLowerLimit = 20;
+    const fontUpperLimit = 80;
 
+    useEffect(()=>{
+        if(translationCountWarning){
+            const disableWarning = setTimeout(()=>{
+               setTranslationCountWarning(false);
+            }, 1000);
+            return () => {clearInterval(disableWarning)};
+        }
+    }, [translationCountWarning]);
+
+    useEffect(()=>{
+        if(fontLimitWarning){
+            const disableWarning = setTimeout(()=>{
+                setFontLimitWarning(false);
+            }, 1000);
+            return () => {clearInterval(disableWarning)};
+        }
+    }, [fontLimitWarning]);
+
+    useEffect(()=>{
+        if(verseLimitWarning){
+            const disableWarning = setTimeout(()=>{
+                setVerseLimitWarning(false);
+            }, 1000);
+            return () => {clearInterval(disableWarning)};
+        }
+    }, [verseLimitWarning]);
 
     function handleToggleTranslation(translation: string){
+        if(config.translations.length == 1 && config.translations.includes(translation)){
+            setTranslationCountWarning(true);
+            return;
+        }
+        else setTranslationCountWarning(false);
         if(config.translations.includes(translation)){
             setConfig({...config, translations: config.translations.filter(t => t !== translation)});
         }
@@ -19,7 +56,8 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
     }
 
     function changeVerseCount(change: number){
-        if(config.verseCount == 1 && change == -1){
+        if((config.verseCount == 1 && change == -1) || (config.verseCount == 3 && change == 1)){
+            setVerseLimitWarning(true);
             return;
         }
         else if(config.verseCount >= 1 && config.verseCount < 3){
@@ -32,13 +70,14 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
     }
 
     function changeFontSize(change: number){
-        if(config.fontSize <= 24 && change < 0){
+        if((config.fontSize <= fontLowerLimit && change < 0) || (config.fontSize == fontUpperLimit && change > 1)){
+            setFontLimitWarning(true);
             return;
         }
-        else if(config.fontSize >= 24 && config.fontSize < 100){
+        else if(config.fontSize >= fontLowerLimit && config.fontSize < fontUpperLimit){
             setConfig({...config, fontSize: config.fontSize+change});
         }
-        else if(config.fontSize == 100 && change < 0){
+        else if(config.fontSize == fontUpperLimit && change < 0){
             setConfig({...config, fontSize: config.fontSize+change}); 
         }
     }
@@ -55,8 +94,12 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
                  <div className="dark:bg-neutral-950 dark:text-neutral-50 px-2.5">{config.verseCount}</div>
                  <button className="font-bold p-1.5" onClick={()=> changeVerseCount(1)}>+</button>
                 </div>
+                {
+                    verseLimitWarning ? 
+                    <div className="text-red-500 text-xs font-light">Limit reached</div>
+                    :<></>
+                }
             </div>
-            
             <div className="flex flex-row justify-start items-center dark:text-neutral-100 pe-5">
             <div className="pe-2">
             Font Size
@@ -66,8 +109,14 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
                  <div className="dark:bg-neutral-950 dark:text-neutral-50 px-2.5">{config.fontSize+"px"}</div>
                  <button className="font-bold p-1.5" onClick={()=> changeFontSize(4)}>+</button>
                 </div>
+                {
+                    fontLimitWarning ? 
+                    <div className="text-red-500 text-xs font-light">Limit reached</div>
+                    :<></>
+                }
             </div>
 
+            <div className="flex justify-start items-center">
             <div className="flex flex-col justify-center items-start gap-2">
                 <div className="flex justify-center items-center">
                 <input className="w-4 h-4 accent-blue-600" type="checkbox" value="esv" checked={config.translations.includes("esv")}
@@ -79,6 +128,14 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
                 onChange={()=> handleToggleTranslation("ro")}/>
                 <label className="ps-2 dark:text-neutral-100">RO</label>
                 </div>
+            </div>
+            {
+                translationCountWarning ?
+            <div className="text-red-500 text-xs font-light">
+                1 Translation needed
+            </div>
+            : <></>
+            }
             </div>
 
             </div>
