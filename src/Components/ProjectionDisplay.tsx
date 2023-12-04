@@ -56,7 +56,7 @@ export default function Monitor(){
 
         return (
                 <>
-                    <div id="dynamic_text" className='flex flex-col justify-around items-start w-full h-full'>
+                    <div className='flex flex-col justify-around items-start w-full h-full'> 
                         <div>
                             {versesToDisplay?.map((verseToDisplay) =>
                             (
@@ -109,16 +109,11 @@ export default function Monitor(){
 
     }
         return (
-        versesToDisplay ? 
-        <>
         <div className="bg-white p-10 w-screen h-screen flex flex-col justify-around items-center">
-            <div className='w-full h-full flex flex-col justify-start items-end'>
+            <div id="dynamic_text" className={`w-full h-full flex flex-col justify-start items-end`}>
                 {renderVerses()}
                 {renderMetadata()}
             </div>
         </div>
-        </>
-        : <></>
-
     )
 }
