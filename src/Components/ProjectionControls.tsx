@@ -8,6 +8,7 @@ type ProjectionControlsProps = {
 export default function ProjectionControls({config, setConfig} : ProjectionControlsProps){
 
 
+
     function handleToggleTranslation(translation: string){
         if(config.translations.includes(translation)){
             setConfig({...config, translations: config.translations.filter(t => t !== translation)});

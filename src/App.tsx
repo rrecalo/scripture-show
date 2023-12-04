@@ -38,10 +38,11 @@ function App() {
   //const [showTranslation, setShowTranslation] = useState<Boolean>(true);
   const [darkMode, setDarkMode] = useState<Boolean>();
   const [bookList, setBookList] = useState<String[]>();
-  const [projectionConfig, setProjectionConfig] = useState<ProjectionConfiguration>({
-    verseCount : 1,
-    fontSize: 24,
-    translations: ["esv", "ro"]
+  const [projectionConfig, setProjectionConfig] = useState<ProjectionConfiguration>(
+  {
+      verseCount:1,
+      fontSize:24,
+      translations: ["esv", "ro"]
   });
 
   useEffect(()=>{
@@ -69,14 +70,35 @@ function App() {
         invoke("open_choose_output_window").then((response)=>{console.log(response)});;
     });
     
-
     emit('theme_update', darkMode);
+
     loadPreferences();
-      },[]);
+    
+    },[]);
+
+  useEffect(()=>{
+    if(projectionConfig){
+        emit('projection_format', projectionConfig);
+        const unlisten = listen('request_format', (_)=>{
+            emit('projection_format', projectionConfig);
+        });
+        
+        return () => {
+            unlisten.then(f => f());
+        }
+    };
+  },[projectionConfig]);
 
   useEffect(()=>{
     if(shownVerses){
         emit('display_verse', {eng: shownVerses, ro:  getTranslation(shownVerses)});
+        const unlisten = listen('request_verses', (_)=>{
+            emit('display_verse', {eng: shownVerses, ro:  getTranslation(shownVerses)});
+        });
+
+        return () => {
+            unlisten.then(f => f());
+        }
     }
   }, [shownVerses]);
 

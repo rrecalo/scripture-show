@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Verse from '../types/Verse'
-import { listen} from '@tauri-apps/api/event'
+import { listen, emit } from '@tauri-apps/api/event'
+import { ProjectionConfiguration } from './MonitoringDisplay'
 
 export type DisplayVerseEvent = {
     payload: {
@@ -9,33 +10,53 @@ export type DisplayVerseEvent = {
     }
 }
 
+export type ProjectionFormatEvent = {
+    payload: ProjectionConfiguration
+}
+
 export default function Monitor(){
 
     const [versesToDisplay, setVersesToDisplay] = useState<Verse[]>();
     const [translatedVerses, setTranslatedVerses] = useState<Verse[]>();
+    const [config, setConfig] = useState<ProjectionConfiguration>();
 
     useEffect(()=>{
-        console.log(versesToDisplay);
-        },[versesToDisplay]);
-    
-    useEffect(()=>{
-        listen('display_verse', (event : DisplayVerseEvent) =>
-        {   
-            if(event){
+        const unlisten_verses = listen('display_verse', (event : DisplayVerseEvent) => {   
+            if(event){ 
                 setVersesToDisplay(event.payload.eng as Verse[]);
                 setTranslatedVerses(event.payload.ro as Verse[]);
             }
         });
+
+        const unlisten_format = listen('projection_format', (event: ProjectionFormatEvent) => {
+            if(event){
+                setConfig(event.payload);
+            }
+        });
+        emit('request_format');
+        emit('request_verses');
+        return ()=>{
+            unlisten_verses.then(f => f());
+            unlisten_format.then(f => f());
+        }
     },[]);
+
+    useEffect(()=>{
+        if(config){
+            let dyn_text = document.getElementById("dynamic_text");
+            if(dyn_text){
+                dyn_text.style.fontSize= `${config.fontSize}px`;
+            }
+        }
+    },[config]);
     
     function renderVerses(){
-
-        let verseStyling="text-[3rem] 2xl:text-[4rem] 2xl:text-[68px] inline font-light w-full whitespace-break leading-tight";
+        let verseStyling=`inline font-light w-full whitespace-break leading-tight`;
         let verseNumStyling='text-[0.25rem] 2xl:text-[1.25rem] font-bold';
 
         return (
                 <>
-                    <div className='flex flex-col justify-around items-start w-full h-full'>
+                    <div id="dynamic_text" className='flex flex-col justify-around items-start w-full h-full'>
                         <div>
                             {versesToDisplay?.map((verseToDisplay) =>
                             (
@@ -46,6 +67,8 @@ export default function Monitor(){
                                 )
                             )}
                         </div>
+                        {
+                        config?.translations.includes("ro") ?
                         <div>
                             {translatedVerses?.map((verseToDisplay) =>
                             (
@@ -55,6 +78,8 @@ export default function Monitor(){
                             </p>)
                             )}
                         </div>
+                        : <></>
+                        }
                     </div>
                 </>
         ) 
@@ -62,9 +87,12 @@ export default function Monitor(){
     }
     function renderMetadata(){
         
+        let eng_book_name = versesToDisplay?.[0]?.book_name;
+        let ro_book_name = config?.translations.includes("ro") ? translatedVerses?.[0]?.book_name : "";
+
         if(versesToDisplay){
         return (
-            <div className="font-bold text-[1rem] 2xl:text-[2.5rem] mt-0">{versesToDisplay?.[0]?.book_name || "" }{" | " + translatedVerses?.[0]?.book_name || ""}{" "}{(versesToDisplay?.at(0)?.chapter) + ":" + (versesToDisplay?.at(0)?.number)}
+            <div className="font-bold text-[1rem] 2xl:text-[2.5rem] mt-0">{eng_book_name || "" }{" | " + ro_book_name}{" "}{(versesToDisplay?.at(0)?.chapter) + ":" + (versesToDisplay?.at(0)?.number)}
                 {versesToDisplay?.[versesToDisplay.length-1] ?
                 <>
                 {

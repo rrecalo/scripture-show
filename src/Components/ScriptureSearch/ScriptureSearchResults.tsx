@@ -21,7 +21,7 @@ export default function ScriptureSearchResults({verses, changeSelectedVerse, ver
 
     useEffect(()=>{
         if(selectedVerse){
-            console.log(startAtFirst);
+            //console.log(startAtFirst);
             //let nextVerses = [];
             let nextVerses = getNextVerses(selectedVerse, verseCount);
             nextVerses.unshift(selectedVerse);

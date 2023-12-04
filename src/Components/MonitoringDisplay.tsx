@@ -21,7 +21,7 @@ export default function DisplayMonitor({verseToDisplay} : DisplayMonitorProps){
     const [translatedVerses, setTranslatedVerses] = useState<Verse[]>();
     const [config, setConfig] = useState<ProjectionConfiguration>({
         verseCount: 1,
-        fontSize: "40px",
+        fontSize: 40,
         translations: ["eng", "ro"]
     } as ProjectionConfiguration);
 
