@@ -169,7 +169,6 @@ fn init_menu() -> Menu{
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
     let file_submenu = Submenu::new("File", Menu::new().add_item(quit));
 
-
     let dark = CustomMenuItem::new("dark".to_string(), "Dark");
     let light = CustomMenuItem::new("light".to_string(), "Light");
     let theme_submenu = Submenu::new("Theme", Menu::new().add_item(dark).add_item(light));
@@ -184,16 +183,16 @@ fn init_menu() -> Menu{
 
 fn main() {
     
-    //let bible_data: Bibles = Bibles { esv: create_from_xml("./ESV.xml"), ro: create_from_xml("./ro.xml")};
     let menu = init_menu();
 
-       tauri::Builder::default()
+    let app = tauri::Builder::default()
         .setup(|app| {
             let resources_path = app.path_resolver().resource_dir().expect("Failed to get resource directory");
             let esv_path = resources_path.clone().join("_up_/resources/ESV.xml");
             let ro_path = resources_path.clone().join("_up_/resources/ro.xml");
             let bible_data: Bibles = Bibles { esv: create_from_xml(esv_path), ro: create_from_xml(ro_path)};
             app.manage(bible_data);
+            #[cfg(not(target_os="macos"))]
             let main_window = WindowBuilder::new(
                 app,
                 "main",
@@ -202,6 +201,14 @@ fn main() {
             .inner_size(1280.0, 720.0)
             .menu(menu)
             .build()?;
+            #[cfg(target_os="macos")]
+            let main_window = WindowBuilder::new(
+                app,
+                "main",
+                tauri::WindowUrl::App("index.html".into()),)
+            .title("Scripture Show")
+            .inner_size(1280.0, 720.0)
+            .build()?;
             WindowBuilder::new(
                 app,
                 "choose_output",
@@ -209,8 +216,6 @@ fn main() {
                 .title("Choose Display Output")
                 .inner_size(400.0, 200.0)
                 .build()?;
-
-            //let main = main_window.clone();
             let app_handle = app.handle();
             main_window.on_menu_event(move |event| {
                 match event.menu_item_id() {
@@ -231,12 +236,13 @@ fn main() {
             });
             Ok(())
         })
-        //.manage(bible_data)
         .invoke_handler(tauri::generate_handler![get_verses, open_display_monitor, get_book_list,
-        open_choose_output_window])
-        //.invoke_handler(tauri::generate_handler![get_book_and_chapter])
-        //.menu(menu)
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
-
+        open_choose_output_window]);
+        #[cfg(target_os="macos")]
+        {
+        app.menu(menu).run(tauri::generate_context!()).expect("error while running tauri application");
         }
+        #[cfg(not(target_os="macos"))]
+        app.run(tauri::generate_context!()).expect("error while running tauri application");
+
+    }
