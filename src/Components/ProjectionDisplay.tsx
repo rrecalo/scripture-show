@@ -58,7 +58,7 @@ export default function Monitor(){
                 <>
                     <div className='flex flex-col justify-around items-start w-full h-full'> 
                         {
-                        config.translations.includes("esv") ?
+                        config?.translations.includes("esv") ?
                         <div>
                             {versesToDisplay?.map((verseToDisplay) =>
                             (

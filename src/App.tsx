@@ -67,14 +67,14 @@ function App() {
             savePreferences({darkMode: false});
         }
     });
-    listen("open_choose_output_window", (_)=>{
+    const unlisten = listen("open_choose_output", (_)=>{
         invoke("open_choose_output_window").then((response)=>{console.log(response)});;
     });
     
     emit('theme_update', darkMode);
 
     loadPreferences();
-    
+    return () => {unlisten.then(f=>f())};
     },[]);
 
   useEffect(()=>{

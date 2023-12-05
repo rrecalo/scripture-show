@@ -60,7 +60,6 @@ fn get_verses(bible: State<Bibles>, book_name: String, ch_num: i32, translations
 #[tauri::command]
 async fn open_display_monitor(app: tauri::AppHandle, monitor_name: String) -> bool {
 
-
   let mut new_window: Option<_> = None;
   let wins = app.clone().windows();
     for window in wins.iter(){
@@ -144,19 +143,18 @@ fn get_book_list(bible: State<Bibles>, version: &str) -> Result<Vec<String>, App
 }
 
 #[tauri::command]
-fn open_choose_output_window(app: tauri::AppHandle) -> Result<bool, ApplicationError>{
-
+async fn open_choose_output_window(app: tauri::AppHandle) -> Result<bool, ApplicationError>{
+    
     let new_window = tauri::WindowBuilder::new(&app, "choose_output",
         tauri::WindowUrl::App("../choose_output.html".into()),)
         .title("Choose Display Output")
         .inner_size(400.0, 200.0)
         .build();
-     
+    
     match new_window {
-        Ok(win) => Ok(true),
+        Ok(_win) => Ok(true),
         Err(_) => Err(ApplicationError::NewWindowError("Err: Could not open window, maybe it already exists?"))
     }
-
 }
 
 
@@ -198,7 +196,7 @@ fn main() {
             app.manage(bible_data);
             let main_window = WindowBuilder::new(
                 app,
-                "main".to_string(),
+                "main",
                 tauri::WindowUrl::App("index.html".into()),)
             .title("Scripture Show")
             .inner_size(1280.0, 720.0)
@@ -226,7 +224,7 @@ fn main() {
                     app_handle.emit_to("main", "dark_mode", false).unwrap();
                 },
                 "open_choose_output_window" => {
-                    app_handle.emit_to("main", "open_choose_output_window", {}).unwrap();
+                    app_handle.emit_to("main", "open_choose_output", {}).unwrap();
                 }
                 _ => {}
                 }
