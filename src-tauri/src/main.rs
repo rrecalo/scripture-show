@@ -2,6 +2,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod modules;
+use core::panic;
+
 use modules::bible::*;
 use tauri::{State, WindowBuilder, Manager, PhysicalPosition, LogicalPosition, http::status::StatusCode, Error, Monitor, Window, Menu, MenuItem, Submenu, CustomMenuItem};
 
@@ -120,6 +122,25 @@ fn get_non_primary_monitor(window: tauri::Window) -> Option<tauri::Monitor> {
 enum ApplicationError{
     BadVersionName(&'static str),
     NewWindowError(&'static str),
+    NoBookFound(&'static str),
+}
+
+#[tauri::command]
+fn get_chapter_count(bible: State<Bibles>, book_name: String, version: &str) -> Result<u32, ApplicationError> {
+    
+    let bible_version: &Bible = match version {
+        "esv" => &bible.esv,
+        "ro" => &bible.ro,
+        _ => panic!("No version string passed as argument!"),
+    };
+
+    let book_found = bible_version.books.iter().find(|book| book.name == book_name);
+
+    match book_found {
+        Some(book) => {return Ok(book.chapters.len() as u32)}
+        None => {return Err(ApplicationError::NoBookFound("No book found by given name!"));},
+    }    
+    
 }
 
 #[tauri::command]
@@ -237,7 +258,7 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![get_verses, open_display_monitor, get_book_list,
-        open_choose_output_window]);
+        open_choose_output_window, get_chapter_count]);
         #[cfg(target_os="macos")]
         {
         app.menu(menu).run(tauri::generate_context!()).expect("error while running tauri application");

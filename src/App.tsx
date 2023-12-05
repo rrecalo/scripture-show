@@ -203,6 +203,14 @@ function App() {
     }
   }
 
+  async function getChapterCount(bookName: string){
+    if(bookName !== ""){
+        let ch_count = await invoke("get_chapter_count", {bookName: bookName, version:"esv"}) as number;
+        return ch_count;
+    }
+    else return undefined;
+  }
+
   function handleChangeShownVerse(newVersesToShow: Verse[]){
     setShownVerses(newVersesToShow);
   }
@@ -213,7 +221,7 @@ function App() {
             {bookList?.map(bookName => <BookSelection bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
         </div>
         <div className="flex flex-col w-7/12 h-full overflow-y-auto overflow-x-hidden">
-            <ScriptureSearch performSearch={searchForBook} currentBook={book} currentChapter={chapter}/>
+            <ScriptureSearch performSearch={searchForBook} currentBook={book} currentChapter={chapter} getChapterCount={getChapterCount}/>
 
             <div id="search_results" className="flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900">
                 <ScriptureSearchResults verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
