@@ -3,38 +3,30 @@
 @tailwind utilities;
 
 *::-webkit-scrollbar {
-  /*width: 10px;*/
-  /* Adjust the width as needed */
+    width: 10px;
 }
 
 *::-webkit-scrollbar-track {
-  /*background-color: #fafafa;*/
-  /* Set a background color for the track */
+  background-color: #fafafa;
 }
 
 
 *::-webkit-scrollbar-thumb {
-  /*background-color: #a3a3a3;*/
-  /* Set a background color for the thumb */
-  /*border-radius: 1px; */
-  /* Optional: Add rounded corners to the thumb */
+  background-color: #a3a3a3;
+  border-radius: 15px;
 }
 
 .dark *::-webkit-scrollbar {
-        background-color: #262626;
-  /*width: 10px;*/
-  /* Adjust the width as needed */
+    background-color: #262626;
+    width: 10px;
 }
 
 .dark *::-webkit-scrollbar-track {
   background-color: #262626;
-  /* Set a background color for the track */
 }
 
 
 .dark *::-webkit-scrollbar-thumb {
   background-color: #0a0a0a;
-  /* Set a background color for the thumb */
-  /*border-radius: 1px; */
-  /* Optional: Add rounded corners to the thumb */
+  
 }

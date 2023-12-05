@@ -209,18 +209,17 @@ function App() {
 
   return (
     <div className={`container flex flex-row min-w-screen w-screen h-screen mx-auto ${darkMode ? 'dark bg-neutral-900' : ''}`}>
-        <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-2 overflow-y-auto w-fit overflow-x-hidden">
+        <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden">
             {bookList?.map(bookName => <BookSelection bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
         </div>
-        <div className="flex flex-col w-7/12 h-full overflow-y-auto">
+        <div className="flex flex-col w-7/12 h-full overflow-y-auto overflow-x-hidden">
             <ScriptureSearch performSearch={searchForBook} currentBook={book} currentChapter={chapter}/>
-            <ScriptureSearchResults verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
+
+            <div id="search_results" className="flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900">
+                <ScriptureSearchResults verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
+            </div>
+
         </div>
-        {/*
-        <div className="flex flex-col w-3/12 h-full">
-            <ScriptureQueue queue={""} />
-        </div>
-        */}
         
         <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100 dark:bg-neutral-900">
             <MonitoringDisplay verseToDisplay={shownVerses?.slice(0, 1)[0]}/>
