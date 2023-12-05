@@ -217,10 +217,10 @@ function App() {
 
   return (
     <div className={`container flex flex-row min-w-screen w-screen h-screen mx-auto ${darkMode ? 'dark bg-neutral-900' : ''}`}>
-        <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden">
+        <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-1/2">
             {bookList?.map(bookName => <BookSelection bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
         </div>
-        <div className="flex flex-col w-7/12 h-full overflow-y-auto overflow-x-hidden">
+        <div className="flex flex-col w-7/12 h-1/2 overflow-y-auto overflow-x-hidden">
             <ScriptureSearch performSearch={searchForBook} currentBook={book} currentChapter={chapter} getChapterCount={getChapterCount}/>
 
             <div id="search_results" className="flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900">
@@ -229,10 +229,12 @@ function App() {
 
         </div>
         
-        <div id="monitoring_area" className="flex flex-col w-5/12 h-full bg-neutral-100 dark:bg-neutral-900">
-            <MonitoringDisplay verseToDisplay={shownVerses?.slice(0, 1)[0]}/>
-            <div className="p-5 w-full h-full flex justify-start items-start">
-            <ProjectionControls config={projectionConfig} setConfig={setProjectionConfig}/>
+        <div id="monitoring_area" className="flex flex-col w-5/12 h-screen bg-neutral-100 dark:bg-neutral-900">
+            <div className="w-full min-h-[50%] max-h-[50%] bg-white">
+                <MonitoringDisplay verseToDisplay={shownVerses?.slice(0, 1)[0]}/>
+            </div>
+            <div className="p-5 w-full h-full flex justify-start items-start dark:bg-neutral-900">
+                <ProjectionControls config={projectionConfig} setConfig={setProjectionConfig}/>
             </div>
         </div>
     </div>

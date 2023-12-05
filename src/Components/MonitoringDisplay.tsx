@@ -89,16 +89,12 @@ export default function DisplayMonitor({verseToDisplay} : DisplayMonitorProps){
     }
 
     return (
-        versesToDisplay ? 
-        <>
-        <div className="bg-white p-10 w-full h-1/2 flex flex-col justify-around items-center">
-            <div className='w-full h-full flex flex-col justify-start items-end'>
+        <div className="bg-white w-full h-full flex flex-col justify-around items-center bg-white min-h-[100%]">
+            <div className='w-full flex flex-col justify-start items-end p-10 h-full'>
                 {renderVerses()}
                 {renderMetadata()}
-                    </div>
-                </div>
-        </>
-        : <></>
+            </div>
+        </div>
     )
 
 }

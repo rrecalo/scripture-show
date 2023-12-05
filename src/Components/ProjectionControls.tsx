@@ -85,8 +85,9 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
     return (
         <div className="flex flex-col w-full h-full justify-start items-start select-none">
             <div className="flex flex-col justify-start items-start w-full">
+            <span className="text-neutral-100 pb-5">Projection Configuration</span>
             <div className="flex flex-row justify-start items-center dark:text-neutral-100 pe-5">
-            <div className="pe-2">
+            <div className="pe-2 font-light">
             Verse Count 
             </div>
                 <div className="flex flex-row justify-between items-center gap-1">
@@ -101,7 +102,7 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
                 }
             </div>
             <div className="flex flex-row justify-start items-center dark:text-neutral-100 pe-5">
-            <div className="pe-2">
+            <div className="pe-2 font-light">
             Font Size
             </div>
                 <div className="flex flex-row justify-between items-center gap-1">
@@ -116,7 +117,7 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
                 }
             </div>
 
-            <div className="flex justify-start items-center">
+            <div className="flex justify-start items-center font-light">
             <div className="flex flex-col justify-center items-start gap-2">
                 <div className="flex justify-center items-center">
                 <input className="w-4 h-4 accent-blue-600" type="checkbox" value="esv" checked={config.translations.includes("esv")}
