@@ -217,22 +217,34 @@ function App() {
 
   return (
     <div className={`container flex flex-row min-w-screen w-screen h-screen mx-auto ${darkMode ? 'dark bg-neutral-900' : ''}`}>
+        <div className="flex flex-col">
+        <div className="pt-1 pl-1 text-neutral-500 font-light text-sm border-b border-neutral-700 px-1">
+            Table of Contents
+        </div>
         <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-1/2">
             {bookList?.map(bookName => <BookSelection bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
         </div>
-        <div className="flex flex-col w-7/12 h-1/2 overflow-y-auto overflow-x-hidden">
+        </div>
+        <div className="flex flex-col w-7/12 h-3/4 overflow-y-auto overflow-x-hidden">
+            <div className="pt-1 pl-1 text-neutral-500 border-b border-neutral-700 text-sm">
+                Search
+            </div>
             <ScriptureSearch performSearch={searchForBook} currentBook={book} currentChapter={chapter} getChapterCount={getChapterCount}/>
-
             <div id="search_results" className="flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900">
                 <ScriptureSearchResults verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
             </div>
-
         </div>
         
-        <div id="monitoring_area" className="flex flex-col w-5/12 h-screen bg-neutral-100 dark:bg-neutral-900">
-            <div className="w-full min-h-[50%] max-h-[50%] bg-white">
+        <div id="monitoring_area" className="flex flex-col w-5/12 h-screen dark:bg-neutral-900">
+            <div className="w-full min-h-[50%] max-h-[50%]">
+                <div className="pt-1 pl-1 text-neutral-500 border-b border-neutral-700 text-sm">
+                    Display Monitor
+                </div>
                 <MonitoringDisplay verseToDisplay={shownVerses?.slice(0, 1)[0]}/>
             </div>
+            <div className="pt-1 pl-1 text-neutral-500 border-b border-neutral-700 text-sm bg-neutral-100 dark:bg-neutral-900">
+                    Projection configuration
+                </div>
             <div className="p-5 w-full h-full flex justify-start items-start dark:bg-neutral-900">
                 <ProjectionControls config={projectionConfig} setConfig={setProjectionConfig}/>
             </div>
