@@ -85,9 +85,8 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
     return (
         <div className="flex flex-col w-full h-full justify-start items-start select-none">
             <div className="flex flex-col justify-start items-start w-full">
-            <span className="text-neutral-100 pb-5">Projection Configuration</span>
             <div className="flex flex-row justify-start items-center dark:text-neutral-100 pe-5">
-            <div className="pe-2 font-light">
+            {/*<div className="pe-2 font-light">
             Verse Count 
             </div>
                 <div className="flex flex-row justify-between items-center gap-1">
@@ -102,6 +101,7 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
                 }
             </div>
             <div className="flex flex-row justify-start items-center dark:text-neutral-100 pe-5">
+            */}
             <div className="pe-2 font-light">
             Font Size
             </div>
@@ -132,8 +132,8 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
             </div>
             {
                 translationCountWarning ?
-            <div className="text-red-500 text-xs font-light">
-                1 Translation needed
+            <div className="text-red-500 text-xs font-light pl-3">
+                1 version needed
             </div>
             : <></>
             }
