@@ -14,9 +14,7 @@ export default function ScriptureSearchResults({verses, changeSelectedVerse, ver
     const [startAtFirst, setStartAtFirst] = useState<Boolean>(false);
 
     useEffect(()=>{
-        if(selectedVerse){
-            setStartAtFirst(true);
-        }
+        setStartAtFirst(true);
     }, [verses]);
 
     useEffect(()=>{
@@ -46,7 +44,8 @@ export default function ScriptureSearchResults({verses, changeSelectedVerse, ver
 
     function selectVerse(verse: Verse){
         if(startAtFirst){
-            setStartAtFirst(false, setSelectedVerse(verse));
+            setStartAtFirst(false);
+            setSelectedVerse(verse);
         }
         else{
             setSelectedVerse(verse);
@@ -59,12 +58,16 @@ export default function ScriptureSearchResults({verses, changeSelectedVerse, ver
                 setSelectedVerse(verses[0]);
                 setStartAtFirst(false);
             }
-            else if(selectedVerse && selectedVerse.number > verseCount){
+            //if you are NOT on the first verse within the selection, continue
+            //iterating through
+            else if(selectedVerse && (selectedVerse.number - verses[0].number) > verseCount){
                 let newVerse = verses.find(someVerse => someVerse.number === selectedVerse?.number - verseCount);
                 setSelectedVerse(newVerse);
             }
-            else if(selectedVerse && selectedVerse.number <= verseCount){
-                let newVerse = verses.find(someVerse => someVerse.number === 1);
+            //if you are on the first verse in the selection, do NOT move past
+            //it (stay on the first verse)
+            else if(selectedVerse && (selectedVerse.number - verses[0].number) <= verseCount){
+                let newVerse = verses.find(someVerse => someVerse.number === verses[0].number);
                 setSelectedVerse(newVerse);
             }
         }
@@ -73,11 +76,14 @@ export default function ScriptureSearchResults({verses, changeSelectedVerse, ver
                 setSelectedVerse(verses[0]);
                 setStartAtFirst(false);
             }
-            else if(selectedVerse && (verses.length - selectedVerse.number >= verseCount)){
+            //if there are verses left to select, select the next verse
+            else if(selectedVerse && ((verses[0].number + verses.length - selectedVerse.number) > verseCount)){
+                
                 let newVerse = verses.find(someVerse => someVerse.number === selectedVerse?.number + verseCount);
                 setSelectedVerse(newVerse);
             }
-            else if (selectedVerse && (verses.length - selectedVerse.number < verseCount)){
+            //if there is only one verse left to select, select it
+            else if (selectedVerse && ((verses[0].number + verses.length - selectedVerse.number) < verseCount)){
                 let newVerse = verses.find(someVerse => someVerse.number === verses.length);
                 setSelectedVerse(newVerse);
             }

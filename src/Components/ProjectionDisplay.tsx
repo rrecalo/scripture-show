@@ -68,7 +68,7 @@ export default function Monitor(){
                         <div>
                             {versesToDisplay?.map((verseToDisplay) =>
                             (
-                                <p className={verseStyling}>
+                                <p key={verseToDisplay.number} className={verseStyling}>
                                     <span className={verseNumStyling}>{verseToDisplay?.number}</span>
                                     {verseToDisplay?.text}
                                 </p>
@@ -82,7 +82,7 @@ export default function Monitor(){
                         <div>
                             {translatedVerses?.map((verseToDisplay) =>
                             (
-                            <p className={verseStyling}>
+                            <p key={verseToDisplay.number} className={verseStyling}>
                                 <span className={verseNumStyling}>{verseToDisplay?.number}</span>
                                 {verseToDisplay?.text}
                             </p>)

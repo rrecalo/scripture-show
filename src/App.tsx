@@ -11,6 +11,8 @@ import { fs } from "@tauri-apps/api";
 import ProjectionControls from "./Components/ProjectionControls";
 import ProjectionDisplay from "./Components/ProjectionDisplay";
 import {ProjectionConfiguration} from './Components/ProjectionDisplay'
+import BookmarkList from "./Components/Bookmark/BookmarkList";
+import { BookmarkType } from "./Components/Bookmark/Bookmark";
 
 export type GetVersesResult = {
     book_name: String,
@@ -46,6 +48,13 @@ function App() {
       fontSize: defaultFontSize,
       translations: defaultTranslations,
   });
+  const [bookmarks, setBookmarks] = useState<BookmarkType[]>(
+  [{book: "John",
+    chapter: 1,
+    verseStart:4, 
+    verseEnd:9}]);
+
+  const [remainderVerses, setRemainderVerses] = useState<Verse[]>();
 
   useEffect(()=>{
     searchForBook("genesis", true);
@@ -188,7 +197,7 @@ function App() {
             book_name = searchQuery.toString();
         }
     }
-    console.log(book_name);
+
     let new_verses = await invoke("get_verses", {bookName: book_name, chNum: parseInt(ch_num), translations:["ro"]}) as GetVersesResult;
     if(acceptChoice){
         if(new_verses){
@@ -196,6 +205,7 @@ function App() {
         setVerses(new_verses?.verses);
         setBook(new_verses?.book_name);
         setChapter(new_verses?.chapter_num);
+        setRemainderVerses([]);
         }
     }
     else{
@@ -214,6 +224,33 @@ function App() {
   function handleChangeShownVerse(newVersesToShow: Verse[]){
     setShownVerses(newVersesToShow);
   }
+    
+  async function openBookmark(bookmark: BookmarkType){
+    let fullChapter = await invoke("get_verses", {bookName: bookmark.book.toLowerCase(), chNum: bookmark.chapter, translations:["ro"]}) as GetVersesResult;
+
+    let newVerses = fullChapter?.verses.splice(bookmark.verseStart-1, bookmark.verseEnd-bookmark.verseStart+1);
+   
+    let verseNums:number[] = [];
+
+    for(let i = bookmark.verseStart; i<= bookmark.verseEnd; i++){
+        verseNums.push(i);
+    }
+    
+    setRemainderVerses(fullChapter.verses.filter(v => !verseNums.includes(v.number)));
+    
+    setVerses(newVerses);
+    setTranslatedVerseData(fullChapter.translation as TranslatedVerseData);
+    setBook(fullChapter?.book_name);
+    setChapter(fullChapter?.chapter_num);
+
+  }
+    
+  function handleShowRestVerses(){
+    if(remainderVerses){
+        setVerses([...verses, ...remainderVerses].sort((a:Verse, b:Verse) => a.number - b.number));
+        setRemainderVerses([]);
+    }
+  }
 
   return (
     <div className={`container flex flex-row min-w-screen w-screen h-screen mx-auto ${darkMode ? 'dark bg-neutral-900' : ''}`}>
@@ -222,7 +259,7 @@ function App() {
             Table of Contents
         </div>
         <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-1/2">
-            {bookList?.map(bookName => <BookSelection bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
+            {bookList?.map(bookName => <BookSelection key={bookName} bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
         </div>
         </div>
         <div className="flex flex-col w-7/12 h-3/4 overflow-y-auto overflow-x-hidden">
@@ -230,8 +267,19 @@ function App() {
                 Search
             </div>
             <ScriptureSearch performSearch={searchForBook} currentBook={book} currentChapter={chapter} getChapterCount={getChapterCount}/>
-            <div id="search_results" className="flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900">
+            <div id="search_results" className="h-full flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900">
                 <ScriptureSearchResults verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
+                {
+                    remainderVerses?.length > 0 ? 
+                    <div className="w-fit mx-auto text-neutral-50 text-xs" onClick={handleShowRestVerses}> show {remainderVerses.length} more verses..</div>
+                    :<></>
+                }
+            </div>
+            <div className="pt-1 pl-1 text-neutral-500 border-b border-neutral-700 text-sm">
+                Bookmarks
+            </div>
+            <div className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-full" >
+                <BookmarkList selectBookmark={openBookmark} bookmarks={bookmarks}/>
             </div>
         </div>
         
