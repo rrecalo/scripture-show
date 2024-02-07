@@ -168,13 +168,28 @@ async fn open_choose_output_window(app: tauri::AppHandle) -> Result<bool, Applic
     
     let new_window = tauri::WindowBuilder::new(&app, "choose_output",
         tauri::WindowUrl::App("../choose_output.html".into()),)
-        .title("Choose Display Output")
+        .title("choose display output")
         .inner_size(400.0, 200.0)
         .build();
     
     match new_window {
         Ok(_win) => Ok(true),
-        Err(_) => Err(ApplicationError::NewWindowError("Err: Could not open window, maybe it already exists?"))
+        Err(_) => Err(ApplicationError::NewWindowError("err: could not open window, maybe it already exists?"))
+    }
+}
+
+#[tauri::command]
+async fn open_new_bookmark_window(app: tauri::AppHandle) -> Result<bool, ApplicationError>{
+    
+    let new_window = tauri::WindowBuilder::new(&app, "bookmark",
+        tauri::WindowUrl::App("../bookmark.html".into()),)
+        .title("Create a Bookmark")
+        .inner_size(600.0, 500.0)
+        .build();
+    
+    match new_window {
+        Ok(_win) => Ok(true),
+        Err(_) => Err(ApplicationError::NewWindowError("err: could not open window, maybe it already exists?"))
     }
 }
 
@@ -258,7 +273,7 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![get_verses, open_display_monitor, get_book_list,
-        open_choose_output_window, get_chapter_count]);
+        open_choose_output_window, open_new_bookmark_window, get_chapter_count]);
         #[cfg(target_os="macos")]
         {
         app.menu(menu).run(tauri::generate_context!()).expect("error while running tauri application");

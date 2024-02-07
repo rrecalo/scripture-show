@@ -13,6 +13,7 @@ import ProjectionDisplay from "./Components/ProjectionDisplay";
 import {ProjectionConfiguration} from './Components/ProjectionDisplay'
 import BookmarkList from "./Components/Bookmark/BookmarkList";
 import { BookmarkType } from "./Components/Bookmark/Bookmark";
+import { AiOutlinePlus } from 'react-icons/ai';
 
 export type GetVersesResult = {
     book_name: String,
@@ -20,11 +21,19 @@ export type GetVersesResult = {
     verses: Verse[],
     translation: any
 }
-type TranslatedVerseData = {
+export type TranslatedVerseData = {
     book_name: String,
     chapter_num: number,
     verses: Verse[]
 }
+
+export async function getChapterCount(bookName: string){
+    if(bookName !== ""){
+        let ch_count = await invoke("get_chapter_count", {bookName: bookName, version:"esv"}) as number;
+        return ch_count;
+    }
+    else return undefined;
+  }
 
 function App() {
 
@@ -213,13 +222,7 @@ function App() {
     }
   }
 
-  async function getChapterCount(bookName: string){
-    if(bookName !== ""){
-        let ch_count = await invoke("get_chapter_count", {bookName: bookName, version:"esv"}) as number;
-        return ch_count;
-    }
-    else return undefined;
-  }
+  
 
   function handleChangeShownVerse(newVersesToShow: Verse[]){
     setShownVerses(newVersesToShow);
@@ -252,15 +255,31 @@ function App() {
     }
   }
 
+  async function openBookmarkWindow(){
+    await invoke("open_new_bookmark_window");
+  }
+
   return (
     <div className={`container flex flex-row min-w-screen w-screen h-screen mx-auto ${darkMode ? 'dark bg-neutral-900' : ''}`}>
         <div className="flex flex-col">
-        <div className="pt-1 pl-1 text-neutral-500 font-light text-sm border-b border-neutral-700 px-1">
-            Table of Contents
-        </div>
-        <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-1/2">
-            {bookList?.map(bookName => <BookSelection key={bookName} bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
-        </div>
+            <div className="w-full h-1/3">
+                <div className="flex justify-between items-center pt-1 pl-1 pe-3 text-neutral-500 border-b border-neutral-700 text-sm">
+                    Bookmarks
+                    <AiOutlinePlus onClick={openBookmarkWindow} />
+                </div>
+                <div className="w-full border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-full" >
+                    <BookmarkList selectBookmark={openBookmark}/>
+                </div>
+            </div>
+            
+            <div className="w-full h-1/3">
+                <div className="pt-1 pl-1 text-neutral-500 font-light text-sm border-b border-neutral-700 px-1">
+                    Table of Contents
+                </div>
+                <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-full">
+                    {bookList?.map(bookName => <BookSelection key={bookName} bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
+                </div>
+            </div>
         </div>
         <div className="flex flex-col w-7/12 h-3/4 overflow-y-auto overflow-x-hidden">
             <div className="pt-1 pl-1 text-neutral-500 border-b border-neutral-700 text-sm">
@@ -270,16 +289,10 @@ function App() {
             <div id="search_results" className="h-full flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900">
                 <ScriptureSearchResults book={book} verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
                 {
-                    remainderVerses?.length > 0 ? 
+                    remainderVerses !== undefined && remainderVerses?.length > 0 ? 
                     <div className="w-fit mx-auto text-neutral-50 text-xs" onClick={handleShowRestVerses}> show {remainderVerses.length} more verses..</div>
                     :<></>
                 }
-            </div>
-            <div className="pt-1 pl-1 text-neutral-500 border-b border-neutral-700 text-sm">
-                Bookmarks
-            </div>
-            <div className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-full" >
-                <BookmarkList selectBookmark={openBookmark} bookmarks={bookmarks}/>
             </div>
         </div>
         

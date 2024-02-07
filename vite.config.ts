@@ -10,6 +10,7 @@ export default defineConfig(async () => ({
             main: './index.html',
             monitor: './monitor.html',
             choose_output: './choose_output.html',
+            bookmark: './bookmark.html',
         }
     }
   },
