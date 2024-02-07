@@ -7,10 +7,10 @@ import Verse from "./types/Verse";
 import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
 import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearchResults";
 import BookSelection from "./Components/BookSelection";
-import MonitoringDisplay from './Components/MonitoringDisplay';
 import { fs } from "@tauri-apps/api";
-import { ProjectionConfiguration } from "./Components/MonitoringDisplay";
 import ProjectionControls from "./Components/ProjectionControls";
+import ProjectionDisplay from "./Components/ProjectionDisplay";
+import {ProjectionConfiguration} from './Components/ProjectionDisplay'
 
 export type GetVersesResult = {
     book_name: String,
@@ -236,11 +236,16 @@ function App() {
         </div>
         
         <div id="monitoring_area" className="flex flex-col w-5/12 h-screen dark:bg-neutral-900">
-            <div className="w-full min-h-[50%] max-h-[50%]">
+            <div className="w-full h-full min-h-[50%] max-h-[50%]">
                 <div className="pt-1 pl-1 text-neutral-500 border-b border-neutral-700 text-sm">
                     Display Monitor
                 </div>
-                <MonitoringDisplay verseToDisplay={shownVerses?.slice(0, 1)[0]}/>
+                {/* <MonitoringDisplay verseToDisplay={shownVerses?.slice(0, 1)[0]}/> */}
+                <div className="w-full h-full flex justify-center items-center aspect-video">
+                    <div className="w-fit h-fit scale-[0.25]">
+                        <ProjectionDisplay/>
+                    </div>
+                </div>
             </div>
             <div className="pt-1 pl-1 text-neutral-500 border-b border-neutral-700 text-sm bg-neutral-100 dark:bg-neutral-900">
                     Projection configuration

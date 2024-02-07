@@ -1,4 +1,4 @@
-import { ProjectionConfiguration } from "./MonitoringDisplay";
+import { ProjectionConfiguration } from "./ProjectionDisplay";
 import { useState, useEffect } from "react";
 
 type ProjectionControlsProps = {

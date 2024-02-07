@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react'
 import Verse from '../types/Verse'
 import { listen, emit } from '@tauri-apps/api/event'
-import { ProjectionConfiguration } from './MonitoringDisplay'
 
 export type DisplayVerseEvent = {
     payload: {
         eng: Verse[],
         ro: Verse[]
     }
+}
+
+export type ProjectionConfiguration = {
+    verseCount : number | 1,
+    fontSize: number,
+    translations: string[],
+
 }
 
 export type ProjectionFormatEvent = {
@@ -52,7 +58,7 @@ export default function Monitor(){
     
     function renderVerses(){
         let verseStyling=`inline font-light w-full whitespace-break leading-tight`;
-        let verseNumStyling='text-[0.25rem] 2xl:text-[1.25rem] font-bold';
+        let verseNumStyling='text-[1rem] 2xl:text-[1.25rem] font-bold';
 
         return (
                 <>
@@ -96,7 +102,7 @@ export default function Monitor(){
 
         if(versesToDisplay){
         return (
-            <div className="font-bold text-[1rem] 2xl:text-[2.5rem] mt-0">{eng_book_name || "" }
+            <div className="font-bold text-[1.5rem] 2xl:text-[2.5rem] mt-0">{eng_book_name || "" }
             {config?.translations.length == 1 ? "" : " | "}
             {ro_book_name}{" "}{config?.translations.length == 2 ? " " : " | "}
             {(versesToDisplay?.at(0)?.chapter) + ":" + (versesToDisplay?.at(0)?.number)}
@@ -116,7 +122,7 @@ export default function Monitor(){
 
     }
         return (
-        <div className="bg-white p-10 w-screen h-screen flex flex-col justify-around items-center">
+        <div className="bg-white p-[2.5%] flex flex-col justify-around items-center w-screen h-screen">
             <div id="dynamic_text" className={`w-full h-full flex flex-col justify-start items-end`}>
                 {renderVerses()}
                 {renderMetadata()}
