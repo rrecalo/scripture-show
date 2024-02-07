@@ -3,19 +3,20 @@ import Verse from '../../types/Verse';
 import {useEffect, useState} from 'react';
 
 type ScriptureSearchResultsProps = {
+    book: string,
     verses: Verse[],
     changeSelectedVerse: Function,
     verseCount: number,
 }
 
-export default function ScriptureSearchResults({verses, changeSelectedVerse, verseCount} : ScriptureSearchResultsProps){
+export default function ScriptureSearchResults({book, verses, changeSelectedVerse, verseCount} : ScriptureSearchResultsProps){
 
     const [selectedVerse, setSelectedVerse] = useState<Verse>();
     const [startAtFirst, setStartAtFirst] = useState<Boolean>(false);
 
     useEffect(()=>{
         setStartAtFirst(true);
-    }, [verses]);
+    }, [book]);
 
     useEffect(()=>{
         if(selectedVerse){

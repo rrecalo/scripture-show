@@ -268,7 +268,7 @@ function App() {
             </div>
             <ScriptureSearch performSearch={searchForBook} currentBook={book} currentChapter={chapter} getChapterCount={getChapterCount}/>
             <div id="search_results" className="h-full flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900">
-                <ScriptureSearchResults verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
+                <ScriptureSearchResults book={book} verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
                 {
                     remainderVerses?.length > 0 ? 
                     <div className="w-fit mx-auto text-neutral-50 text-xs" onClick={handleShowRestVerses}> show {remainderVerses.length} more verses..</div>
