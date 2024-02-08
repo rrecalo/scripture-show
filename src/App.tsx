@@ -14,6 +14,7 @@ import {ProjectionConfiguration} from './Components/ProjectionDisplay'
 import BookmarkList from "./Components/Bookmark/BookmarkList";
 import { BookmarkType } from "./Components/Bookmark/Bookmark";
 import { AiOutlinePlus } from 'react-icons/ai';
+import VerseHistory from "./Components/VerseHistory";
 
 export type GetVersesResult = {
     book_name: String,
@@ -260,26 +261,36 @@ function App() {
   }
 
   return (
-    <div className={`container flex flex-row min-w-screen w-screen h-screen mx-auto ${darkMode ? 'dark bg-neutral-900' : ''}`}>
-        <div className="flex flex-col">
+    <div className={`container flex flex-row min-w-screen w-screen h-screen overflow-clip mx-auto ${darkMode ? 'dark bg-neutral-900' : ''}`}>
+        <div className="flex flex-col justify-start items-center">
             <div className="w-full h-1/3">
-                <div className="flex justify-between items-center pt-1 pl-1 pe-3 text-neutral-500 border-b border-neutral-700 text-sm">
+                <div className="flex justify-between items-center pt-1 pl-1 pe-3 text-neutral-500 border-b border-neutral-700 text-sm h-1/10">
                     Bookmarks
                     <AiOutlinePlus onClick={openBookmarkWindow} />
                 </div>
-                <div className="w-full border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-full" >
+                <div className="w-full border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-9/10">
                     <BookmarkList selectBookmark={openBookmark}/>
                 </div>
             </div>
             
             <div className="w-full h-1/3">
-                <div className="pt-1 pl-1 text-neutral-500 font-light text-sm border-b border-neutral-700 px-1">
+                <div className="pt-1 pl-1 text-neutral-500 font-light text-sm border-b border-neutral-700 px-1 h-1/10">
                     Table of Contents
                 </div>
-                <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-full">
+                <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden max-h-[90%]">
                     {bookList?.map(bookName => <BookSelection key={bookName} bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
                 </div>
             </div>
+            
+            <div className="w-full h-1/3">
+                <div className="pt-1 pl-1 text-neutral-500 font-light text-sm border-b border-neutral-700 px-1 h-1/10">
+                    History 
+                </div>
+                <div id="verse_history_container" className="border-black dark:border-neutral-700 border-r-0 w-fit overflow-x-hidden h-9/10 max-h-[90%] w-full">
+                    <VerseHistory />
+                </div>
+            </div>
+
         </div>
         <div className="flex flex-col w-7/12 h-3/4 overflow-y-auto overflow-x-hidden">
             <div className="pt-1 pl-1 text-neutral-500 border-b border-neutral-700 text-sm">
