@@ -1,5 +1,5 @@
-import {AiOutlineDelete} from 'react-icons/ai'
-import {uuid} from 'uuidv4';
+import {AiOutlineDelete} from 'react-icons/ai';
+import {v4 as uuid} from 'uuid';
 
 
 export type BookmarkType = {

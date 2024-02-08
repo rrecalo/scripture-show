@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {BookmarkType} from './Bookmark'
 import Bookmark from './Bookmark';
 import { listen } from '@tauri-apps/api/event';
+import ConfirmBookmarkDeletionModal from './ConfirmBookmarkDeletionModal';
 
 type BookmarkListProps = {
     selectBookmark: Function,
@@ -10,6 +11,8 @@ type BookmarkListProps = {
 export default function BookmarkList({selectBookmark}: BookmarkListProps){
 
     const [bookmarks, setBookmarks] = useState<BookmarkType[]>([]);
+    const [bookmarkToDelete, setBookmarkToDelete] = useState<BookmarkType>();
+    const [showModal, setShowModal] = useState<Boolean>(false);
 
     useEffect(()=>{
         listen("create_bookmark", (event)=>{
@@ -21,21 +24,28 @@ export default function BookmarkList({selectBookmark}: BookmarkListProps){
         },[]);
 
     function handleBookmarkClicked(e: MouseEvent, b: BookmarkType){
-
         e.preventDefault();
         selectBookmark(b);
 
         }
 
-    function handleDeleteBookmark(e: MouseEvent, b: BookmarkType){
-        e.preventDefault();
+    function handleDeleteClicked(e: MouseEvent, b: BookmarkType){
         e.stopPropagation();
+        setBookmarkToDelete(b);
+        setShowModal(true);
+    }
+    
+    function handleDeleteBookmark(b: BookmarkType){
         setBookmarks((state)=> state.filter((bookmark: BookmarkType) => bookmark.id  !== b.id));
+        setShowModal(false);
     }
 
     return (
-        bookmarks.map(b => 
-        <Bookmark key={b.id} selectBookmark={handleBookmarkClicked} deleteBookmark={handleDeleteBookmark} bookmark={b}/>
-        )
+        <>
+        <ConfirmBookmarkDeletionModal display={showModal} setDisplay={setShowModal} b={bookmarkToDelete} deleteBookmark={handleDeleteBookmark}/>
+        {bookmarks.map(b => 
+        <Bookmark key={b.id} selectBookmark={handleBookmarkClicked} deleteBookmark={handleDeleteClicked} bookmark={b}/>
+        )}
+        </>
     )
 }
