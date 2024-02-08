@@ -27,11 +27,15 @@ export default function BookmarkList({selectBookmark}: BookmarkListProps){
 
         }
 
-
+    function handleDeleteBookmark(e: MouseEvent, b: BookmarkType){
+        e.preventDefault();
+        e.stopPropagation();
+        setBookmarks((state)=> state.filter((bookmark: BookmarkType) => bookmark.id  !== b.id));
+    }
 
     return (
         bookmarks.map(b => 
-        <Bookmark key={b.verseStart+b.verseEnd} selectBookmark={handleBookmarkClicked} bookmark={b}/>
+        <Bookmark key={b.id} selectBookmark={handleBookmarkClicked} deleteBookmark={handleDeleteBookmark} bookmark={b}/>
         )
     )
 }

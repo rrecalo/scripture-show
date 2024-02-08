@@ -1,11 +1,11 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { listen } from "@tauri-apps/api/event";
 import { emit } from "@tauri-apps/api/event";
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
+import {v4 as uuid} from 'uuid';
 import ScriptureSearchBox from "../ScriptureSearch/ScriptureSearchBox";
 import { getChapterCount } from "../../App";
 import { GetVersesResult } from "../../App";
-import {TranslatedVerseData} from '../../App';
 import VerseComponent from "../VerseComponent";
 import Verse from '../../types/Verse';
 import { BookmarkType } from "./Bookmark";
@@ -15,7 +15,6 @@ export default function BookmarkWindow({}){
     const [darkMode, setDarkMode] = useState<Boolean>();
     const [verseRange, setVerseRange] = useState<string>("");
     const [verses, setVerses] = useState<Verse[]>([]);
-    const [translatedVerseData, setTranslatedVerseData] = useState<TranslatedVerseData>();
     const [book, setBook] = useState<String>();
     const [chapter, setChapter] = useState<number>();
     const [chosenVerseNums, setChosenVerseNums] = useState<number[]>();
@@ -91,7 +90,6 @@ export default function BookmarkWindow({}){
         if(acceptChoice){
             if(new_verses){
             
-            setTranslatedVerseData(new_verses?.translation as TranslatedVerseData);
             setVerses(new_verses?.verses);
             setBook(new_verses?.book_name);
             setChapter(new_verses?.chapter_num);
@@ -108,7 +106,7 @@ export default function BookmarkWindow({}){
 
     function createBookmark(){
         if(chosenVerseNums){
-            emit("create_bookmark", {book: book, chapter:chapter, verseStart:chosenVerseNums[0], verseEnd:chosenVerseNums[chosenVerseNums.length-1]} as BookmarkType);
+            emit("create_bookmark", {id: uuid(), book: book, chapter:chapter, verseStart:chosenVerseNums[0], verseEnd:chosenVerseNums[chosenVerseNums.length-1]} as BookmarkType);
             setVerseRange("");
             setChosenVerseNums(undefined);
         }
