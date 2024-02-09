@@ -101,7 +101,6 @@ function App() {
     
     const unlisten_projection_customization_updates = listen('projection_format', (event: any) => {
             if(event){
-                console.log("proejction config changed!");
                 setProjectionConfig(event.payload);
             }
         });
@@ -145,7 +144,14 @@ function App() {
             emit("load_projection_customization", projectionConfig);
         }
     });
-    return () => {unlisten.then(f=>f());}
+    const unlisten_format = listen("request_format", (_)=>{
+        if(projectionConfig){
+            emit("projection_format", projectionConfig);
+        }
+    });
+    return () => {
+        unlisten.then(f=>f());
+        unlisten_format.then(f=>f());}
   }, [projectionConfig]);
 
 

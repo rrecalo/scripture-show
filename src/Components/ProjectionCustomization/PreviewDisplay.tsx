@@ -103,7 +103,7 @@ export default function PreviewDisplay(){
 
         if(versesToDisplay){
         return (
-            <div className={`font-[${500}] text-[1.5rem] 2xl:text-[2.5rem] mt-0 `}>{eng_book_name || "" }
+            <div className={`text-[1.5rem] 2xl:text-[2.5rem] mt-0 `}>{eng_book_name || "" }
             {config?.translations.length == 1 ? "" : " | "}
             {ro_book_name}{" "}{config?.translations.length == 2 ? " " : " | "}
             {(versesToDisplay?.at(0)?.chapter) + ":" + (versesToDisplay?.at(0)?.number)}
@@ -123,7 +123,7 @@ export default function PreviewDisplay(){
 
     }
         return (
-        <div id="container" className={`inter p-[2.5%] flex flex-col justify-around items-center w-screen h-screen bg-[${config?.bgColor}]`}>
+        <div id="container" className={`inter p-[2.5%] flex flex-col justify-around items-center w-screen h-screen`}>
             <div id="dynamic_text" className={`w-full h-full flex flex-col justify-start items-end`}>
                 {renderVerses()}
                 {renderMetadata()}

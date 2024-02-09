@@ -27,6 +27,7 @@ export default function Monitor(){
         });
         emit('request_format');
         emit('request_verses');
+
         return ()=>{
             unlisten_verses.then(f => f());
             unlisten_format.then(f => f());
@@ -121,7 +122,7 @@ export default function Monitor(){
 
     }
         return (
-        <div id="container" className="inter bg-white p-[2.5%] flex flex-col justify-around items-center w-screen h-screen">
+        <div id="container" className={`inter p-[2.5%] flex flex-col justify-around items-center w-screen h-screen`}>
             <div id="dynamic_text" className={`w-full h-full flex flex-col justify-start items-end`}>
                 {renderVerses()}
                 {renderMetadata()}
