@@ -1,6 +1,7 @@
 import { HexColorPicker } from "react-colorful";
 import ProjectionConfiguration from "../../types/ProjectionConfiguration";
 import { useState, useEffect } from "react";
+import ReactSlider from 'react-slider';
 import "./styles.css";
 
 type ProjectionControlsProps = {
@@ -78,14 +79,101 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
         setConfig({...config, textColor: e});
     }
 
+    function handleVerseTextWeightChange(e:any){
+        setConfig({...config, verseTextWeight: e});
+    }
+
+    function handleVerseNumberWeightChange(e:any){
+        setConfig({...config, verseNumberWeight: e});
+    }
+
+    function handleVerseInfoWeightChange(e:any){
+        setConfig({...config, verseInfoWeight: e});
+    }
+
     return (
         <div className="flex flex-row w-full h-full justify-start items-start select-none">
             
 
 
-
             <div className="flex flex-col justify-start items-start w-full">
+
+                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-5 h-[30px]">
+                    <div className="w-1/2 h-1/2 dark:text-neutral-400">
+                        Verse Font Weight                     
+                    </div>
+                    <div className="dark:text-neutral-50">
+                        {config?.verseTextWeight}
+                    </div>
+
+                    <div className="w-1/2 h-1/2 dark:text-black">
+                    <ReactSlider
+                        marks min={1} max={9}
+                        value={config?.verseTextWeight/100}
+                        onChange={(e)=>handleVerseTextWeightChange(e*100)}
+                        className="customSlider" 
+                        thumbClassName="customSlider-thumb"
+                        trackClassName="customSlider-track"
+                        markClassName="customSlider-mark"
+                        renderThumb={(props) => <div {...props}>
+                        <div className="slider-value">
+                        </div>
+                        </div>}
+                    />
+                    </div>
+                </div>
                 
+                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-5 h-[30px]">
+                    <div className="w-1/2 h-1/2 dark:text-neutral-400">
+                        Verse Number Weight
+                    </div>
+                    <div className="dark:text-neutral-50">
+                        {config?.verseNumberWeight}
+                    </div>
+
+                    <div className="w-1/2 h-1/2 dark:text-black">
+                    <ReactSlider
+                        marks min={1} max={9}
+                        value={config?.verseNumberWeight/100}
+                        onChange={(e)=>handleVerseNumberWeightChange(e*100)}
+                        className="customSlider" 
+                        thumbClassName="customSlider-thumb"
+                        trackClassName="customSlider-track"
+                        markClassName="customSlider-mark"
+                        renderThumb={(props) => <div {...props}>
+                        <div className="slider-value">
+                        </div>
+                        </div>}
+                    />
+                    </div>
+                </div>
+                
+                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-5 h-[30px]">
+                    <div className="w-1/2 h-1/2 dark:text-neutral-400">
+                        Verse Info Weight
+                    </div>
+                    <div className="dark:text-neutral-50">
+                        {config?.verseInfoWeight}
+                    </div>
+
+                    <div className="w-1/2 h-1/2 dark:text-black">
+                    <ReactSlider
+                        marks min={1} max={9}
+                        value={config?.verseInfoWeight/100}
+                        onChange={(e)=>handleVerseInfoWeightChange(e*100)}
+                        className="customSlider" 
+                        thumbClassName="customSlider-thumb"
+                        trackClassName="customSlider-track"
+                        markClassName="customSlider-mark"
+                        renderThumb={(props) => <div {...props}>
+                        <div className="slider-value">
+                        </div>
+                        </div>}
+                    />
+                    </div>
+                </div>
+ 
+
                 <div className="flex flex-row justify-start items-center dark:text-neutral-100 pe-5">
                     <div className="pe-2 font-light">
                         Font Size

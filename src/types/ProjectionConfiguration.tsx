@@ -6,6 +6,9 @@ type ProjectionConfiguration = {
     translations: string[],
     bgColor: string,
     textColor: string,
+    verseTextWeight: number,
+    verseNumberWeight: number,
+    verseInfoWeight: number,
 }
 
 

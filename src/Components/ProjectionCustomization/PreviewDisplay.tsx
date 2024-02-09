@@ -40,28 +40,37 @@ export default function PreviewDisplay(){
             if(dyn_text){
                 dyn_text.style.fontSize= `${config.fontSize}px`;
                 dyn_text.style.color = `${config.textColor}`;
+                dyn_text.style.fontWeight = `${config.verseInfoWeight}`;
             }
             let container = document.getElementById("container");
             if(container){
                 container.style.backgroundColor = `${config.bgColor}`;
             }
+            let verse_text = document.getElementById("verse_text");
+            if(verse_text){
+                verse_text.style.fontWeight = `${config.verseTextWeight}`;
+            }
+            let verse_num = document.getElementById("verse_num");
+            if(verse_num){
+                verse_num.style.fontWeight = `${config.verseNumberWeight}`;
+            }
         }
     },[config]);
     
     function renderVerses(){
-        let verseStyling=`inline font-light w-full whitespace-break leading-tight`;
-        let verseNumStyling='text-[1rem] 2xl:text-[1.25rem] font-bold';
+        let verseStyling=`inline w-full whitespace-break leading-tight`;
+        let verseNumStyling='text-[1rem] 2xl:text-[1.25rem]';
 
         return (
                 <>
-                    <div className='flex flex-col justify-around items-start w-full h-full'> 
+                    <div id="verse_text" className='flex flex-col justify-around items-start w-full h-full'> 
                         {
                         config?.translations.includes("esv") ?
                         <div>
                             {versesToDisplay?.map((verseToDisplay) =>
                             (
                                 <p key={verseToDisplay.number} className={verseStyling}>
-                                    <span className={verseNumStyling}>{verseToDisplay?.number}</span>
+                                    <span id="verse_num" className={verseNumStyling}>{verseToDisplay?.number}</span>
                                     {verseToDisplay?.text}
                                 </p>
                                 )
@@ -94,7 +103,7 @@ export default function PreviewDisplay(){
 
         if(versesToDisplay){
         return (
-            <div className="font-bold text-[1.5rem] 2xl:text-[2.5rem] mt-0">{eng_book_name || "" }
+            <div className={`font-[${500}] text-[1.5rem] 2xl:text-[2.5rem] mt-0 `}>{eng_book_name || "" }
             {config?.translations.length == 1 ? "" : " | "}
             {ro_book_name}{" "}{config?.translations.length == 2 ? " " : " | "}
             {(versesToDisplay?.at(0)?.chapter) + ":" + (versesToDisplay?.at(0)?.number)}
@@ -114,7 +123,7 @@ export default function PreviewDisplay(){
 
     }
         return (
-        <div id="container" className={`p-[2.5%] flex flex-col justify-around items-center w-screen h-screen bg-[${config?.bgColor}]`}>
+        <div id="container" className={`inter p-[2.5%] flex flex-col justify-around items-center w-screen h-screen bg-[${config?.bgColor}]`}>
             <div id="dynamic_text" className={`w-full h-full flex flex-col justify-start items-end`}>
                 {renderVerses()}
                 {renderMetadata()}

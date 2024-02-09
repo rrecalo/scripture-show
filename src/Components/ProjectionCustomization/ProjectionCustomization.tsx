@@ -3,6 +3,7 @@ import {listen, emit} from '@tauri-apps/api/event';
 import PreviewDisplay from './PreviewDisplay';
 import ProjectionControls from './ProjectionControls';
 import ProjectionConfiguration from '../../types/ProjectionConfiguration';
+import './styles.css';
 
 type ProjectionCustomizationProps = { }
 

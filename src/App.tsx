@@ -58,6 +58,9 @@ function App() {
       translations: defaultTranslations,
       bgColor: "#ffffff",
       textColor: "#101219",
+      verseTextWeight: 500,
+      verseNumberWeight: 500,
+      verseInfoWeight: 500,
   });
 
 

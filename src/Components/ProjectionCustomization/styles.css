@@ -11,3 +11,62 @@
   height: 16px;
 }
 
+:root {
+  --main-color: #525252;
+  --main-color-hover: rgb(104, 117, 217, 0.2);
+  --track-color: #737373;
+/* Default mark color*/
+  --mark-color: #aaaaaa;
+}
+       
+
+.customSlider{
+    width:100%;
+    height:100%;
+}
+.customSlider-thumb {
+  cursor: pointer;
+  /*color for the thumb */
+  background: var(--main-color);
+  /* shape of the thumb: circle */
+  width: 16px;
+  height:16px;
+  border-radius: 100%;
+  /* remove default outline when selected */
+  outline: none;
+}
+
+.customSlider-thumb .slider-value {
+    position:absolute;
+    background-color: var(--track-color);
+    border-radius: 5px;
+    font-size: 0.7rem;
+    padding: 0px 3px 0 3px;
+    top:-20px;
+}
+
+.customSlider-thumb:hover {
+  box-shadow: 0 0 0 8px var(--main-color-hover);
+}
+
+.customSlider-track {
+  /* Top value to align your track to the center of your thumb */
+  top: 7px;
+  /* thickness of the track */
+  height: 4px;
+ /* default color of your track */
+  background: var(--track-color);
+}
+
+.customSlider-mark {
+  cursor: pointer;
+  top: 7px;
+  width: 0px;
+  height: 4px;
+  background-color: var(--mark-color);
+}
+
+.customSlider-track.customSlider-track-0 {
+  /* color of the track before the thumb */
+  background: var(--main-color);
+}
