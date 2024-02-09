@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import Verse from '../types/Verse'
+import Verse from '../../types/Verse'
 import { listen, emit } from '@tauri-apps/api/event'
-import ProjectionConfiguration from '../types/ProjectionConfiguration'
-import { DisplayVerseEvent } from '../types/ProjectionConfiguration'
-import { ProjectionFormatEvent } from '../types/ProjectionConfiguration'
+import ProjectionConfiguration from '../../types/ProjectionConfiguration'
+import { DisplayVerseEvent } from '../../types/ProjectionConfiguration'
+import { ProjectionFormatEvent } from '../../types/ProjectionConfiguration'
 
 
-export default function Monitor(){
+export default function PreviewDisplay(){
 
     const [versesToDisplay, setVersesToDisplay] = useState<Verse[]>();
     const [translatedVerses, setTranslatedVerses] = useState<Verse[]>();
@@ -27,6 +27,7 @@ export default function Monitor(){
         });
         emit('request_format');
         emit('request_verses');
+
         return ()=>{
             unlisten_verses.then(f => f());
             unlisten_format.then(f => f());
@@ -113,7 +114,7 @@ export default function Monitor(){
 
     }
         return (
-        <div id="container" className="bg-white p-[2.5%] flex flex-col justify-around items-center w-screen h-screen">
+        <div id="container" className={`p-[2.5%] flex flex-col justify-around items-center w-screen h-screen bg-[${config?.bgColor}]`}>
             <div id="dynamic_text" className={`w-full h-full flex flex-col justify-start items-end`}>
                 {renderVerses()}
                 {renderMetadata()}

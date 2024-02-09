@@ -168,8 +168,23 @@ async fn open_choose_output_window(app: tauri::AppHandle) -> Result<bool, Applic
     
     let new_window = tauri::WindowBuilder::new(&app, "choose_output",
         tauri::WindowUrl::App("../choose_output.html".into()),)
-        .title("choose display output")
+        .title("Choose Output")
         .inner_size(400.0, 200.0)
+        .build();
+    
+    match new_window {
+        Ok(_win) => Ok(true),
+        Err(_) => Err(ApplicationError::NewWindowError("err: could not open window, maybe it already exists?"))
+    }
+}
+
+#[tauri::command]
+async fn open_projection_customization_window(app: tauri::AppHandle) -> Result<bool, ApplicationError>{
+    
+    let new_window = tauri::WindowBuilder::new(&app, "projection_customization",
+        tauri::WindowUrl::App("../projection_customization.html".into()),)
+        .title("Projection Theme Customization")
+        .inner_size(800.0, 600.0)
         .build();
     
     match new_window {
@@ -210,7 +225,8 @@ fn init_menu() -> Menu{
     let theme_submenu = Submenu::new("Theme", Menu::new().add_item(dark).add_item(light));
     let prefs_submenu = Submenu::new("Preferences", Menu::new().add_submenu(theme_submenu));
     let choose_output = CustomMenuItem::new("open_choose_output_window".to_string(), "Choose Output");
-    let settings_submenu = Submenu::new("Settings", Menu::new().add_submenu(prefs_submenu).add_item(choose_output));
+    let projection_customization = CustomMenuItem::new("open_projection_customization_window".to_string(), "Projection Customization");
+    let settings_submenu = Submenu::new("Settings", Menu::new().add_submenu(prefs_submenu).add_item(choose_output).add_item(projection_customization));
     Menu::new()
     .add_submenu(file_submenu)
     .add_submenu(settings_submenu)
@@ -266,6 +282,9 @@ fn main() {
                 },
                 "open_choose_output_window" => {
                     app_handle.emit_to("main", "open_choose_output", {}).unwrap();
+                },
+                "open_projection_customization_window" => {
+                    app_handle.emit_to("main", "open_projection_customization", {}).unwrap();
                 }
                 _ => {}
                 }
@@ -273,7 +292,7 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![get_verses, open_display_monitor, get_book_list,
-        open_choose_output_window, open_new_bookmark_window, get_chapter_count]);
+        open_choose_output_window, open_new_bookmark_window, open_projection_customization_window, get_chapter_count]);
         #[cfg(target_os="macos")]
         {
         app.menu(menu).run(tauri::generate_context!()).expect("error while running tauri application");

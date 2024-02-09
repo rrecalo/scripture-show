@@ -11,6 +11,7 @@ export default defineConfig(async () => ({
             monitor: './monitor.html',
             choose_output: './choose_output.html',
             bookmark: './bookmark.html',
+            projection_customization: './projection_customization.html'
         }
     }
   },

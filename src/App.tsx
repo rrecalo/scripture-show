@@ -8,13 +8,12 @@ import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
 import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearchResults";
 import BookSelection from "./Components/BookSelection";
 import { fs } from "@tauri-apps/api";
-import ProjectionControls from "./Components/ProjectionControls";
 import ProjectionDisplay from "./Components/ProjectionDisplay";
-import {ProjectionConfiguration} from './Components/ProjectionDisplay'
 import BookmarkList from "./Components/Bookmark/BookmarkList";
 import { BookmarkType } from "./Components/Bookmark/Bookmark";
 import { AiOutlinePlus } from 'react-icons/ai';
 import VerseHistory from "./Components/VerseHistory";
+import ProjectionConfiguration from "./types/ProjectionConfiguration";
 
 export type GetVersesResult = {
     book_name: String,
@@ -43,13 +42,13 @@ function App() {
   const defaultVerseCount = 1;
   const defaultFontSize = 36;
   const defaultTranslations = ["esv", "ro"];
+  const verseCount = 1;
   const [verses, setVerses] = useState<Verse[]>([]);
   const [translatedVerseData, setTranslatedVerseData] = useState<TranslatedVerseData>();
   const [book, setBook] = useState<String>();
   const [chapter, setChapter] = useState<number>();
   const [shownVerses, setShownVerses] = useState<Verse[]>();
   const [displayOpened, setDisplayOpened] = useState<Boolean>(false);
-  const [verseCount, setVerseCount] = useState<number>(1);
   const [darkMode, setDarkMode] = useState<Boolean>();
   const [bookList, setBookList] = useState<String[]>();
   const [projectionConfig, setProjectionConfig] = useState<ProjectionConfiguration>(
@@ -57,12 +56,10 @@ function App() {
       verseCount: defaultVerseCount,
       fontSize: defaultFontSize,
       translations: defaultTranslations,
+      bgColor: "#ffffff",
+      textColor: "#101219",
   });
-  const [bookmarks, setBookmarks] = useState<BookmarkType[]>(
-  [{book: "John",
-    chapter: 1,
-    verseStart:4, 
-    verseEnd:9}]);
+
 
   const [remainderVerses, setRemainderVerses] = useState<Verse[]>();
 
@@ -86,28 +83,33 @@ function App() {
             savePreferences({darkMode: false});
         }
     });
-    const unlisten = listen("open_choose_output", (_)=>{
-        invoke("open_choose_output_window").then((response)=>{console.log(response)});;
+    
+    const unlisten_choose_output = listen("open_choose_output", (_)=>{
+        invoke("open_choose_output_window").then((response)=>{console.log(response)});
+    });
+    
+    const unlisten_projection_customization = listen("open_projection_customization", (_) =>{
+        invoke("open_projection_customization_window").then((response)=>{console.log(response)});
     });
     
     emit('theme_update', darkMode);
+    emit("load_projection_customization", projectionConfig);
+    emit('projection_format', projectionConfig);
+    
+    const unlisten_projection_customization_updates = listen('projection_format', (event: any) => {
+            if(event){
+                console.log("proejction config changed!");
+                setProjectionConfig(event.payload);
+            }
+        });
 
     loadPreferences();
-    return () => {unlisten.then(f=>f())};
+    return () => {
+        unlisten_choose_output.then(f=>f());
+        unlisten_projection_customization.then(f=>f());
+        unlisten_projection_customization_updates.then(f=>f());
+        };
     },[]);
-
-  useEffect(()=>{
-    if(projectionConfig){
-        emit('projection_format', projectionConfig);
-        const unlisten = listen('request_format', (_)=>{
-            emit('projection_format', projectionConfig);
-        });
-        
-        return () => {
-            unlisten.then(f => f());
-        }
-    };
-  },[projectionConfig]);
 
   useEffect(()=>{
     if(shownVerses){
@@ -130,6 +132,18 @@ function App() {
     });
     emit('theme_update', darkMode);
   },[darkMode])
+
+  //this effect will recreate a listener each time the projectionConfig is
+  //changed. this way, when the projection customization window is opened, it
+  //can take off from where it left the configuration at previously
+  useEffect(()=>{
+    const unlisten = listen("projection_customization_request", (_)=>{
+        if(projectionConfig){
+            emit("load_projection_customization", projectionConfig);
+        }
+    });
+    return () => {unlisten.then(f=>f());}
+  }, [projectionConfig]);
 
 
     function loadPreferences(){
@@ -319,12 +333,14 @@ function App() {
                     </div>
                 </div>
             </div>
+            {/*
             <div className="pt-1 pl-1 text-neutral-500 border-b border-neutral-700 text-sm bg-neutral-100 dark:bg-neutral-900">
                     Projection configuration
                 </div>
             <div className="p-5 w-full h-full flex justify-start items-start dark:bg-neutral-900">
                 <ProjectionControls config={projectionConfig} setConfig={setProjectionConfig}/>
             </div>
+            */}
         </div>
     </div>
   );

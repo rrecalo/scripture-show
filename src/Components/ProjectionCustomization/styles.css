@@ -1,0 +1,13 @@
+.color_picker .react-colorful{
+    width: auto; 
+    height:auto;
+    aspect-ratio: 4/3;
+}
+
+.color_picker .react-colorful__hue-pointer,
+.color_picker .react-colorful__alpha-pointer,
+.color_picker .react-colorful__saturation-pointer{
+  width: 16px;
+  height: 16px;
+}
+
