@@ -127,12 +127,17 @@ function App() {
   }, [shownVerses]);
 
   useEffect(()=>{
-    listen("theme_request", (_)=>{
+    const unlisten_theme = listen("theme_request", (_)=>{
         if(darkMode !== undefined && darkMode !== null){
+            console.log("sent darkMode: ", darkMode);
             emit('theme_update', darkMode);
         }
     });
     emit('theme_update', darkMode);
+    
+    return () => {
+        unlisten_theme.then(f=>f());
+    }
   },[darkMode])
 
   //this effect will recreate a listener each time the projectionConfig is
