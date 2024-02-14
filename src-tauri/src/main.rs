@@ -5,12 +5,10 @@ mod modules;
 use core::panic;
 
 use modules::bible::*;
-use tauri::{State, WindowBuilder, Manager, PhysicalPosition, LogicalPosition, http::status::StatusCode, Error, Monitor, Window, Menu, MenuItem, Submenu, CustomMenuItem};
+use tauri::{CustomMenuItem, Manager, Menu, Position,  State, Submenu, Window, WindowBuilder};
 
 use modules::bible_reader::create_from_xml;
 use serde::Serialize;
-//use breadx::{prelude::*, display::DisplayConnection, protocol::xproto};
-
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
@@ -59,50 +57,88 @@ fn get_verses(bible: State<Bibles>, book_name: String, ch_num: i32, translations
 
 }
 
+fn convert_to_window_label(original: String) -> String {
+
+    original.replace(" #", "_").clone()
+
+}
+
 #[tauri::command]
 async fn open_display_monitor(app: tauri::AppHandle, monitor_name: String) -> bool {
 
-  let mut new_window: Option<_> = None;
+  let window_label: &str = &convert_to_window_label(monitor_name.clone());
+  let mut new_window: Option<Window> = None::<Window>;
   let wins = app.clone().windows();
     for window in wins.iter(){
-        if &window.1.label() == &"display_monitor" {
+        if &window.1.label() == &window_label {
             //let _ = window.1.close();
-            new_window = Some(window.1);
+            new_window = Some(window.1.clone());
 
         } 
         if &window.1.label() == &"choose_output" {
-            let _ = &window.1.close();
+            //let _ = &window.1.close();
         }
     };
 
-  let window = match new_window{
-        Some(win) => win.clone(),
-        None => tauri::WindowBuilder::new(&app, "display_monitor", tauri::WindowUrl::App("monitor.html".into()))
-    .build()
-    .unwrap()
+    //start with the 'main' window's monitor as the default (in case the one we want can't be found for some reason)
+    let mut chosen_monitor: tauri::Monitor = app.get_window("main").expect("bad!!").primary_monitor().unwrap().unwrap();
+    for monitor in app.get_window("main").expect("uhoh!").available_monitors().expect("could not fetch available monitors!"){
+            //println!("{0} x:{1}, | y:{2}", monitor.name().unwrap(), monitor.position().x, monitor.position().y);
+            if monitor.name().unwrap() == &monitor_name {
+                chosen_monitor = monitor.clone();
+            }
+    }
 
-  };
+    println!("Chosen Monitor : {0} | Size : {1} x {2}", monitor_name, chosen_monitor.size().width, chosen_monitor.size().height);
 
-  let mut alt_monitor: tauri::Monitor = window.primary_monitor().unwrap().unwrap();
-  for monitor in window.available_monitors().expect("could not fetch available monitors!"){
-        if monitor.name().unwrap() == &monitor_name {
-            alt_monitor = monitor.clone();
+  let window: Option<Window> = match new_window {
+    Some(win) => {let _ = win.close(); None},
+    None => {
+        Some(tauri::WindowBuilder::new(&app, window_label, tauri::WindowUrl::App("monitor.html".into()))
+        .always_on_top(true)
+        .hidden_title(true)
+        .decorations(false)
+        .fullscreen(false)
+        .inner_size(800.0, 600.0)
+        .build().expect("Failed to create window!"))
         }
-  }
+    };
 
-  let _ = window.set_position(PhysicalPosition {
-      x:alt_monitor.position().x,
-      y:0
-  });
+    let pos = chosen_monitor.position();
 
-  let _ = window.set_fullscreen(false);
-  let _ = window.set_title("Verse Display");
+   
+   if window.is_some() {
+        let win = window.unwrap();
+        win.set_position(Position::Physical(
+            tauri::PhysicalPosition{
+                x: pos.x / 2,
+                y: pos.y / 2
+            })
+        ).expect("Could not set new window's position");
+        let _ = win.set_focus();
+        let _ = win.set_fullscreen(true);
+        
 
-  println!("Chosen Monitor : {0} | Projecting To : {1}", monitor_name, alt_monitor.name().unwrap());
+        //println!("window is : {0} x {1}", win.inner_size().unwrap().width, win.inner_size().unwrap().height);
+        //println!("placed at : x : {0} y : {1}", win.outer_position().unwrap().x, win.outer_position().unwrap().y);
+        //unsafe {
+            //use cocoa::appkit::{NSApp, NSApplication, NSApplicationActivationPolicy, NSApplicationPresentationOptions};
+            //let view: cocoa_id = std::mem::transmute(win.ns_view());
+            //let app = NSApplication::sharedApplication(view);
+            //let app = NSApp();
+            //app.setActivationPolicy_(NSApplicationActivationPolicy::NSApplicationActivationPolicyRegular);
+            /*
+            let options: NSApplicationPresentationOptions = NSApplicationPresentationOptions::NSApplicationPresentationHideMenuBar
+            | NSApplicationPresentationOptions::NSApplicationPresentationHideDock;
+            app.setPresentationOptions_(options);
+            */
+        //}
+    }
 
-  true
+    true
 
 }
+
 
 fn get_non_primary_monitor(window: tauri::Window) -> Option<tauri::Monitor> {
     
@@ -170,6 +206,7 @@ async fn open_choose_output_window(app: tauri::AppHandle) -> Result<bool, Applic
         tauri::WindowUrl::App("../choose_output.html".into()),)
         .title("Choose Output")
         .inner_size(400.0, 200.0)
+        .always_on_top(true)
         .build();
     
     match new_window {
