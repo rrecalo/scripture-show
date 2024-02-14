@@ -48,9 +48,9 @@ export default function ProjectionCustomization({} : ProjectionCustomizationProp
 
     return (
     <div className={`${darkMode ? 'dark' : ''} w-screen h-screen`}>
+        <div className="fixed top-0 h-6 w-full" data-tauri-drag-region></div>
 
-
-        <div className='w-full h-full flex flex-col justify-start items-center text-sm bg-neutral-100 dark:bg-neutral-900'>
+        <div className='pt-6 w-full h-full flex flex-col justify-start items-center text-sm bg-neutral-100 dark:bg-neutral-900'>
           
             <div className="h-full w-1/2 mx-auto flex justify-center items-center bg-neutral-800 aspect-video">
                 <div className="h-fit scale-[0.5] aspect-video">

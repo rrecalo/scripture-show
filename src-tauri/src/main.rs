@@ -201,13 +201,27 @@ fn get_book_list(bible: State<Bibles>, version: &str) -> Result<Vec<String>, App
 
 #[tauri::command]
 async fn open_choose_output_window(app: tauri::AppHandle) -> Result<bool, ApplicationError>{
-    
+
+    #[cfg(not(target_os="macos"))]
     let new_window = tauri::WindowBuilder::new(&app, "choose_output",
         tauri::WindowUrl::App("../choose_output.html".into()),)
         .title("Choose Output")
+        .min_inner_size(400.0, 200.0)
         .inner_size(400.0, 200.0)
         .always_on_top(true)
+        .focused(true)
         .build();
+
+    #[cfg(target_os="macos")]
+    let new_window = tauri::WindowBuilder::new(&app, "choose_output",
+        tauri::WindowUrl::App("../choose_output.html".into()),)
+        .min_inner_size(400.0, 200.0)
+        .inner_size(400.0, 200.0)
+        .title_bar_style(tauri::TitleBarStyle::Overlay)
+        .hidden_title(true)
+        .focused(true)
+        .build();
+
     
     match new_window {
         Ok(_win) => Ok(true),
@@ -218,12 +232,25 @@ async fn open_choose_output_window(app: tauri::AppHandle) -> Result<bool, Applic
 #[tauri::command]
 async fn open_projection_customization_window(app: tauri::AppHandle) -> Result<bool, ApplicationError>{
     
+    #[cfg(not(target_os="macos"))]
     let new_window = tauri::WindowBuilder::new(&app, "projection_customization",
         tauri::WindowUrl::App("../projection_customization.html".into()),)
         .title("Projection Theme Customization")
+        .min_inner_size(800.0, 600.0)
         .inner_size(800.0, 600.0)
+        .focused(true)
         .build();
-    
+
+    #[cfg(target_os="macos")]
+    let new_window = tauri::WindowBuilder::new(&app, "projection_customization",
+        tauri::WindowUrl::App("../projection_customization.html".into()),)
+        .min_inner_size(800.0, 600.0)
+        .inner_size(800.0, 600.0)
+        .title_bar_style(tauri::TitleBarStyle::Overlay)
+        .hidden_title(true)
+        .focused(true)
+        .build();
+
     match new_window {
         Ok(_win) => Ok(true),
         Err(_) => Err(ApplicationError::NewWindowError("err: could not open window, maybe it already exists?"))
@@ -233,12 +260,26 @@ async fn open_projection_customization_window(app: tauri::AppHandle) -> Result<b
 #[tauri::command]
 async fn open_new_bookmark_window(app: tauri::AppHandle) -> Result<bool, ApplicationError>{
     
+    #[cfg(not(target_os="macos"))]
     let new_window = tauri::WindowBuilder::new(&app, "bookmark",
         tauri::WindowUrl::App("../bookmark.html".into()),)
         .title("Create a Bookmark")
+        .min_inner_size(600.0, 500.0)
         .inner_size(600.0, 500.0)
+        .focused(true)
         .build();
-    
+
+    #[cfg(target_os="macos")]
+    let new_window = tauri::WindowBuilder::new(&app, "bookmark",
+        tauri::WindowUrl::App("../bookmark.html".into()),)
+        .min_inner_size(600.0, 500.0)
+        .inner_size(600.0, 500.0)
+        .title_bar_style(tauri::TitleBarStyle::Overlay)
+        .hidden_title(true)
+        .focused(true)
+        .build();
+
+
     match new_window {
         Ok(_win) => Ok(true),
         Err(_) => Err(ApplicationError::NewWindowError("err: could not open window, maybe it already exists?"))
@@ -303,12 +344,22 @@ fn main() {
             .min_inner_size(1280.0, 720.0)
             .inner_size(1280.0, 720.0)
             .build()?;
-            WindowBuilder::new(
-                app,
-                "choose_output",
-                tauri::WindowUrl::App("choose_output.html".into()),)
-                .title("Choose Display Output")
+            #[cfg(not(target_os="macos"))]
+            WindowBuilder::new(app, "choose_output",
+                tauri::WindowUrl::App("../choose_output.html".into()),)
+                .title("Choose Output")
+                .min_inner_size(400.0, 200.0)
+                .inner_size(200.0, 100.0)
+                .always_on_top(true)
+                .build()?;
+            #[cfg(target_os="macos")]
+            tauri::WindowBuilder::new(app, "choose_output",
+                tauri::WindowUrl::App("../choose_output.html".into()),)
+                .min_inner_size(400.0, 200.0)
                 .inner_size(400.0, 200.0)
+                .title_bar_style(tauri::TitleBarStyle::Overlay)
+                .hidden_title(true)
+                .always_on_top(true)
                 .build()?;
             let app_handle = app.handle();
             main_window.on_menu_event(move |event| {
