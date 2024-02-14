@@ -67,15 +67,17 @@ export default function Monitor({audience} : MonitorProps) {
             if(verse_text){
                 verse_text.style.fontWeight = `${config.verseTextWeight}`;
             }
-            let verse_num = document.getElementById("verse_num");
-            if(verse_num){
-                verse_num.style.fontWeight = `${config.verseNumberWeight}`;
+            let verse_nums = document.getElementsByClassName("verse_num");
+            if(verse_nums.length > 0){
+                for(let i = 0; i < verse_nums.length; i++) {
+                    verse_nums[i].style.fontWeight = `${config.verseNumberWeight}`;
+                }
             }
         }
-    },[config]);    
+    },[config]);
     function renderVerses(){
         let verseStyling=`inline w-full whitespace-break leading-tight`;
-        let verseNumStyling='text-[1rem] 2xl:text-[1.25rem]';
+        let verseNumStyling='text-[1rem] 2xl:text-[1.25rem] verse_num';
 
         return (
                 <>
@@ -86,7 +88,7 @@ export default function Monitor({audience} : MonitorProps) {
                             {versesToDisplay?.map((verseToDisplay) =>
                             (
                                 <p key={verseToDisplay.number} className={verseStyling}>
-                                    <span id="verse_num" className={verseNumStyling}>{verseToDisplay?.number}</span>
+                                    <span className={verseNumStyling}>{verseToDisplay?.number}</span>
                                     {verseToDisplay?.text}
                                 </p>
                                 )
