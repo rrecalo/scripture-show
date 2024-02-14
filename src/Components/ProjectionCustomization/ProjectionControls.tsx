@@ -98,8 +98,8 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
 
             <div className="flex flex-col justify-start items-start w-full">
 
-                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-5 h-[30px]">
-                    <div className="w-1/2 h-1/2 dark:text-neutral-400">
+                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[30px]">
+                    <div className="w-1/2 h-1/2 dark:text-neutral-300">
                         Verse Font Weight                     
                     </div>
                     <div className="dark:text-neutral-50">
@@ -123,8 +123,8 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
                     </div>
                 </div>
                 
-                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-5 h-[30px]">
-                    <div className="w-1/2 h-1/2 dark:text-neutral-400">
+                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[30px]">
+                    <div className="w-1/2 h-1/2 dark:text-neutral-300">
                         Verse Number Weight
                     </div>
                     <div className="dark:text-neutral-50">
@@ -148,8 +148,8 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
                     </div>
                 </div>
                 
-                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-5 h-[30px]">
-                    <div className="w-1/2 h-1/2 dark:text-neutral-400">
+                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[30px]">
+                    <div className="w-1/2 h-1/2 dark:text-neutral-300">
                         Verse Info Weight
                     </div>
                     <div className="dark:text-neutral-50">
@@ -174,7 +174,7 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
                 </div>
  
 
-                <div className="flex flex-row justify-start items-center dark:text-neutral-100 pe-5">
+                <div className="flex flex-row justify-start items-center dark:text-neutral-100 pe-5 pt-2">
                     <div className="pe-2 font-light">
                         Font Size
                     </div>
@@ -218,17 +218,17 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
 
             </div>
                 
-            <div className="flex justify-betwen items-center w-full h-full gap-5 px-2">
+            <div className="flex justify-betwen items-center w-full h-full gap-5 px-2 pb-3">
             <div className="w-1/2 color_picker">
                 <div className="dark:text-neutral-200 mb-1">Background Color</div>
-                <input className="rounded-md w-full mb-3 text-base outline-none px-1 py-1 h-full dark:bg-neutral-800 dark:text-neutral-200" autoComplete="off"
+                <input className="rounded-md w-full mb-3 text-base outline-none px-1 py-1 ps-2 h-full dark:bg-neutral-700 dark:text-neutral-200" autoComplete="off"
                 value={config?.bgColor} onChange={(e)=>handleBgColorChange(e.target.value)}/>
                 <HexColorPicker className="" color={config?.bgColor} onChange={handleBgColorChange} />
             </div>
             
             <div className="w-1/2 color_picker">
                 <div className="dark:text-neutral-200 mb-1">Text Color</div>
-                <input className="rounded-md w-full mb-3 text-base outline-none px-1 py-1 h-full dark:bg-neutral-800 dark:text-neutral-200" autoComplete="off"
+                <input className="rounded-md w-full mb-3 text-base outline-none px-1 py-1 ps-2 h-full dark:bg-neutral-700 dark:text-neutral-200" autoComplete="off"
                 value={config?.textColor} onChange={(e)=>handleTextColorChange(e.target.value)}/>
                 <HexColorPicker className="" color={config?.textColor} onChange={handleTextColorChange} />
             </div>

@@ -123,7 +123,7 @@ export default function PreviewDisplay(){
 
     }
         return (
-        <div id="container" className={`inter p-[2.5%] flex flex-col justify-around items-center w-screen h-screen`}>
+        <div id="container" className={`inter p-[2.5%] flex flex-col justify-around items-center w-screen aspect-video`}>
             <div id="dynamic_text" className={`w-full h-full flex flex-col justify-start items-end`}>
                 {renderVerses()}
                 {renderMetadata()}

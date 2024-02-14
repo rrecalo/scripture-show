@@ -146,7 +146,7 @@ export default function Monitor({audience} : MonitorProps) {
 
 
         return (
-        <div id="container" className={`inter p-[2.5%] flex flex-col justify-around items-center w-screen h-screen`} onMouseOver={()=>{setMouseInWindow(true)}} 
+        <div id="container" className={`inter p-5 flex flex-col justify-around items-center w-screen aspect-video ${audience ? 'h-screen' : ''}`} onMouseOver={()=>{setMouseInWindow(true)}} 
         onMouseOut={()=>{setMouseInWindow(false)}}>
             <div id="dynamic_text" className={`w-full h-full flex flex-col justify-start items-end`}>
                 {renderVerses()}

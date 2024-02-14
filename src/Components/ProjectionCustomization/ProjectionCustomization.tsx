@@ -51,22 +51,20 @@ export default function ProjectionCustomization({} : ProjectionCustomizationProp
 
 
         <div className='w-full h-full flex flex-col justify-start items-center text-sm bg-neutral-100 dark:bg-neutral-900'>
-            <div className='w-full h-[40%]' >
           
-            <div className=" w-full h-full flex justify-center items-center aspect-video bg-neutral-800">
-                <div className="w-fit h-fit scale-[0.40]">
+            <div className="h-full w-1/2 mx-auto flex justify-center items-center bg-neutral-800 aspect-video">
+                <div className="h-fit scale-[0.5] aspect-video">
                     
                     <PreviewDisplay />
                     
                 </div>
             </div>
-            </div>
 
-            <div className='mt-2 w-full h-[60%] pt-5'>
-                <div className="pt-1 pl-1 text-neutral-500 border-b border-neutral-700">
+            <div className='mt-2 w-full h-[60%] border-t-4 border-neutral-800'>
+                <div className="pt-1 pl-1 pb-1 text-neutral-400 dark:bg-neutral-900">
                 Projection Configuration
                 </div>
-                <div className='px-5 pt-2'>
+                <div className='px-5 pt-2 dark:bg-neutral-800'>
                     
                     <ProjectionControls config={projectionConfig} setConfig={setProjectionConfig}/>
                     

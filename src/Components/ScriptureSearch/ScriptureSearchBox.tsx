@@ -48,7 +48,7 @@ export default function ScriptureSearchBox({performSearch, getChapterCount} : Sc
         },[searchValue]);
 
     return (
-        <div className="flex justify-start items-center bg-inherit w-full h-full min-h-[24px]">
+        <div className="flex justify-start items-center bg-inherit w-full h-full min-h-[24px] dark:bg-neutral-800 p-1 ps-2 rounded-md">
             <input className="outline-none w-1/2 h-full bg-inherit"
             autoComplete="off"
             onKeyDown={(e)=>handleKeyDown(e)}

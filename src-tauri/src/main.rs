@@ -296,6 +296,7 @@ fn main() {
                 "main",
                 tauri::WindowUrl::App("index.html".into()),)
             .title("Scripture Show")
+            .transparent(true)
             .inner_size(1280.0, 720.0)
             .build()?;
             WindowBuilder::new(
