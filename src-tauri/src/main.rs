@@ -287,6 +287,7 @@ fn main() {
                 "main",
                 tauri::WindowUrl::App("index.html".into()),)
             .title("Scripture Show")
+            .min_inner_size(1280.0, 720.0)
             .inner_size(1280.0, 720.0)
             .menu(menu)
             .build()?;
@@ -296,7 +297,10 @@ fn main() {
                 "main",
                 tauri::WindowUrl::App("index.html".into()),)
             .title("Scripture Show")
-            .transparent(true)
+            .title_bar_style(tauri::TitleBarStyle::Overlay)
+            .hidden_title(true)
+            //.transparent(true)
+            .min_inner_size(1280.0, 720.0)
             .inner_size(1280.0, 720.0)
             .build()?;
             WindowBuilder::new(

@@ -289,10 +289,13 @@ function App() {
   }
 
   return (
-    <div className={`container flex flex-row min-w-screen w-screen h-screen overflow-clip mx-auto ${darkMode ? 'dark bg-neutral-900' : ''}`}>
-        <div className="flex flex-col justify-start items-center dark:bg-neutral-800 bg-neutral-100">
-            <div className="w-full h-1/3 ">
-                <div className="flex justify-between items-center pt-1 pl-1 pe-3 text-neutral-400 text-sm h-1/10 dark:bg-neutral-900 pb-1">
+    <div className={`container flex flex-row min-w-screen w-screen h-screen overflow-clip border border-neutral-950 
+    dark:bg-neutral-800 bg-neutral-100
+    rounded-lg mx-auto ${darkMode ? 'dark bg-neutral-900' : ''}`}>
+        <div className="fixed top-0 h-6 w-full" data-tauri-drag-region></div>
+        <div className="pt-6 flex flex-col justify-start items-center dark:bg-neutral-800 bg-neutral-100 border border-l-0 border-neutral-700">
+            <div className="w-full h-1/3 ps-1">
+                <div className="flex justify-between items-center pt-1 pl-1 pe-3 text-neutral-200 text-sm h-1/10 pb-1 font-bold">
                     Bookmarks
                     <AiOutlinePlus onClick={openBookmarkWindow} />
                 </div>
@@ -301,17 +304,17 @@ function App() {
                 </div>
             </div>  
             
-            <div className="w-full h-1/3">
-                <div className="pt-1 pl-1 text-neutral-400 font-light text-sm px-1 h-1/10 dark:bg-neutral-900 pb-1">
+            <div className="w-full h-1/3 ps-1 border-t border-neutral-700">
+                <div className="pt-1 pl-1 text-neutral-200 text-sm px-1 h-1/10 pb-1 font-bold">
                     Table of Contents
                 </div>
-                <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden max-h-[90%]">
+                <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-[85%]">
                     {bookList?.map(bookName => <BookSelection key={bookName} bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
                 </div>
             </div>
             
-            <div className="w-full h-1/3">
-                <div className="pt-2 pl-1 pb-1 text-neutral-400 font-light text-sm px-1 h-1/10 dark:bg-neutral-900">
+            <div className="w-full h-1/3 ps-1 border-t border-neutral-700">
+                <div className="pt-2 pl-1 pb-1 text-neutral-200 text-sm px-1 h-1/10 font-bold">
                     History 
                 </div>
                 <div id="verse_history_container" className="border-black dark:border-neutral-700 border-r-0 overflow-x-hidden h-9/10 max-h-[90%] w-full">
@@ -320,12 +323,10 @@ function App() {
             </div>
 
         </div>
-        <div className="flex flex-col w-7/12 h-full overflow-y-auto overflow-x-hidden dark:bg-neutral-800">
-            {/* <div className="pt-1 pl-1 pb-1 text-neutral-500 border-b dark:border-neutral-950 text-sm">
-                Search
-            </div> */}
+        <div className="relative flex flex-col w-7/12 h-full overflow-y-auto overflow-x-hidden dark:bg-neutral-900">
+
             <ScriptureSearch performSearch={searchForBook} currentBook={book} currentChapter={chapter} getChapterCount={getChapterCount}/>
-            <div id="search_results" className="h-3/4 flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900">
+            <div id="search_results" className="pt-24 h-full flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900">
                 <ScriptureSearchResults book={book} verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
                 {
                     remainderVerses !== undefined && remainderVerses?.length > 0 ? 
@@ -335,8 +336,8 @@ function App() {
             </div>
         </div>
         
-        <div id="monitoring_area" className="flex flex-col w-5/12 h-full dark:bg-neutral-800">
-            <div className="pt-1 pl-1 pb-1 text-neutral-400 text-sm dark:bg-neutral-900">
+        <div id="monitoring_area" className="pt-2 flex flex-col w-5/12 h-full dark:bg-neutral-800 border border-neutral-700">
+            <div className="pt-1 pl-1 pb-1 ps-1 text-neutral-200 text-sm font-bold">
                 Display Monitor
             </div>
             {/* <MonitoringDisplay verseToDisplay={shownVerses?.slice(0, 1)[0]}/> */}
