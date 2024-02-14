@@ -1,16 +1,22 @@
 import { useEffect, useState } from 'react'
 import Verse from '../types/Verse'
 import { listen, emit } from '@tauri-apps/api/event'
+import { getCurrent } from '@tauri-apps/api/window'
 import ProjectionConfiguration from '../types/ProjectionConfiguration'
 import { DisplayVerseEvent } from '../types/ProjectionConfiguration'
 import { ProjectionFormatEvent } from '../types/ProjectionConfiguration'
+import { appWindow } from '@tauri-apps/api/window'
 
+type MonitorProps = {
+    audience: boolean
+}
 
-export default function Monitor(){
+export default function Monitor({audience} : MonitorProps) {
 
     const [versesToDisplay, setVersesToDisplay] = useState<Verse[]>();
     const [translatedVerses, setTranslatedVerses] = useState<Verse[]>();
     const [config, setConfig] = useState<ProjectionConfiguration>();
+    const [mouseInWindow, setMouseInWindow] = useState<boolean>(false);
 
     useEffect(()=>{
         const unlisten_verses = listen('display_verse', (event : DisplayVerseEvent) => {   
@@ -32,7 +38,18 @@ export default function Monitor(){
             unlisten_verses.then(f => f());
             unlisten_format.then(f => f());
         }
+
+
     },[]);
+
+    useEffect(() =>{
+        if(mouseInWindow) {
+            const mouseTimeout = setTimeout(() => {
+                setMouseInWindow(false);
+            }, 2000);
+            return ()=>{clearInterval(mouseTimeout);};
+        }
+    }, [mouseInWindow]);
 
     useEffect(()=>{
         if(config){
@@ -121,12 +138,25 @@ export default function Monitor(){
         }
 
     }
+
+    function closeWindow(){
+        let currentWindow = getCurrent();
+        currentWindow.close();
+    }
+
+
         return (
-        <div id="container" className={`inter p-[2.5%] flex flex-col justify-around items-center w-screen h-screen`}>
+        <div id="container" className={`inter p-[2.5%] flex flex-col justify-around items-center w-screen h-screen`} onMouseOver={()=>{setMouseInWindow(true)}} 
+        onMouseOut={()=>{setMouseInWindow(false)}}>
             <div id="dynamic_text" className={`w-full h-full flex flex-col justify-start items-end`}>
                 {renderVerses()}
                 {renderMetadata()}
+                
             </div>
+            { audience && mouseInWindow ?
+                <div onClick={closeWindow} className='left-20 bottom-14 absolute px-8 py-4 bg-neutral-50 rounded-2xl text-neutral-800 font-bold text-lg text-center opacity-50'>close</div>
+                : <></>
+            }
         </div>
     )
 }

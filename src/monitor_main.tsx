@@ -3,5 +3,5 @@ import "./styles.css";
 import ProjectionDisplay from './Components/ProjectionDisplay';
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-    <ProjectionDisplay/>
+    <ProjectionDisplay audience={true}/>
 );

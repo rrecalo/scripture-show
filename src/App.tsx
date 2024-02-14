@@ -343,7 +343,7 @@ function App() {
                 {/* <MonitoringDisplay verseToDisplay={shownVerses?.slice(0, 1)[0]}/> */}
                 <div className="w-full h-full flex justify-center items-center aspect-video">
                     <div className="w-fit h-fit scale-[0.25]">
-                        <ProjectionDisplay/>
+                        <ProjectionDisplay audience={false}/>
                     </div>
                 </div>
             </div>
