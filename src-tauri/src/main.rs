@@ -286,6 +286,16 @@ async fn open_new_bookmark_window(app: tauri::AppHandle) -> Result<bool, Applica
     }
 }
 
+#[derive(Serialize)]
+struct GetOpenWindowsResult{
+    windows: Vec<String>
+}
+
+#[tauri::command]
+async fn get_open_windows(app: tauri::AppHandle) -> Result<GetOpenWindowsResult, ApplicationError> {
+    let open_windows = app.windows().into_keys().collect();
+    Ok(GetOpenWindowsResult { windows: open_windows })
+}
 
 struct Bibles{
     esv: Bible,
@@ -385,7 +395,8 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![get_verses, open_display_monitor, get_book_list,
-        open_choose_output_window, open_new_bookmark_window, open_projection_customization_window, get_chapter_count]);
+        open_choose_output_window, open_new_bookmark_window, open_projection_customization_window, get_chapter_count,
+        get_open_windows]);
         #[cfg(target_os="macos")]
         {
         app.menu(menu).run(tauri::generate_context!()).expect("error while running tauri application");
