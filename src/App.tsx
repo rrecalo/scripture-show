@@ -40,7 +40,7 @@ function App() {
   const appName = "scripture-show";
   const jsonConfigName = "scripture-show-config.json";
   const defaultVerseCount = 1;
-  const defaultFontSize = 36;
+  const defaultFontSize = 2;
   const defaultTranslations = ["esv", "ro"];
   const verseCount = 1;
   const [verses, setVerses] = useState<Verse[]>([]);
@@ -337,7 +337,7 @@ function App() {
         </div>
         
         <div id="monitoring_area" className="pt-2 flex flex-col w-5/12 h-full dark:bg-neutral-800 border border-neutral-700">
-            <div className="pt-1 pl-1 pb-1 ps-1 text-neutral-200 text-sm font-bold">
+            <div className="pt-1 pl-2 pb-1 ps-1 text-neutral-200 text-sm font-bold">
                 Display Monitor
             </div>
             {/* <MonitoringDisplay verseToDisplay={shownVerses?.slice(0, 1)[0]}/> */}

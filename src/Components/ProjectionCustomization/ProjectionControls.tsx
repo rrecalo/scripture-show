@@ -14,8 +14,8 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
     const [translationCountWarning, setTranslationCountWarning] = useState<boolean>(false);
     const [fontLimitWarning, setFontLimitWarning] = useState<boolean>(false);
     const [verseLimitWarning, setVerseLimitWarning] = useState<boolean>(false);
-    const fontLowerLimit = 20;
-    const fontUpperLimit = 80;
+    const fontLowerLimit = 2;
+    const fontUpperLimit = 4;
 
     useEffect(()=>{
         if(translationCountWarning){
@@ -91,48 +91,51 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
         setConfig({...config, verseInfoWeight: e});
     }
 
+    function setFontSize(e:any){
+        setConfig({...config, fontSize: e});
+    }
+
     return (
-        <div className="flex flex-row w-full h-full justify-start items-start select-none">
+        <div className="flex flex-col w-full h-full justify-start items-start select-none">
             
 
 
-            <div className="flex flex-col justify-start items-start w-full">
-
+            <div className="flex flex-col justify-start items-start w-full px-4 py-2">
+                <div className=" text-neutral-200 text-sm h-1/10 font-bold">
+                    Typography
+                </div>
                 <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[30px]">
-                    <div className="w-1/2 h-1/2 dark:text-neutral-300">
+                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-300">
                         Verse Font Weight                     
                     </div>
-                    <div className="dark:text-neutral-50">
+                    <div className="dark:text-neutral-50 w-1/6 h-1/2 my-auto">
                         {config?.verseTextWeight}
                     </div>
 
                     <div className="w-1/2 h-1/2 dark:text-black">
-                    <ReactSlider
-                        marks min={1} max={9}
-                        value={config?.verseTextWeight/100}
-                        onChange={(e)=>handleVerseTextWeightChange(e*100)}
-                        className="customSlider" 
-                        thumbClassName="customSlider-thumb"
-                        trackClassName="customSlider-track"
-                        markClassName="customSlider-mark"
-                        renderThumb={(props) => <div {...props}>
-                        <div className="slider-value">
-                        </div>
-                        </div>}
-                    />
+                        <ReactSlider
+                            marks min={1} max={9}
+                            value={config?.verseTextWeight/100}
+                            onChange={(e)=>handleVerseTextWeightChange(e*100)}
+                            className="customSlider" 
+                            thumbClassName="customSlider-thumb"
+                            trackClassName="customSlider-track"
+                            markClassName="customSlider-mark"
+                            renderThumb={(props) => <div {...props}></div>}
+                        />
                     </div>
                 </div>
                 
                 <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[30px]">
-                    <div className="w-1/2 h-1/2 dark:text-neutral-300">
+                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-300">
                         Verse Number Weight
                     </div>
-                    <div className="dark:text-neutral-50">
+                    <div className="dark:text-neutral-50 w-1/6 h-1/2 my-auto">
                         {config?.verseNumberWeight}
                     </div>
 
                     <div className="w-1/2 h-1/2 dark:text-black">
-                    <ReactSlider
+                        <ReactSlider
                         marks min={1} max={9}
                         value={config?.verseNumberWeight/100}
                         onChange={(e)=>handleVerseNumberWeightChange(e*100)}
@@ -140,19 +143,16 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
                         thumbClassName="customSlider-thumb"
                         trackClassName="customSlider-track"
                         markClassName="customSlider-mark"
-                        renderThumb={(props) => <div {...props}>
-                        <div className="slider-value">
-                        </div>
-                        </div>}
-                    />
+                        renderThumb={(props) => <div {...props}></div>}
+                        />
                     </div>
                 </div>
                 
                 <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[30px]">
-                    <div className="w-1/2 h-1/2 dark:text-neutral-300">
+                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-300">
                         Verse Info Weight
                     </div>
-                    <div className="dark:text-neutral-50">
+                    <div className="dark:text-neutral-50 w-1/6 h-1/2 my-auto">
                         {config?.verseInfoWeight}
                     </div>
 
@@ -165,75 +165,79 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
                         thumbClassName="customSlider-thumb"
                         trackClassName="customSlider-track"
                         markClassName="customSlider-mark"
-                        renderThumb={(props) => <div {...props}>
-                        <div className="slider-value">
-                        </div>
-                        </div>}
-                    />
+                        renderThumb={(props) => <div {...props}></div>}
+                        />
                     </div>
                 </div>
- 
 
-                <div className="flex flex-row justify-start items-center dark:text-neutral-100 pe-5 pt-2">
-                    <div className="pe-2 font-light">
-                        Font Size
+                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[30px]">
+                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-300">
+                        Verse Font Size
+                    </div>
+                    <div className="dark:text-neutral-50 w-1/6 h-1/2 my-auto">
+                        {config?.fontSize}vw
                     </div>
 
-                    <div className="flex flex-row justify-between items-center gap-1">
-                        <button className="font-bold p-1.5" onClick={()=> changeFontSize(-4)}>-</button>
-                        <div className="dark:bg-neutral-950 dark:text-neutral-50 px-2.5">
-                            {config?.fontSize+"px"}
-                        </div>
-                        <button className="font-bold p-1.5" onClick={()=> changeFontSize(4)}>+</button>        
+                    <div className="w-1/2 h-1/2 dark:text-black">
+                        <ReactSlider
+                        marks min={1} max={(fontUpperLimit * 2) + 1}
+                        value={(config?.fontSize - 2) * 8}
+                        onChange={(e)=>setFontSize((fontLowerLimit + ((e - 1) / 4)))}
+                        className="customSlider" 
+                        thumbClassName="customSlider-thumb"
+                        trackClassName="customSlider-track"
+                        markClassName="customSlider-mark"
+                        renderThumb={(props) => <div {...props}></div>}
+                        />
                     </div>
-
-                    {
-                        fontLimitWarning ? 
-                        <div className="text-red-500 text-xs font-light">Limit reached</div>
-                        :<></>
-                    }
                 </div>
+            </div>
 
-                <div className="flex justify-start items-center font-light">
+            <div className="flex flex-col justify-start items-start font-light w-full px-4 py-2 border-t border-neutral-700">
+                <div className=" text-neutral-200 text-sm h-1/10 pb-2 font-bold">
+                    Versions
+                </div>
                 <div className="flex flex-col justify-center items-start gap-2">
                     <div className="flex justify-center items-center">
-                    <input className="w-4 h-4 accent-blue-600" type="checkbox" value="esv" checked={config?.translations?.includes("esv")}
-                    onChange={()=> handleToggleTranslation("esv")}/>
-                    <label className="ps-2 dark:text-neutral-100">ESV</label>
+                        <input className="w-4 h-4 accent-blue-600" type="checkbox" value="esv" checked={config?.translations?.includes("esv")}
+                        onChange={()=> handleToggleTranslation("esv")}/>
+                        <label className="ps-2 dark:text-neutral-100">ESV</label>
                     </div>
                     <div className="flex justify-center items-center">
-                    <input className="w-4 h-4 accent-blue-600" type="checkbox" value="ro" checked={config?.translations?.includes("ro")}
-                    onChange={()=> handleToggleTranslation("ro")}/>
-                    <label className="ps-2 dark:text-neutral-100">RO</label>
+                        <input className="w-4 h-4 accent-blue-600" type="checkbox" value="ro" checked={config?.translations?.includes("ro")}
+                        onChange={()=> handleToggleTranslation("ro")}/>
+                        <label className="ps-2 dark:text-neutral-100">RO</label>
                     </div>
                 </div>
-                {
-                    translationCountWarning ?
-                <div className="text-red-500 text-xs font-light pl-3">
-                    1 version needed
-                </div>
-                : <></>
-                }
-                </div>
-
+                    {
+                        translationCountWarning ?
+                    <div className="text-red-500 text-xs font-light pl-3">
+                        1 version needed
+                    </div>
+                    : <></>
+                    }
             </div>
                 
-            <div className="flex justify-betwen items-center w-full h-full gap-5 px-2 pb-3">
-            <div className="w-1/2 color_picker">
-                <div className="dark:text-neutral-200 mb-1">Background Color</div>
-                <input className="rounded-md w-full mb-3 text-base outline-none px-1 py-1 ps-2 h-full dark:bg-neutral-700 dark:text-neutral-200" autoComplete="off"
-                value={config?.bgColor} onChange={(e)=>handleBgColorChange(e.target.value)}/>
-                <HexColorPicker className="" color={config?.bgColor} onChange={handleBgColorChange} />
+            <div className="w-full px-4 py-2 border-t border-neutral-700">
+                <div className="text-neutral-200 text-sm h-1/10 pb-1 font-bold">
+                    Color
+                </div>
+                <div className="flex justify-between items-center w-full h-full gap-5">
+                    <div className="w-1/2 color_picker">
+                        <div className="dark:text-neutral-200 mb-1">Background Color</div>
+                        <input className="rounded-lg w-full mb-3 text-base outline-none px-1 py-1 ps-2 h-full dark:bg-neutral-900 dark:text-neutral-200" autoComplete="off"
+                        value={config?.bgColor} onChange={(e)=>handleBgColorChange(e.target.value)}/>
+                        <HexColorPicker className="" color={config?.bgColor} onChange={handleBgColorChange} />
+                    </div>
+                    <div className="w-1/2 color_picker">
+                        <div className="dark:text-neutral-200 mb-1">Text Color</div>
+                        <input className="rounded-lg w-full mb-3 text-base outline-none px-1 py-1 ps-2 h-full dark:bg-neutral-900 dark:text-neutral-200" autoComplete="off"
+                        value={config?.textColor} onChange={(e)=>handleTextColorChange(e.target.value)}/>
+                        <HexColorPicker className="" color={config?.textColor} onChange={handleTextColorChange} />
+                    </div>
+                </div>
             </div>
             
-            <div className="w-1/2 color_picker">
-                <div className="dark:text-neutral-200 mb-1">Text Color</div>
-                <input className="rounded-md w-full mb-3 text-base outline-none px-1 py-1 ps-2 h-full dark:bg-neutral-700 dark:text-neutral-200" autoComplete="off"
-                value={config?.textColor} onChange={(e)=>handleTextColorChange(e.target.value)}/>
-                <HexColorPicker className="" color={config?.textColor} onChange={handleTextColorChange} />
-            </div>
-            </div>
-
         </div>
     )
 }

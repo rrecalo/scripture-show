@@ -55,7 +55,7 @@ export default function Monitor({audience} : MonitorProps) {
         if(config){
             let dyn_text = document.getElementById("dynamic_text");
             if(dyn_text){
-                dyn_text.style.fontSize= `${config.fontSize}px`;
+                dyn_text.style.fontSize= `${config.fontSize}vw`;
                 dyn_text.style.color = `${config.textColor}`;
                 dyn_text.style.fontWeight = `${config.verseInfoWeight}`;
             }
@@ -73,18 +73,40 @@ export default function Monitor({audience} : MonitorProps) {
                     verse_nums[i].style.fontWeight = `${config.verseNumberWeight}`;
                 }
             }
+
+            const sourceDiv = document.getElementById('verse_text');
+
+            if(sourceDiv){
+                //take the fontSize from config, and if the container is overflowing, do some big brain math
+                //to reduce the fontSize and apply the newly calculated (smaller) fontSize
+                //text only scales down!
+                let newSize = config.fontSize
+                const computedStyle = window.getComputedStyle(sourceDiv);
+                const sourceHeight = parseFloat(computedStyle.height);
+
+                if (sourceDiv.scrollHeight + 25 > sourceHeight) {
+
+                    newSize *= sourceHeight / (sourceDiv.scrollHeight + 25);
+
+                    if(dyn_text){
+                        dyn_text.style.fontSize= `${newSize}vw`;
+                    }
+                }
+            }
         }
-    },[config]);
+        
+    },[config, versesToDisplay]);
+
     function renderVerses(){
         let verseStyling=`inline w-full whitespace-break leading-tight`;
         let verseNumStyling='text-[1rem] 2xl:text-[1.25rem] verse_num';
 
         return (
                 <>
-                    <div id="verse_text" className='flex flex-col justify-around items-start w-full h-full'> 
+                    <div id="verse_text" className='flex flex-col justify-around items-start w-full h-[90%] max-h-[90%] gap-5'> 
                         {
                         config?.translations.includes("esv") ?
-                        <div>
+                        <div id="esv_text">
                             {versesToDisplay?.map((verseToDisplay) =>
                             (
                                 <p key={verseToDisplay.number} className={verseStyling}>
@@ -98,7 +120,7 @@ export default function Monitor({audience} : MonitorProps) {
                         }
                         {
                         config?.translations.includes("ro") ?
-                        <div>
+                        <div id="ro_text">
                             {translatedVerses?.map((verseToDisplay) =>
                             (
                             <p key={verseToDisplay.number} className={verseStyling}>
@@ -121,7 +143,7 @@ export default function Monitor({audience} : MonitorProps) {
 
         if(versesToDisplay){
         return (
-            <div className="text-[1.5rem] 2xl:text-[2.5rem] mt-0">{eng_book_name || "" }
+            <div id="verse_info" className="text-[2.5vw] mt-0 h-[50px] pe-5">{eng_book_name || "" }
             {config?.translations.length == 1 ? "" : " | "}
             {ro_book_name}{" "}{config?.translations.length == 2 ? " " : " | "}
             {(versesToDisplay?.at(0)?.chapter) + ":" + (versesToDisplay?.at(0)?.number)}
@@ -148,9 +170,9 @@ export default function Monitor({audience} : MonitorProps) {
 
 
         return (
-        <div id="container" className={`inter p-5 flex flex-col justify-around items-center w-screen aspect-video ${audience ? 'h-screen' : ''}`} onMouseOver={()=>{setMouseInWindow(true)}} 
+        <div id="container" className={`inter p-5 flex flex-col justify-between items-center w-screen aspect-video h-full overflow-clip ${audience ? 'h-screen' : ''}`} onMouseOver={()=>{setMouseInWindow(true)}} 
         onMouseOut={()=>{setMouseInWindow(false)}}>
-            <div id="dynamic_text" className={`w-full h-full flex flex-col justify-start items-end`}>
+            <div id="dynamic_text" className={`w-full h-full max-h-full flex flex-col justify-between items-end py-1`}>
                 {renderVerses()}
                 {renderMetadata()}
                 
