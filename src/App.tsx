@@ -101,7 +101,7 @@ function App() {
     
     const unlisten_projection_customization_updates = listen('projection_format', (event: any) => {
             if(event){
-                setProjectionConfig(event.payload);
+                //setProjectionConfig(event.payload);
             }
         });
 
@@ -129,7 +129,7 @@ function App() {
   useEffect(()=>{
     const unlisten_theme = listen("theme_request", (_)=>{
         if(darkMode !== undefined && darkMode !== null){
-            console.log("sent darkMode: ", darkMode);
+            //console.log("sent darkMode: ", darkMode);
             emit('theme_update', darkMode);
         }
     });
@@ -159,6 +159,14 @@ function App() {
         unlisten_format.then(f=>f());}
   }, [projectionConfig]);
 
+  useEffect(()=>{
+    if(projectionConfig && darkMode){
+        savePreferences({...projectionConfig, darkMode});
+        emit("projection_format", projectionConfig);
+        emit('theme_update', darkMode);
+    }
+  }, [projectionConfig, darkMode]);
+
 
     function loadPreferences(){
         const decoder = new TextDecoder();
@@ -166,16 +174,33 @@ function App() {
         res => {
             if(res){
             const prefs = JSON.parse(decoder.decode(res));
-            setDarkMode(prefs.darkMode);
+                setDarkMode(prefs.darkMode);
+                //if default verse count is not found in the preferences, that means there probably aren't any preferences
+                //in this case, set the preferences as the defaults
+                if(prefs.verseCount === undefined || prefs.verseCount === null){
+                    setProjectionConfig({
+                        verseCount: defaultVerseCount,
+                        fontSize: defaultFontSize,
+                        translations: defaultTranslations,
+                        bgColor: "#ffffff",
+                        textColor: "#101219",
+                        verseTextWeight: 500,
+                        verseNumberWeight: 500,
+                        verseInfoWeight: 500,
+                    } as ProjectionConfiguration);
+                }
+                else {
+                    setProjectionConfig(prefs as ProjectionConfiguration);
+                }
             }
         });
     }
 
     function savePreferences(preferences : any){
+    console.log(preferences);
       const encoder = new TextEncoder();
       const prefsString = JSON.stringify(preferences);
       const encodedPrefs = encoder.encode(prefsString);
-      console.log(BaseDirectory.Config);
       fs.exists(appName, {dir: BaseDirectory.Config}).then(exists =>
         {
         if(!exists){
