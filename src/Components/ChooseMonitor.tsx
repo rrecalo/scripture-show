@@ -22,7 +22,7 @@ type Screen = {
 }
 
 
-export default function ChooseMonitor(){
+export default function ConfigureScreens(){
 
     const [monitors, setMonitors] = useState<Monitor[]>();
     const [primary, setPrimary] = useState<Monitor>();

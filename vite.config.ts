@@ -9,7 +9,7 @@ export default defineConfig(async () => ({
         input:{
             main: './index.html',
             monitor: './monitor.html',
-            choose_output: './choose_output.html',
+            configure_screens: './configure_screens.html',
             bookmark: './bookmark.html',
             projection_customization: './projection_customization.html'
         }

@@ -87,8 +87,8 @@ function App() {
         }
     });
     
-    const unlisten_choose_output = listen("open_choose_output", (_)=>{
-        invoke("open_choose_output_window").then((response)=>{console.log(response)});
+    const unlisten_configure_screens = listen("open_configure_screens", (_)=>{
+        invoke("open_configure_screens_window").then((response)=>{console.log(response)});
     });
     
     const unlisten_projection_customization = listen("open_projection_customization", (_) =>{
@@ -107,7 +107,7 @@ function App() {
 
     loadPreferences();
     return () => {
-        unlisten_choose_output.then(f=>f());
+        unlisten_configure_screens.then(f=>f());
         unlisten_projection_customization.then(f=>f());
         unlisten_projection_customization_updates.then(f=>f());
         };
