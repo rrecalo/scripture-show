@@ -2,11 +2,18 @@ import { useEffect, useState } from "react";
 import { GetVersesResult } from './../../App';
 import { IoSearch } from "react-icons/io5";
 import { easeInOut, motion } from "framer-motion";
+import { register } from "@tauri-apps/api/globalShortcut";
 
 type ScriptureSearchBoxProps = {
     performSearch : Function,
     getChapterCount : Function,
 }
+
+await register('F5', () => {
+    let input = document.getElementById("search_box");
+    input?.click();
+    input?.focus();
+});
 
 export default function ScriptureSearchBox({performSearch, getChapterCount} : ScriptureSearchBoxProps){
 
