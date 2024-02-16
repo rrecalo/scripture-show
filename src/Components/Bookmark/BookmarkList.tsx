@@ -42,12 +42,14 @@ export default function BookmarkList({selectBookmark}: BookmarkListProps){
     }
 
     return (
-        <AnimatePresence>
-            <ConfirmBookmarkDeletionModal key="modal" display={showModal} setDisplay={setShowModal} b={bookmarkToDelete} deleteBookmark={handleDeleteBookmark}/>
-
-        {bookmarks.map(b => 
-        <Bookmark key={b.id} selectBookmark={handleBookmarkClicked} deleteBookmark={handleDeleteClicked} bookmark={b}/>
-        )}
-        </AnimatePresence>
+        // <AnimatePresence>
+        <>
+        <ConfirmBookmarkDeletionModal key="modal" display={showModal} setDisplay={setShowModal} b={bookmarkToDelete} deleteBookmark={handleDeleteBookmark}/>
+        
+            {bookmarks.map(b => 
+            <Bookmark key={b.id} selectBookmark={handleBookmarkClicked} deleteBookmark={handleDeleteClicked} bookmark={b}/>
+            )}
+        </>
+        // </AnimatePresence>
     )
 }
