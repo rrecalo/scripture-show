@@ -15,7 +15,7 @@
   </p>
 </p>
 
-<br/>![scripture-show](https://github.com/rrecalo/scripture-show/assets/103965989/fe55d6cc-0a03-4029-a469-b782fc1c9ebe)
+<br/>![ss-ui-2 15 24](https://github.com/rrecalo/scripture-show/assets/103965989/a72b8f10-142e-409b-bdcb-7c50783543fd)
 
 
 ## Steps to start contributing
