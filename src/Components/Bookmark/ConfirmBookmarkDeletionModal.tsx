@@ -1,5 +1,4 @@
 
-import { useEffect } from 'react';
 import {BookmarkType} from './Bookmark';
 
 type BookmarkModalProps = {
@@ -11,8 +10,6 @@ type BookmarkModalProps = {
 
 export default function ConfirmBookmarkDeletionModal({display, setDisplay, b, deleteBookmark} : BookmarkModalProps){
    
-    useEffect(()=>{console.log(display);},[display]);
-
     function handleDeleteClick(){
         deleteBookmark(b);
     }
