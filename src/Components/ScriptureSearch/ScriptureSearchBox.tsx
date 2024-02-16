@@ -92,9 +92,9 @@ export default function ScriptureSearchBox({performSearch, getChapterCount} : Sc
              transition:{duration:0.35}}}>
                 <div id="search_box_container" className={`flex w-full justify-center items-center gap-2 border border-neutral-700 rounded-lg ${isSearching ? 'pl-0' : 'pl-2'}`}>
                     <motion.div onClick={(e)=>{e.preventDefault(); e.stopPropagation(); handleSearchDivClick();}}
-                    id="search_icon_container" layout="preserve-aspect" className="w-5 h-5" animate={{opacity: isSearching ? 0 : 1, width: isSearching ? "0px": "20px",
+                    id="search_icon_container" layout="preserve-aspect" className="w-4 h-4" animate={{opacity: isSearching ? 0 : 1, width: isSearching ? "0px": "24px",
                         transition:{duration:0.5}}}>
-                        <IoSearch id="search_icon" className="w-full h-5 text-neutral-400"/> 
+                        <IoSearch id="search_icon" className="w-4 h-4 text-neutral-400"/> 
                     </motion.div>
                     <input id="search_box" className={`text-left outline-none w-full h-full bg-inherit py-1 ${isSearching ? "cursor-text": "cursor-default" }`}
                     autoComplete="off"
