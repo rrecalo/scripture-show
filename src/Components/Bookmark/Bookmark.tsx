@@ -34,7 +34,7 @@ export default function Bookmark({bookmark, selectBookmark, deleteBookmark} : Bo
     }
 
     function handleClick(e: any, bookmark : BookmarkType){
-        controls.start({x:[5, 0], transition:{duration:0.25}})
+        controls.start({x:[0, 5, 0], transition:{duration:0.25}})
         selectBookmark(e, bookmark);
     }
 
