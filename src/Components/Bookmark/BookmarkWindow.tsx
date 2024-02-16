@@ -108,50 +108,62 @@ export default function BookmarkWindow({}){
         if(chosenVerseNums){
             emit("create_bookmark", {id: uuid(), book: book, chapter:chapter, verseStart:chosenVerseNums[0], verseEnd:chosenVerseNums[chosenVerseNums.length-1]} as BookmarkType);
             setVerseRange("");
+            setVerses([]);
+            setBook(undefined);
+            setChapter(undefined);
             setChosenVerseNums(undefined);
         }
         
     }
 
     return (
-        <div className={`flex flex-col justify-start items-start ps-0 pt-1 cursor-default min-w-screen min-h-screen h-full w-full ${darkMode ? 'dark bg-neutral-900' : ''}`}>
-            <div className="ps-1 pt-1 pl-1 text-neutral-500 border-b border-neutral-700 text-sm w-full">
-                Book and Chapter
-            </div>
-            <div className="dark:text-neutral-300 w-full ps-2 pt-2 bg-neutral-800">
-                <ScriptureSearchBox performSearch={performSearch} getChapterCount={getChapterCount}/>  
-            </div>
+        <div className={`flex flex-col justify-start items-center cursor-default min-w-screen min-h-screen h-full w-full overflow-clip ${darkMode ? 'dark bg-neutral-900' : ''}`}>
+            <div className="fixed top-0 h-6 w-full" data-tauri-drag-region></div>
 
-            <div className="ps-1 pt-3 pl-1 text-neutral-500 border-b border-neutral-700 text-sm w-full">
-                Verse range
-            </div>
-            <div className="dark:text-neutral-300 w-full ps-2 pt-2 bg-neutral-800 flex justify-between items-center">
-                <input className="outline-none w-1/2 h-full bg-inherit" autoComplete="off"
-                placeholder="Enter a range of verses (i.e. 1-5)" value={verseRange} onChange={(e)=>setVerseRange(e.target.value)}/>
-                <div className="bg-inherit dark:text-neutral-400 w-1/2 h-full">
-                    Verses 1-{verses.length}                    
+            <div className="w-full pt-6 bg-neutral-800 border-b border-neutral-700">
+                 <div className="flex justify-start items-start pt-1 pl-3 pe-3 text-neutral-200 text-sm h-1/10 pb-1 font-bold w-full">
+                    Create Bookmark
+                </div>
+                <div className="ps-1 pt-1 pl-1 text-neutral-500 border-b border-neutral-700 text-sm w-full">
+                    <div className="pl-3">Book and Chapter</div>
+                </div>
+                <div className="dark:text-neutral-300 w-full ps-2 pt-2 bg-neutral-900 pb-1">
+                    <ScriptureSearchBox performSearch={performSearch} getChapterCount={getChapterCount}/>  
+                </div>
+
+                <div className="ps-1 pt-3 pl-1 text-neutral-500 border-b border-neutral-700 text-sm w-full">
+                <div className="pl-3">Verse range</div>
+                </div>
+                <div className="flex justify-start items-center dark:text-neutral-300 w-full ps-2 pt-2 bg-neutral-900 pb-1">
+                    <input className="outline-none w-1/2 h-full bg-inherit p-1 ps-2" autoComplete="off"
+                    placeholder="Enter a range of verses (i.e. 1-5)" value={verseRange} onChange={(e)=>setVerseRange(e.target.value)}/>
+                    <div className="bg-inherit dark:text-neutral-400 w-1/2 h-full p-1">
+                        {verses.length > 0 ? "Verses 1-" : ""}{verses.length > 0 ? verses.length : ''}                    
+                    </div>
                 </div>
             </div>
 
-            <div className="ps-1 pt-3 pl-1 text-neutral-500 border-b border-neutral-700 text-sm w-full">
-                Bookmark Preview
-            </div>
-            <div className="pl-3 py-2 dark:text-neutral-300">
-                {book} {chapter}:{verseRange}
-            </div>
-            <div className="overflow-y-scroll h-[200px]">
-            {
-                verses
-                .filter((v: Verse) => chosenVerseNums?.includes(v.number))
-                ?.map((verse : Verse) => <VerseComponent key={verse.number} verse={verse} selectVerse={()=>{}} selectedVerse={undefined}/>)
-            }
-            </div>
+            <div className="w-full h-[50%] flex flex-col justify-start items-start">
+                <div className="absolute w-full ">
+                 
+                    <div className="w-full pl-3 py-2 dark:text-neutral-300 b backdrop-blur-2xl">
+                        {book} {chapter}{verses.length > 0 ? ':' : ''}{verseRange}
+                    </div>
+                </div>
+                <div className="overflow-y-auto h-[200px] pt-10">
+                {
+                    verses
+                    .filter((v: Verse) => chosenVerseNums?.includes(v.number))
+                    ?.map((verse : Verse) => <VerseComponent key={verse.number} verse={verse} selectVerse={()=>{}} selectedVerse={undefined}/>)
+                }
+                </div>
 
-            <button className="mt-4 ml-4 px-4 py-1.5 dark:bg-neutral-800 rounded-md text-neutral-200 text-sm"
-            onClick={createBookmark}>
+                <button className="mt-4 ml-4 px-4 py-1.5 dark:bg-neutral-800 rounded-md text-neutral-200 text-sm"
+                onClick={createBookmark}>
 
-                Create Bookmark
-            </button>
+                    Create Bookmark
+                </button>
+            </div>
         </div>
     )
 }
