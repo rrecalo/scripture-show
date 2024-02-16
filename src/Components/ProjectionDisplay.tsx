@@ -5,7 +5,6 @@ import { getCurrent } from '@tauri-apps/api/window'
 import ProjectionConfiguration from '../types/ProjectionConfiguration'
 import { DisplayVerseEvent } from '../types/ProjectionConfiguration'
 import { ProjectionFormatEvent } from '../types/ProjectionConfiguration'
-import { appWindow } from '@tauri-apps/api/window'
 
 type MonitorProps = {
     audience: boolean
@@ -19,6 +18,9 @@ export default function Monitor({audience} : MonitorProps) {
     const [mouseInWindow, setMouseInWindow] = useState<boolean>(false);
 
     useEffect(()=>{
+        emit('request_format');
+        emit('request_verses');
+
         const unlisten_verses = listen('display_verse', (event : DisplayVerseEvent) => {   
             if(event){ 
                 setVersesToDisplay(event.payload.eng as Verse[]);
@@ -31,8 +33,7 @@ export default function Monitor({audience} : MonitorProps) {
                 setConfig(event.payload);
             }
         });
-        emit('request_format');
-        emit('request_verses');
+
 
         return ()=>{
             unlisten_verses.then(f => f());

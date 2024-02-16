@@ -18,12 +18,15 @@ export default function ProjectionCustomization({} : ProjectionCustomizationProp
         const unlisten_theme_update = listen('theme_update', (event : any) =>{
             setDarkMode(event.payload);
             });
+        
         emit("theme_request", "projection_customization");
+
+        emit("projection_customization_request", "projection_customization");
 
         const unlisten_projection_customization = listen("load_projection_customization", (event: any) => {
             setProjectionConfig(event.payload);
         });
-        emit("projection_customization_request", "projection_customization");
+
 
         return () => {
 

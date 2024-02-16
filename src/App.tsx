@@ -97,19 +97,19 @@ function App() {
     
     emit('theme_update', darkMode);
     emit("load_projection_customization", projectionConfig);
-    emit('projection_format', projectionConfig);
     
-    const unlisten_projection_customization_updates = listen('projection_format', (event: any) => {
-            if(event){
-                //setProjectionConfig(event.payload);
-            }
-        });
+    // const unlisten_projection_customization_updates = listen('projection_format', (event: any) => {
+    //         if(event){
+    //             //setProjectionConfig(event.payload);
+    //         }
+    //     });
 
     loadPreferences();
+    
     return () => {
         unlisten_configure_screens.then(f=>f());
         unlisten_projection_customization.then(f=>f());
-        unlisten_projection_customization_updates.then(f=>f());
+        // unlisten_projection_customization_updates.then(f=>f());
         };
     },[]);
 
@@ -144,26 +144,35 @@ function App() {
   //changed. this way, when the projection customization window is opened, it
   //can take off from where it left the configuration at previously
   useEffect(()=>{
-    const unlisten = listen("projection_customization_request", (_)=>{
-        if(projectionConfig){
-            emit("load_projection_customization", projectionConfig);
-        }
-    });
-    const unlisten_format = listen("request_format", (_)=>{
-        if(projectionConfig){
-            emit("projection_format", projectionConfig);
-        }
-    });
-    return () => {
-        unlisten.then(f=>f());
-        unlisten_format.then(f=>f());}
+        
   }, [projectionConfig]);
 
   useEffect(()=>{
     if(projectionConfig && darkMode){
         savePreferences({...projectionConfig, darkMode});
-        emit("projection_format", projectionConfig);
+
         emit('theme_update', darkMode);
+
+        const configChangedListener = listen('projection_format', (event)=>{
+            setProjectionConfig(event?.payload as any);
+        });
+
+        const unlisten = listen("projection_customization_request", (_)=>{
+            if(projectionConfig){
+                emit("load_projection_customization", projectionConfig);
+            }
+        });
+        const unlisten_format = listen("request_format", (_)=>{
+            if(projectionConfig){
+                emit("projection_format", projectionConfig);
+            }
+        });
+        return () => {
+            unlisten.then(f=>f());
+            unlisten_format.then(f=>f());
+            configChangedListener.then(f=>f());
+
+        }
     }
   }, [projectionConfig, darkMode]);
 
@@ -178,7 +187,7 @@ function App() {
                 //if default verse count is not found in the preferences, that means there probably aren't any preferences
                 //in this case, set the preferences as the defaults
                 if(prefs.verseCount === undefined || prefs.verseCount === null){
-                    setProjectionConfig({
+                    let defaults = {
                         verseCount: defaultVerseCount,
                         fontSize: defaultFontSize,
                         translations: defaultTranslations,
@@ -187,17 +196,19 @@ function App() {
                         verseTextWeight: 500,
                         verseNumberWeight: 500,
                         verseInfoWeight: 500,
-                    } as ProjectionConfiguration);
+                    } as ProjectionConfiguration;
+                    setProjectionConfig(defaults);
+                    emit('projection_format', defaults as ProjectionConfiguration);
                 }
                 else {
                     setProjectionConfig(prefs as ProjectionConfiguration);
+                    emit('projection_format', prefs as ProjectionConfiguration);
                 }
             }
         });
     }
 
     function savePreferences(preferences : any){
-    console.log(preferences);
       const encoder = new TextEncoder();
       const prefsString = JSON.stringify(preferences);
       const encodedPrefs = encoder.encode(prefsString);
