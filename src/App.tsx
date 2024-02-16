@@ -326,7 +326,7 @@ function App() {
   }
 
   return (
-    <div className={`container flex flex-row min-w-screen w-screen h-screen overflow-clip border border-neutral-950 
+    <motion.div initial={{opacity:0}} animate={{opacity:1}} className={`container flex flex-row min-w-screen w-screen h-screen overflow-clip border border-neutral-950 
     dark:bg-neutral-800 bg-neutral-100
     rounded-lg mx-auto ${darkMode ? 'dark bg-neutral-900' : ''}`}>
         <div className="fixed top-0 h-6 w-full" data-tauri-drag-region></div>
@@ -395,7 +395,7 @@ function App() {
             </div>
             */}
         </div>
-    </div>
+    </motion.div>
   );
 }
 

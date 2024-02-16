@@ -106,7 +106,7 @@ export default function ConfigureScreens(){
     }
 
     return(
-        <div className={`flex flex-row justify-center items-center gap-5 cursor-default min-w-screen min-h-screen h-full max-w-screen ${darkMode ? 'dark bg-neutral-900' : ''}`}>
+        <motion.div initial={{opacity:0.5}} animate={{opacity:1}} className={`flex flex-row justify-center items-center gap-5 cursor-default min-w-screen min-h-screen h-full max-w-screen ${darkMode ? 'dark bg-neutral-900' : ''}`}>
             <div className="fixed top-0 h-6 w-full" data-tauri-drag-region></div>
 
             {activeScreens?.map((screen : Screen) =>
@@ -132,6 +132,6 @@ export default function ConfigureScreens(){
                 </motion.span>
             </div>)}
              
-        </div>
+        </motion.div>
     )
 }

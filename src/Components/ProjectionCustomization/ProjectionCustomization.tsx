@@ -5,6 +5,7 @@ import ProjectionControls from './ProjectionControls';
 import ProjectionConfiguration from '../../types/ProjectionConfiguration';
 import './styles.css';
 import ProjectionDisplay from '../ProjectionDisplay';
+import { motion } from 'framer-motion';
 
 type ProjectionCustomizationProps = { }
 
@@ -51,7 +52,7 @@ export default function ProjectionCustomization({} : ProjectionCustomizationProp
 
 
     return (
-    <div className={`${darkMode ? 'dark ' : ''} w-screen h-screen overflow-clip`}>
+    <motion.div initial={{opacity:0.5}} animate={{opacity:1}} className={`${darkMode ? 'dark ' : ''} w-screen h-screen overflow-clip`}>
         <div className="fixed top-0 h-6 w-full" data-tauri-drag-region></div>
 
         <div className='w-full h-full flex justify-start items-center text-sm border-r border-neutral-700'>
@@ -65,13 +66,13 @@ export default function ProjectionCustomization({} : ProjectionCustomizationProp
 
             <div className="h-full w-1/2 mx-auto flex justify-center items-center bg-neutral-900 aspect-video">
                 <div className="h-fit scale-[0.49] aspect-video">
-                    <ProjectionDisplay />
+                    <ProjectionDisplay audience={false}/>
                 </div>
             </div>
 
             
         </div>
-    </div>
+    </motion.div>
 
     )
 
