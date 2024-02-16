@@ -14,6 +14,7 @@ import { BookmarkType } from "./Components/Bookmark/Bookmark";
 import { AiOutlinePlus } from 'react-icons/ai';
 import VerseHistory from "./Components/VerseHistory";
 import ProjectionConfiguration from "./types/ProjectionConfiguration";
+import { motion } from "framer-motion";
 
 export type GetVersesResult = {
     book_name: String,
@@ -333,9 +334,12 @@ function App() {
             <div className="w-full h-1/3 ps-1">
                 <div className="flex justify-between items-center pt-1 pl-1 pe-3 text-neutral-200 text-sm h-1/10 pb-1 font-bold">
                     Bookmarks
-                    <AiOutlinePlus onClick={openBookmarkWindow} />
+                    
+                    <motion.div animate={{color:"#a3a3a3", scale:1}} whileHover={{color: "#f5f5f5", scale:1.1}} onClick={openBookmarkWindow}>
+                        <AiOutlinePlus />
+                    </motion.div>
                 </div>
-                <div className="w-full border-black dark:border-neutral-700 border-r-0 overflow-y-auto overflow-x-hidden h-9/10 ">
+                <div className="w-full border-black dark:border-neutral-700 border-r-0 overflow-y-auto overflow-x-clip h-9/10 ">
                     <BookmarkList selectBookmark={openBookmark}/>
                 </div>
             </div>  

@@ -9,6 +9,7 @@ import { GetVersesResult } from "../../App";
 import VerseComponent from "../VerseComponent";
 import Verse from '../../types/Verse';
 import { BookmarkType } from "./Bookmark";
+import { motion } from "framer-motion";
 
 export default function BookmarkWindow({}){
 
@@ -117,7 +118,7 @@ export default function BookmarkWindow({}){
     }
 
     return (
-        <div className={`flex flex-col justify-start items-center cursor-default min-w-screen min-h-screen h-full w-full overflow-clip ${darkMode ? 'dark bg-neutral-900' : ''}`}>
+        <motion.div initial={{opacity:0.5}} animate={{opacity:1}} className={`flex flex-col justify-start items-center cursor-default min-w-screen min-h-screen h-full w-full overflow-clip ${darkMode ? 'dark bg-neutral-900' : ''}`}>
             <div className="fixed top-0 h-6 w-full" data-tauri-drag-region></div>
 
             <div className="w-full pt-6 bg-neutral-800 border-b border-neutral-700">
@@ -164,6 +165,6 @@ export default function BookmarkWindow({}){
                     Create Bookmark
                 </button>
             </div>
-        </div>
+        </motion.div>
     )
 }

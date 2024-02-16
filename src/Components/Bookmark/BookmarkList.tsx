@@ -3,6 +3,7 @@ import {BookmarkType} from './Bookmark'
 import Bookmark from './Bookmark';
 import { listen } from '@tauri-apps/api/event';
 import ConfirmBookmarkDeletionModal from './ConfirmBookmarkDeletionModal';
+import { AnimatePresence } from 'framer-motion';
 
 type BookmarkListProps = {
     selectBookmark: Function,
@@ -41,11 +42,12 @@ export default function BookmarkList({selectBookmark}: BookmarkListProps){
     }
 
     return (
-        <>
-        <ConfirmBookmarkDeletionModal display={showModal} setDisplay={setShowModal} b={bookmarkToDelete} deleteBookmark={handleDeleteBookmark}/>
+        <AnimatePresence>
+            <ConfirmBookmarkDeletionModal key="modal" display={showModal} setDisplay={setShowModal} b={bookmarkToDelete} deleteBookmark={handleDeleteBookmark}/>
+
         {bookmarks.map(b => 
         <Bookmark key={b.id} selectBookmark={handleBookmarkClicked} deleteBookmark={handleDeleteClicked} bookmark={b}/>
         )}
-        </>
+        </AnimatePresence>
     )
 }
