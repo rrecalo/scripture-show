@@ -181,7 +181,7 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
                     <div className="w-1/2 h-1/2 dark:text-black">
                         <ReactSlider
                         marks min={1} max={(fontUpperLimit * 2) + 1}
-                        value={(config?.fontSize - 2) * 8}
+                        value={((config?.fontSize - fontLowerLimit) * 4) + 1}
                         onChange={(e)=>setFontSize((fontLowerLimit + ((e - 1) / 4)))}
                         className="customSlider" 
                         thumbClassName="customSlider-thumb"

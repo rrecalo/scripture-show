@@ -12,8 +12,9 @@
 }
 
 :root {
-  --main-color: #525252;
-  --main-color-hover: rgb(104, 117, 217, 0.2);
+  --main-color: #f3553c;
+  /* students orange : #f3553c*/
+  --main-color-hover: rgb(243, 85, 60, 0.25);
   --track-color: #737373;
 /* Default mark color*/
   --mark-color: #aaaaaa;
@@ -46,7 +47,7 @@
 }
 
 .customSlider-thumb:hover {
-  box-shadow: 0 0 0 8px var(--main-color-hover);
+  box-shadow: 0 0 0 6px var(--main-color-hover);
 }
 
 .customSlider-track {
