@@ -215,6 +215,7 @@ async fn open_configure_screens_window(app: tauri::AppHandle) -> Result<bool, Ap
     #[cfg(target_os="macos")]
     let new_window = tauri::WindowBuilder::new(&app, "configure_screens",
         tauri::WindowUrl::App("../configure_screens.html".into()),)
+        .title("Configure Screens")
         .min_inner_size(400.0, 200.0)
         .inner_size(400.0, 200.0)
         .title_bar_style(tauri::TitleBarStyle::Overlay)
@@ -244,6 +245,7 @@ async fn open_projection_customization_window(app: tauri::AppHandle) -> Result<b
     #[cfg(target_os="macos")]
     let new_window = tauri::WindowBuilder::new(&app, "projection_customization",
         tauri::WindowUrl::App("../projection_customization.html".into()),)
+        .title("Projection Theme Customization")
         .min_inner_size(800.0, 600.0)
         .inner_size(800.0, 600.0)
         .title_bar_style(tauri::TitleBarStyle::Overlay)
@@ -272,6 +274,7 @@ async fn open_new_bookmark_window(app: tauri::AppHandle) -> Result<bool, Applica
     #[cfg(target_os="macos")]
     let new_window = tauri::WindowBuilder::new(&app, "bookmark",
         tauri::WindowUrl::App("../bookmark.html".into()),)
+        .title("Create a Bookmark")
         .min_inner_size(600.0, 500.0)
         .inner_size(600.0, 500.0)
         .title_bar_style(tauri::TitleBarStyle::Overlay)
