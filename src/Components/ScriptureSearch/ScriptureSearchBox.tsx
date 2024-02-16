@@ -25,7 +25,8 @@ export default function ScriptureSearchBox({performSearch, getChapterCount} : Sc
     }, [])
 
     function stopSearch(e: any){
-        if(e.target.id !== "search_container" && e.target.id !== "search_box" && e.target.id !== "search_icon" && e.target.id !== "search_icon_container" ){
+        if(e.target.id !== "search_container" && e.target.id !== "search_box" && e.target.id !== "search_icon" && e.target.id !== "search_icon_container" 
+        && e.target.id !== "search_box_container"){
             setSearching(false);
             setSearchValue("");
         }
@@ -75,7 +76,6 @@ export default function ScriptureSearchBox({performSearch, getChapterCount} : Sc
     //width: isSearching ? "100%" : "50%",
 
     function handleSearchDivClick(){
-        console.log("div clicked!");
         setSearching(true);
         let searchBox = document.getElementById("search_box");
         if(searchBox){
@@ -85,18 +85,18 @@ export default function ScriptureSearchBox({performSearch, getChapterCount} : Sc
     }
 
     return (
-        <div id="search_container" className="flex justify-center items-center bg-inherit w-full h-full min-h-[30px] p-1 ps-2 pt-2 rounded-md"
+        <div id="search_container" className="flex justify-start items-center bg-inherit w-full h-full min-h-[35px] pt-2 pb-2 rounded-md"
         onClick={()=>handleSearchDivClick()}>
             <motion.div className="w-1/4 flex justify-start items-center" layout
-            animate={{width: isSearching ? "100%" : "25%", x: isSearching ? "-8px": 0,
+            animate={{width: isSearching ? "100%" : "25%", x: isSearching ? "0px": 0, paddingLeft : isSearching ? "0px" : "0px",
              transition:{duration:0.35}}}>
-                <div className="flex w-full justify-center items-center gap-2">
-                    <motion.div  onClick={(e)=>{e.preventDefault(); e.stopPropagation(); handleSearchDivClick();}}
+                <div id="search_box_container" className={`flex w-full justify-center items-center gap-2 border border-neutral-700 rounded-lg ${isSearching ? 'pl-0' : 'pl-2'}`}>
+                    <motion.div onClick={(e)=>{e.preventDefault(); e.stopPropagation(); handleSearchDivClick();}}
                     id="search_icon_container" layout="preserve-aspect" className="w-5 h-5" animate={{opacity: isSearching ? 0 : 1, width: isSearching ? "0px": "20px",
                         transition:{duration:0.5}}}>
                         <IoSearch id="search_icon" className="w-full h-5 text-neutral-400"/> 
                     </motion.div>
-                    <input id="search_box" className="text-left outline-none w-1/2 h-full bg-inherit"
+                    <input id="search_box" className={`text-left outline-none w-full h-full bg-inherit py-1 ${isSearching ? "cursor-text": "cursor-default" }`}
                     autoComplete="off"
                     autoCorrect="off"
                     autoCapitalize="off"
@@ -106,7 +106,7 @@ export default function ScriptureSearchBox({performSearch, getChapterCount} : Sc
                     {
                     queryResult
                     ?
-                    <motion.div className="bg-inherit dark:text-neutral-400 w-1/2 h-full" initial={{opacity:0}} animate={{opacity:1}}>
+                    <motion.div className="bg-inherit dark:text-neutral-400 w-1/2 h-full text-center" initial={{opacity:0}} animate={{opacity:1}}>
                         {queryResult} {chapterCount !== undefined ? ("1-"+chapterCount) : ""}
                     </motion.div>
                     : <div className="bg-inherit w-1/2 h-full"></div>
