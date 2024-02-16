@@ -1,6 +1,7 @@
 import VerseComponent from '../VerseComponent';
 import Verse from '../../types/Verse';
 import {useEffect, useState} from 'react';
+import { AnimatePresence } from 'framer-motion';
 
 type ScriptureSearchResultsProps = {
     book: string,
@@ -92,8 +93,8 @@ export default function ScriptureSearchResults({book, verses, changeSelectedVers
     }
 
     return (
-        <>
-            {verses?.map((verse : Verse) => <VerseComponent key={verse.number} verse={verse} selectVerse={selectVerse} selectedVerse={selectedVerse}/>)}
-        </>
+        <AnimatePresence mode='wait'>
+            {verses?.map((verse : Verse) => <VerseComponent key={verse.text} verse={verse} selectVerse={selectVerse} selectedVerse={selectedVerse}/>)}
+        </AnimatePresence>
     )
 }
