@@ -346,7 +346,7 @@ function App() {
             
             <div className="w-full h-1/3 ps-1 border-t border-neutral-700">
                 <div className="pt-1 pl-1 text-neutral-200 text-sm px-1 h-1/10 pb-1 font-bold">
-                    Table of Contents
+                    Books
                 </div>
                 <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-[85%]">
                     {bookList?.map(bookName => <BookSelection key={bookName} bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
