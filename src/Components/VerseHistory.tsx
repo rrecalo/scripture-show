@@ -1,6 +1,7 @@
 import {listen} from '@tauri-apps/api/event';
 import { useEffect, useState } from 'react';
 import Verse from '../types/Verse';
+import { LayoutGroup, motion } from 'framer-motion';
 
 type VerseHistoryProps = {
 
@@ -39,10 +40,13 @@ export default function VerseHistory({} : VerseHistoryProps){
     
 
     return (
-    
-        history?.map((item : Verse) =>
-        <div className='ps-1 font-light text-sm w-full pe-4 whitespace-nowrap select-none cursor-default text-neutral-400 overflow-y-auto h-full overflow-x-hidden'
-        >{item.book_name} {item.chapter}:{item.number}</div>)
+        <LayoutGroup id="verse_history">
+            {history?.map((item : Verse, index: number) =>
+            <motion.div layout layoutId={item.text+index.toString()}
+            initial={{y:-1, opacity:0.9}} animate={{y:0, opacity:1}}
+            className='ps-1 font-light text-sm w-full pe-4 whitespace-nowrap select-none cursor-default text-neutral-400 overflow-y-auto h-full overflow-x-hidden'
+            >{item.book_name} {item.chapter}:{item.number}</motion.div>)}
+        </LayoutGroup>
     )
 
 

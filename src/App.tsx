@@ -357,7 +357,7 @@ function App() {
                 <div className="pt-2 pl-1 pb-1 text-neutral-200 text-sm px-1 h-1/10 font-bold">
                     History 
                 </div>
-                <div id="verse_history_container" className="border-black dark:border-neutral-700 border-r-0 overflow-x-hidden h-9/10 max-h-[90%] w-full">
+                <div id="verse_history_container" className="border-black dark:border-neutral-700 border-r-0 overflow-x-hidden h-9/10 max-h-[90%] w-full pb-5">
                     <VerseHistory />
                 </div>
             </div>
