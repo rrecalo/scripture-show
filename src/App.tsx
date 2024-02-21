@@ -15,6 +15,7 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import VerseHistory from "./Components/VerseHistory";
 import ProjectionConfiguration from "./types/ProjectionConfiguration";
 import { motion } from "framer-motion";
+import { appConfigDir } from '@tauri-apps/api/path';
 
 export type GetVersesResult = {
     book_name: String,
@@ -36,9 +37,11 @@ export async function getChapterCount(bookName: string){
     else return undefined;
   }
 
+export const appName = "scripture-show";
+
+
 function App() {
 
-  const appName = "scripture-show";
   const jsonConfigName = "scripture-show-config.json";
   const defaultVerseCount = 1;
   const defaultFontSize = 2;
@@ -180,6 +183,8 @@ function App() {
 
     function loadPreferences(){
         const decoder = new TextDecoder();
+        appConfigDir().then(res=>{console.log(res)});
+        //console.log(BaseDirectory.Config);
         readBinaryFile(jsonConfigName, {dir:BaseDirectory.AppConfig}).then(
         res => {
             if(res){

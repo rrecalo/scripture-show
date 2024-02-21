@@ -1,13 +1,16 @@
 import {useEffect, useState} from 'react';
 import {listen, emit} from '@tauri-apps/api/event';
-import PreviewDisplay from './PreviewDisplay';
 import ProjectionControls from './ProjectionControls';
 import ProjectionConfiguration from '../../types/ProjectionConfiguration';
 import './styles.css';
 import ProjectionDisplay from '../ProjectionDisplay';
 import { motion } from 'framer-motion';
+import { fs } from '@tauri-apps/api';
+import { BaseDirectory, createDir, readBinaryFile, writeBinaryFile } from '@tauri-apps/api/fs';
+import { appName } from '../../App';
 
 type ProjectionCustomizationProps = { }
+export let ThemeDir = "themes"
 
 export default function ProjectionCustomization({} : ProjectionCustomizationProps){
 
@@ -51,6 +54,35 @@ export default function ProjectionCustomization({} : ProjectionCustomizationProp
     },[projectionConfig]);
 
 
+    function saveTheme(themeName: string){
+        const encoder = new TextEncoder();
+        const prefsString = JSON.stringify(projectionConfig);
+        const encodedPrefs = encoder.encode(prefsString);
+        fs.exists(ThemeDir, {dir: BaseDirectory.AppConfig}).then(exists =>
+            {
+            if(!exists){
+                createDir(ThemeDir, {dir: BaseDirectory.AppConfig, recursive:true }, );
+            }
+            
+            writeBinaryFile(ThemeDir+"/"+themeName, encodedPrefs, {dir: BaseDirectory.AppConfig});
+            });
+    }
+
+    function loadTheme(themeName: string){
+        const decoder = new TextDecoder();
+        readBinaryFile(ThemeDir+"/"+themeName, {dir:BaseDirectory.AppConfig}).then(
+        res => {
+            if(res){
+            const prefs = JSON.parse(decoder.decode(res));
+                //setDarkMode(prefs.darkMode);
+                //if default verse count is not found in the preferences, that means there probably aren't any preferences
+                //in this case, set the preferences as the defaults
+                setProjectionConfig(prefs as ProjectionConfiguration);
+                //emit('projection_format', prefs as ProjectionConfiguration);
+            }
+        });
+    }
+
     return (
     <motion.div initial={{opacity:0.5}} animate={{opacity:1}} className={`${darkMode ? 'dark ' : ''} w-screen h-screen overflow-clip`}>
         <div className="fixed top-0 h-6 w-full" data-tauri-drag-region></div>
@@ -60,7 +92,7 @@ export default function ProjectionCustomization({} : ProjectionCustomizationProp
             <div className='pt-6 w-1/2 h-full dark:bg-neutral-800 border-r dark:border-neutral-700'>
 
                 <div className='w-full h-full pt-0'>
-                    <ProjectionControls config={projectionConfig} setConfig={setProjectionConfig}/>
+                    <ProjectionControls config={projectionConfig} setConfig={setProjectionConfig} themeFunctions={[saveTheme, loadTheme]}/>
                 </div>
             </div>
 
@@ -69,6 +101,7 @@ export default function ProjectionCustomization({} : ProjectionCustomizationProp
                     <ProjectionDisplay audience={false}/>
                 </div>
             </div>
+
 
             
         </div>

@@ -3,19 +3,41 @@ import ProjectionConfiguration from "../../types/ProjectionConfiguration";
 import { useState, useEffect } from "react";
 import ReactSlider from 'react-slider';
 import "./styles.css";
+import { readDir, BaseDirectory, readBinaryFile } from "@tauri-apps/api/fs";
+import { ThemeDir } from "./ProjectionCustomization";
 
 type ProjectionControlsProps = {
     config: ProjectionConfiguration,
-    setConfig: Function
+    setConfig: Function,
+    //0 = save, 1 = load, 2 = clear/delete
+    themeFunctions: Function[]
+}
+type Theme = { 
+    name: string,
+    theme: ProjectionConfiguration,
+    lastUsed: boolean,
 }
 
-export default function ProjectionControls({config, setConfig} : ProjectionControlsProps){
+export default function ProjectionControls({config, setConfig, themeFunctions} : ProjectionControlsProps){
 
+    const [themes, setThemes] = useState<Theme[]>();
+    const [activeSelection, setActiveSelection] = useState<string>();
     const [translationCountWarning, setTranslationCountWarning] = useState<boolean>(false);
     const [fontLimitWarning, setFontLimitWarning] = useState<boolean>(false);
     const [verseLimitWarning, setVerseLimitWarning] = useState<boolean>(false);
     const fontLowerLimit = 2;
     const fontUpperLimit = 4;
+
+    useEffect(()=>{
+        getAllThemes();
+    }, []);
+
+    useEffect(()=>{
+        if(!activeSelection && themes){
+            //setActiveSelection(themes[0].name);
+            //themeFunctions[1](themes[0].name);
+        }
+    }, [themes])
 
     useEffect(()=>{
         if(translationCountWarning){
@@ -94,16 +116,94 @@ export default function ProjectionControls({config, setConfig} : ProjectionContr
     function setFontSize(e:any){
         setConfig({...config, fontSize: e});
     }
+    
+    function processEntries(entries: any, themeNames: string[]) {
+        for (const entry of entries) {
+            themeNames.push(entry.name);
+            if (entry.children) {
+                processEntries(entry.children, themeNames);
+            }
+        }
+        }
+
+    function getAllThemes(){
+        readDir('themes', { dir: BaseDirectory.AppData, recursive: true }).then(entries => {
+        let themeNames: string[] = [];
+        processEntries(entries, themeNames);
+        readThemeData(themeNames);
+        });
+        
+    }
+
+    function readThemeData(themes: string[]){
+        let themeData: Theme[] = [];
+        const decoder = new TextDecoder();
+        themes.forEach(theme =>{
+            readBinaryFile(ThemeDir+'/'+theme, {dir:BaseDirectory.AppConfig}).then(
+                res => {
+                    if(res){
+                    const prefs = JSON.parse(decoder.decode(res));
+                        themeData.push({name: theme, theme: prefs, lastUsed: false} as Theme);
+                    }
+                });
+        });
+        if (themeData){
+            setThemes(themeData);
+        }
+
+    }
+
+    function changeActiveSelection(e: any){
+        setActiveSelection(e.target.value);
+    }
+
+    async function handleSave(){
+        themeFunctions[0](activeSelection);
+        let t = themes;
+        let savedTheme = t?.find(theme => theme.name === activeSelection);
+        if(savedTheme){
+            savedTheme.theme = config;
+        }
+        setConfig(config);
+        setThemes(t);
+        //themeFunctions[1](activeSelection);
+
+        /*
+        let load = document.getElementById("changes");
+        if(load){
+            load.innerHTML = "";
+        }
+        */
+    }
 
     return (
         <div className="flex flex-col w-full h-full justify-start items-start select-none">
             
 
-
             <div className="flex flex-col justify-start items-start w-full px-4 py-2">
+                <div className=" text-neutral-200 text-sm h-1/10 font-bold">
+                    Save/Load Theme
+                </div>
+                <div className='w-full h-fit pt-2'>
+                    <select onChange={changeActiveSelection} value={activeSelection}
+                    className="bg-neutral-900 w-1/2 outline-none text-neutral-200 appearance-none pl-2 py-1">
+                        {themes?.map(theme=>(<option value={theme.name}>{theme.name}</option>))}
+                    </select>
+                    <div id="changes" className="inline-block text-red-500 text-base min-w-2 min-h-full">
+                    {JSON.stringify(config) !== JSON.stringify(themes?.find(theme => theme.name === activeSelection)?.theme) ? 
+                    '*' : ''}
+                    </div>
+                    <button id="save" className="ml-2 px-4 py-1 dark:bg-neutral-900 rounded-md text-neutral-200 text-sm" onClick={()=>handleSave()}>save</button>
+                    <button id="load" className="ml-2 px-4 py-1 dark:bg-neutral-900 rounded-md text-neutral-200 text-sm" onClick={()=>themeFunctions[1](activeSelection)}>load</button>
+                </div>
+            </div>
+            <div className="flex flex-col justify-start items-start w-full px-4 py-2 border-t border-neutral-700">
+                
+                
                 <div className=" text-neutral-200 text-sm h-1/10 font-bold">
                     Typography
                 </div>
+                
                 <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[30px]">
                     <div className="w-1/2 h-1/2 my-auto dark:text-neutral-300">
                         Verse Font Weight                     

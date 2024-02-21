@@ -23,7 +23,7 @@
       },
       "fs":{
           "all":true,
-          "scope":["$APP/*", "$DESKTOP/*", "*/*", "*", "*/.config/*", "$CONFIG/*", "$RESOURCE/*"]
+          "scope":["$APP/*", "$DESKTOP/*", "*/*", "*", "*/.config/*", "$CONFIG/*", "$RESOURCE/*", "$APPCONFIG/*", "*/themes/*", "$APPCONFIG/themes/*"]
       },
       "all": true,
       "shell": {
