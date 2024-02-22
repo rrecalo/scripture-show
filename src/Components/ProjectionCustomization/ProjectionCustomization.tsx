@@ -53,6 +53,10 @@ export default function ProjectionCustomization({} : ProjectionCustomizationProp
     },[projectionConfig]);
 
 
+    function deleteTheme(themeName: string){
+        fs.removeFile(ThemeDir+"/"+themeName, {dir: BaseDirectory.AppConfig});
+    }
+
     function saveTheme(themeName: string){
         const encoder = new TextEncoder();
         const prefsString = JSON.stringify(projectionConfig);
@@ -92,7 +96,7 @@ export default function ProjectionCustomization({} : ProjectionCustomizationProp
             <div className='pt-6 w-1/2 h-full dark:bg-neutral-800 border-r dark:border-neutral-700'>
 
                 <div className='w-full h-full pt-0'>
-                    <ProjectionControls config={projectionConfig} setConfig={setProjectionConfig} themeFunctions={[saveTheme, loadTheme]}/>
+                    <ProjectionControls config={projectionConfig} setConfig={setProjectionConfig} themeFunctions={[saveTheme, loadTheme, deleteTheme]}/>
                 </div>
             </div>
 

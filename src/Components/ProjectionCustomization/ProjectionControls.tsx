@@ -32,6 +32,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     const [translationCountWarning, setTranslationCountWarning] = useState<boolean>(false);
     const [fontLimitWarning, setFontLimitWarning] = useState<boolean>(false);
     const [verseLimitWarning, setVerseLimitWarning] = useState<boolean>(false);
+    const [editedName, setEditedName] = useState<string>();
     const fontLowerLimit = 2;
     const fontUpperLimit = 4;
 
@@ -41,8 +42,8 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
             let lastTheme = event?.payload?.lastTheme;
             setLastTheme(lastTheme);
             if(event){
-                getAllThemes(lastTheme).then(res=>{
-                    setThemes(res);
+                getAllThemes().then(res=>{
+                    setThemes(res as Theme[]);
                     setActiveSelection(lastTheme);
                 });
             }
@@ -51,7 +52,8 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
         let root = document.getElementById("root");
         if(root){
             root.addEventListener("click", (event : MouseEvent)=>{
-                if(event?.target?.id !== "file_menu" && event?.target?.id !== "file_dropdown" && event?.target?.id !== "theme_name_input"){
+                if(event?.target?.id !== "file_menu" && event?.target?.id !== "file_dropdown" && event?.target?.id !== "theme_name_input"
+                ){
                     setShowThemeMenu(false);
                     setHideModal(true);
                 }
@@ -65,10 +67,43 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
 
     useEffect(()=>{
         if(themes && lastTheme){
-            setActiveSelection(lastTheme);
+            setActiveSelection(lastTheme || themes[0].name);
             setLastTheme(undefined);
+            emit("last_theme", {lastTheme: lastTheme});
         }
     },[themes, lastTheme]);
+
+    useEffect(()=>{
+        let editBox = document.getElementById("edit_name");
+        if (editBox){
+            editBox.focus();
+        }
+
+        let root = document.getElementById("root");
+        if(root){
+            root.addEventListener("click", stopEditingName);
+        }
+        return () => {
+            root?.removeEventListener("click", ()=>{});
+        }
+    }, [editedName, activeSelection]);
+    
+    function stopEditingName(event: MouseEvent){
+        if(event?.target?.id !== "edit_name" && event?.target?.id !== "rename_option")
+        {
+            if(editedName && activeSelection) {
+                if(editedName !== removeExtension(activeSelection)){
+                    let themeName = editedName + ".json";
+                    setThemes((themes)=>[...themes.filter(t => t.name !== activeSelection), {name:themeName, lastUsed:false, theme:config} as Theme]);
+                    setActiveSelection(themeName);
+                    setEditedName(undefined);
+                    themeFunctions[2](activeSelection);
+                    themeFunctions[0](themeName);
+                    setLastTheme(themeName);
+                }
+            }
+        }
+    }
 
     useEffect(()=>{
         if(translationCountWarning){
@@ -111,19 +146,6 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
         }
     }
 
-    function changeFontSize(change: number){
-        if((config.fontSize <= fontLowerLimit && change < 0) || (config.fontSize == fontUpperLimit && change > 1)){
-            setFontLimitWarning(true);
-            return;
-        }
-        else if(config.fontSize >= fontLowerLimit && config.fontSize < fontUpperLimit){
-            setConfig({...config, fontSize: config.fontSize+change});
-        }
-        else if(config.fontSize == fontUpperLimit && change < 0){
-            setConfig({...config, fontSize: config.fontSize+change}); 
-        }
-    }
-
     function handleBgColorChange(e:any){
         setConfig({...config, bgColor: e});
     }
@@ -159,9 +181,9 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                 processEntries(entry.children, themeNames);
             }
         }
-        }
+    }
 
-    async function getAllThemes(initialTheme: string | undefined){
+    async function getAllThemes(){
         return readDir('themes', { dir: BaseDirectory.AppData, recursive: true }).then(entries => {
             let themeNames: string[] = [];
             processEntries(entries, themeNames);
@@ -191,10 +213,6 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
 
     }
 
-    function changeActiveSelection(e: any){
-        setActiveSelection(e.target.value);
-    }
-
     async function handleSave(){
         themeFunctions[0](activeSelection);
         let t = themes;
@@ -220,6 +238,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
         setThemes((themes)=>[...themes, {name:themeName, lastUsed:false, theme:config} as Theme]);
         setActiveSelection(themeName);
         setNewThemeName("");
+        setLastTheme(themeName);
     }
 
     function handleNewClick(e: MouseEvent){
@@ -227,6 +246,37 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
         e.stopPropagation();
         setHideModal(false);
         setShowThemeMenu(false);
+    }
+
+    function handleRename(){
+        if(activeSelection){
+            setEditedName(removeExtension(activeSelection));
+        }
+    }
+
+    function handleEditingKeydown(e: KeyboardEvent) {
+        if(e.key === "Enter"){
+            e.preventDefault();
+            e.stopPropagation();
+            if(editedName && activeSelection) {
+                if(editedName !== removeExtension(activeSelection)){
+                    let themeName = editedName + ".json";
+                    setThemes((themes)=>[...themes.filter(t => t.name !== activeSelection), {name:themeName, lastUsed:false, theme:config} as Theme]);
+                    setActiveSelection(themeName);
+                    themeFunctions[2](activeSelection);
+                    themeFunctions[0](themeName);
+                    setLastTheme(themeName);
+                }
+                setEditedName(undefined);
+            }
+        }
+    }
+
+    function handleDelete(){
+        setThemes((themes)=>[...themes.filter(t => t.name !== activeSelection)]);
+        themeFunctions[2](activeSelection);
+        setActiveSelection(themes[0].name || undefined);
+        setLastTheme(themes[0].name);
     }
 
     return (
@@ -238,17 +288,26 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                     Save/Load Theme
                 </div>
                 <div className='w-full h-fit pt-2 flex'>
-                    <select onChange={(e)=>setActiveSelection(e.target.value)} value={activeSelection} onMouseDown={()=>{
+                    <div className="relative min-w-[25%] max-w-[50%] w-fit bg-neutral-900 rounded-md">
+                    <select hidden={editedName !== undefined ? true : false} onChange={(e)=>{setActiveSelection(e.target.value); setLastTheme(e.target.value);}} value={activeSelection} onMouseDown={()=>{
                         setShowThemeMenu(false);
                     }}
-                    className="bg-neutral-900 min-w-[25%] max-w-[50%] outline-none text-neutral-200 appearance-none pl-2 py-1">
-                        {themes?.map(theme=>(<option value={theme.name}>{removeExtension(theme.name)}</option>))}
+                    className="absolute left-0 w-full outline-none text-neutral-200 appearance-none pl-2 py-1 bg-transparent">
+                        {themes?.map(theme=>(<option key={theme.name} id={theme.name} value={theme.name}>{removeExtension(theme.name)}</option>))}
                     </select>
+                    {
+                        editedName !== undefined ?
+                    <input placeholder="name required..." autoCapitalize="off" autoComplete="off" autoCorrect="off"
+                    id="edit_name" className="z-10 absolute left-0 w-full outline-none text-neutral-200 appearance-none pl-2 py-1 bg-transparent" value={editedName} onChange={(e)=>setEditedName(e.target.value)}
+                    onKeyDown={handleEditingKeydown}/>
+                    : <></>
+                    }
+                    </div>
                     <div id="changes" className="inline-block text-red-500 text-base min-w-2 min-h-full">
                     {JSON.stringify(config) !== JSON.stringify(themes?.find(theme => theme.name === activeSelection)?.theme) ? 
                     '*' : ''}
                     </div>
-                    <div id="file_dropdown" className="relative w-16 ml-2 pl-3 pe-2 py-1 rounded-md text-neutral-100 text-sm bg-neutral-900 flex justify-between items-center align-middle" 
+                    <div id="file_dropdown" className="relative  w-16 ml-2 pl-3 pe-2 py-1 rounded-md text-neutral-100 text-sm bg-neutral-900 flex justify-between items-center align-middle" 
                     onClick={()=>setShowThemeMenu(!showThemeMenu)}>
                         File
                         <MdArrowDropDown id="file_dropdown" className="w-4 h-4"/>
@@ -266,6 +325,14 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                             <div className="bg-neutral-900 pl-2 w-full border-b border-neutral-700"
                             onClick={()=>themeFunctions[1](activeSelection)}>
                                 <div className="w-full py-1 ">Load</div>
+                            </div>
+                            <div id="rename_option" className="bg-neutral-900 pl-2 w-full border-b border-neutral-700"
+                            onClick={(e)=>{e.stopPropagation(); handleRename();}}>
+                                <div id="rename_option" className="w-full py-1 ">Rename</div>
+                            </div>
+                            <div className="bg-neutral-900 pl-2 w-full border-b border-neutral-700 rounded-es-md rounded-ee-md"
+                            onClick={handleDelete}>
+                                <div className="w-full py-1 ">Delete</div>
                             </div>
                             
                         </div>
