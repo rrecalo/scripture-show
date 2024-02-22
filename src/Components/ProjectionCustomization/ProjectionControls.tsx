@@ -25,7 +25,8 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     
     const [showThemeMenu, setShowThemeMenu] = useState<boolean>(false);
     const [newThemeName, setNewThemeName] = useState<string>("");
-    const [hideModal, setHideModal] = useState<boolean>(true);  
+    const [hideModal, setHideModal] = useState<boolean>(true); 
+    const [lastTheme, setLastTheme] = useState<string>(); 
     const [themes, setThemes] = useState<Theme[]>([]);
     const [activeSelection, setActiveSelection] = useState<string>();
     const [translationCountWarning, setTranslationCountWarning] = useState<boolean>(false);
@@ -37,15 +38,19 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     useEffect(()=>{
         emit("last_theme_request");
         const unlisten = listen("load_last_theme", (event)=>{
+            let lastTheme = event?.payload?.lastTheme;
+            setLastTheme(lastTheme);
             if(event){
-                getAllThemes(event?.payload?.lastTheme);
+                getAllThemes(lastTheme).then(res=>{
+                    setThemes(res);
+                    setActiveSelection(lastTheme);
+                });
             }
         });
-        getAllThemes("theme.json");
+        
         let root = document.getElementById("root");
         if(root){
             root.addEventListener("click", (event : MouseEvent)=>{
-                console.log(event);
                 if(event?.target?.id !== "file_menu" && event?.target?.id !== "file_dropdown" && event?.target?.id !== "theme_name_input"){
                     setShowThemeMenu(false);
                     setHideModal(true);
@@ -57,6 +62,13 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
             unlisten.then(f=>f());
         }
     }, []);
+
+    useEffect(()=>{
+        if(themes && lastTheme){
+            setActiveSelection(lastTheme);
+            setLastTheme(undefined);
+        }
+    },[themes, lastTheme]);
 
     useEffect(()=>{
         if(translationCountWarning){
@@ -150,18 +162,13 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
         }
 
     async function getAllThemes(initialTheme: string | undefined){
-        readDir('themes', { dir: BaseDirectory.AppData, recursive: true }).then(entries => {
+        return readDir('themes', { dir: BaseDirectory.AppData, recursive: true }).then(entries => {
             let themeNames: string[] = [];
             processEntries(entries, themeNames);
 
-            readThemeData(themeNames).then(res=>{
-                setThemes(res as Theme[]);
-                if(initialTheme){
-                    setActiveSelection(initialTheme);
-                }
-            })
+            return readThemeData(themeNames);
 
-        });
+        })
         
     }
 
@@ -231,7 +238,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                     Save/Load Theme
                 </div>
                 <div className='w-full h-fit pt-2 flex'>
-                    <select onChange={changeActiveSelection} value={activeSelection} onMouseDown={()=>{
+                    <select onChange={(e)=>setActiveSelection(e.target.value)} value={activeSelection} onMouseDown={()=>{
                         setShowThemeMenu(false);
                     }}
                     className="bg-neutral-900 min-w-[25%] max-w-[50%] outline-none text-neutral-200 appearance-none pl-2 py-1">

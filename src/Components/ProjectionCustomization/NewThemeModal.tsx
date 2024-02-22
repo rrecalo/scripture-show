@@ -12,26 +12,15 @@ type Props = {
 
 function NewThemeModal({hide, setHide, newThemeName, setNewThemeName, initNewTheme} : Props) {
 
-
-    useEffect(()=>{
-        if(!hide){
-            let root = document.getElementById("root");
-            if(root){
-                root.addEventListener("click", (event : MouseEvent)=>{
-                    
-                });
-            }
-            return ()=>{root?.removeEventListener("click", ()=>{});}
-        }
-    },[hide]);
-
     function handleCreate(){
         initNewTheme();
     }
 
     function handleCancel(){
-        setHide(true);
-        setNewThemeName("");
+        if(newThemeName === undefined && newThemeName.length > 0){
+            setHide(true);
+            setNewThemeName("");
+        }
     }
 
   return (

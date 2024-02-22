@@ -155,7 +155,6 @@ function App() {
   useEffect(()=>{
     if(lastTheme){
         const unlisten = listen("last_theme", (event) =>{
-            console.log(event);
             setLastTheme(event?.payload?.lastTheme);
         })
 
