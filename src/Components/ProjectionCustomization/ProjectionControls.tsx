@@ -92,7 +92,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
             root.addEventListener("click", stopEditingName);
         }
         return () => {
-            root?.removeEventListener("click", ()=>{});
+            root?.removeEventListener("click", stopEditingName);
         }
     }, [editedName, activeSelection]);
     
