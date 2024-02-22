@@ -108,6 +108,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                     themeFunctions[2](activeSelection);
                     themeFunctions[0](themeName);
                     setLastTheme(themeName);
+                    setExpanded(false);
                 }
             }
         }
@@ -274,6 +275,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                     setLastTheme(themeName);
                 }
                 setEditedName(undefined);
+                setExpanded(false);
             }
         }
     }
