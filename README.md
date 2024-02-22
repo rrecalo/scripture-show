@@ -1,6 +1,6 @@
 <p align="center">
   <p align="center">
-   <img width="128px" src="https://github.com/rrecalo/scripture-show/assets/103965989/1f0947b2-d40a-4e2c-b33e-063f06642a38](https://github.com/rrecalo/scripture-show/assets/103965989/e26d20f7-8816-403b-8318-89b39ad332c7" />
+   <img width="128px" src="https://github.com/rrecalo/scripture-show/assets/103965989/ddcce03a-048d-4c3a-a3f0-ad245b3b057c"/>
   </p>
 	<h1 align="center"><b>ScriptureShow</b></h1>
  <p align="center">
