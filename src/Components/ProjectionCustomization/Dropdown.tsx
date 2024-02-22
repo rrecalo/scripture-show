@@ -28,24 +28,26 @@ function Dropdown({hidden, value, options, onChange, onMouseDown, expanded, setE
 
   return (
     <div hidden={hidden} className="relative bg-neutral-800 border border-neutral-700 text-neutral-300 rounded-md min-w-full">
-        <div onMouseDown={showOptions} className="flex gap-1 justify-between items-center align-middle py-1 px-1 ps-2">
+        <div onMouseDown={showOptions} className="flex gap-1 justify-between items-center align-middle py-1.5 px-1 ps-2">
             <div>
                 {removeExtension(value || "")}
             </div>
             <BiExpandVertical className="w-3 h-3 text-neutral-300"/>
         </div>
 
-        <motion.div initial={{opacity:0}} animate={{opacity: expanded ? 1 : 0,  transition:{duration:0.25}}} id="options" className="absolute mt-1 top-full w-full px-1 h-fit max-h-[150px] overflow-y-scroll bg-neutral-800 border border-neutral-700 rounded-md">
-            {options.map(
-                option => {
-                 let isSelected = option === value;
-                 return (<motion.div onClick={isSelected ? ()=>{} : ()=>handleChange(option)} className={`w-full ps-2 py-1 m-1 rounded-md border-neutral-700 ${isSelected ? 'border' :''}`}
-                    animate={{backgroundColor:isSelected ? "" : "rgb(38, 38, 38)", pointerEvents: expanded ? 'auto' : 'none',}} whileHover={{backgroundColor: isSelected ? "" : "rgb(64, 64, 64)" }}>
-                        {removeExtension(option)}
-                    </motion.div>
-                )
-                }
-            )}
+        <motion.div id="options" initial={{opacity:0}} animate={{opacity: expanded ? 1 : 0,  transition:{duration:0.25}}} className="absolute px-1 pe-3 bg-neutral-800 top-full border border-neutral-700 w-full h-fit max-h-[150px] mt-1.5 rounded-md">
+        <div className="pt-1"></div>
+        {options.map(
+            option => {
+                let isSelected = option === value;
+                return (<motion.div onClick={isSelected ? ()=>{} : ()=>handleChange(option)} className={`w-full ps-2 py-1.5 m-1 rounded-md border-neutral-700 ${isSelected ? 'border' :''}`}
+                animate={{backgroundColor:isSelected ? "" : "rgb(38, 38, 38)", pointerEvents: expanded ? 'auto' : 'none',}} whileHover={{backgroundColor: isSelected ? "" : "rgb(64, 64, 64)" }}>
+                    {removeExtension(option)}
+                </motion.div>
+            )
+            }
+        )}
+        <div className="pt-1"></div>
         </motion.div>
     </div>
   )
