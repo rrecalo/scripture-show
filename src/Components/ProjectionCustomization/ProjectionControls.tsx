@@ -5,9 +5,12 @@ import ReactSlider from 'react-slider';
 import "./styles.css";
 import { readDir, BaseDirectory, readBinaryFile } from "@tauri-apps/api/fs";
 import { ThemeDir } from "./ProjectionCustomization";
-import { MdArrowDropDown, MdArrowRight } from "react-icons/md";
+import { MdArrowDropDown} from "react-icons/md";
 import NewThemeModal from "./NewThemeModal";
 import { emit, listen } from '@tauri-apps/api/event';
+import { MdOutlineEditNote } from "react-icons/md";
+import Dropdown from "./Dropdown";
+import { motion } from "framer-motion";
 
 type ProjectionControlsProps = {
     config: ProjectionConfiguration,
@@ -21,9 +24,14 @@ type Theme = {
     lastUsed: boolean,
 }
 
+export function removeExtension(themeName: string){
+    return themeName.replace(".json", "");
+}
+
 export default function ProjectionControls({config, setConfig, themeFunctions} : ProjectionControlsProps){
     
     const [showThemeMenu, setShowThemeMenu] = useState<boolean>(false);
+    const [expanded, setExpanded] = useState<boolean>(false);
     const [newThemeName, setNewThemeName] = useState<string>("");
     const [hideModal, setHideModal] = useState<boolean>(true); 
     const [lastTheme, setLastTheme] = useState<string>(); 
@@ -170,9 +178,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
         setConfig({...config, fontSize: e});
     }
 
-    function removeExtension(themeName: string){
-        return themeName.replace(".json", "");
-    }
+
     
     function processEntries(entries: any, themeNames: string[]) {
         for (const entry of entries) {
@@ -284,75 +290,74 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
             
             <NewThemeModal newThemeName={newThemeName} setNewThemeName={setNewThemeName} hide={hideModal} setHide={setHideModal} initNewTheme={initNewTheme}/>
             <div className="flex flex-col justify-start items-start w-full px-4 py-2">
-                <div className=" text-neutral-200 text-sm h-1/10 font-bold">
-                    Save/Load Theme
+                <div className=" text-neutral-200 text-sm h-1/10 font-bold mb-1">
+                    Themes
                 </div>
+                
                 <div className='w-full h-fit pt-2 flex'>
-                    <div className="relative min-w-[25%] max-w-[50%] w-fit bg-neutral-900 rounded-md">
-                    <select hidden={editedName !== undefined ? true : false} onChange={(e)=>{setActiveSelection(e.target.value); setLastTheme(e.target.value);}} value={activeSelection} onMouseDown={()=>{
-                        setShowThemeMenu(false);
-                    }}
-                    className="absolute left-0 w-full outline-none text-neutral-200 appearance-none pl-2 py-1 bg-transparent">
-                        {themes?.map(theme=>(<option key={theme.name} id={theme.name} value={theme.name}>{removeExtension(theme.name)}</option>))}
-                    </select>
+                    <div className="relative min-w-[50%] max-w-[50%] w-fit rounded-md">
+                    <Dropdown expanded={expanded} setExpanded={setExpanded} hidden={editedName !== undefined ? true : false} value={activeSelection} onChange={(e : string)=>{setActiveSelection(e)}} 
+                    options={themes.map(theme=>theme.name)}
+                    onMouseDown={()=>
+                    setShowThemeMenu(false)}/>
                     {
                         editedName !== undefined ?
                     <input placeholder="name required..." autoCapitalize="off" autoComplete="off" autoCorrect="off"
-                    id="edit_name" className="z-10 absolute left-0 w-full outline-none text-neutral-200 appearance-none pl-2 py-1 bg-transparent" value={editedName} onChange={(e)=>setEditedName(e.target.value)}
+                    id="edit_name" className="z-10 absolute left-0 w-full outline-none text-neutral-200 appearance-none pl-2 py-1 bg-transparent border border-neutral-700 rounded-md" value={editedName} onChange={(e)=>setEditedName(e.target.value)}
                     onKeyDown={handleEditingKeydown}/>
+                    
                     : <></>
                     }
                     </div>
-                    <div id="changes" className="inline-block text-red-500 text-base min-w-2 min-h-full">
+                    <div id="changes" className="inline-block text-red-500 text-base min-w-2 min-h-full ml-0.5">
                     {JSON.stringify(config) !== JSON.stringify(themes?.find(theme => theme.name === activeSelection)?.theme) ? 
                     '*' : ''}
                     </div>
-                    <div id="file_dropdown" className="relative  w-16 ml-2 pl-3 pe-2 py-1 rounded-md text-neutral-100 text-sm bg-neutral-900 flex justify-between items-center align-middle" 
+                    <div id="file_dropdown" className="relative w-16 ml-2 pl-3 pe-2 py-1 rounded-md text-neutral-200 text-sm bg-neutral-800 border border-neutral-700 flex justify-between items-center align-middle" 
                     onClick={()=>setShowThemeMenu(!showThemeMenu)}>
                         File
                         <MdArrowDropDown id="file_dropdown" className="w-4 h-4"/>
-                        <div id="file_menu" className="absolute left-0 w-24 top-8 z-10" hidden={!showThemeMenu}>
-                            <div className="bg-neutral-900 pl-2 w-full rounded-ss-md rounded-se-md border-b border-neutral-700"
+                        <motion.div id="file_menu" animate={{opacity: showThemeMenu ? 1 : 0, display: showThemeMenu ? "block" : "none"}} className="absolute left-0 w-24 top-8 z-10 border border-neutral-700 rounded-md text-neutral-200">
+                            <div className="bg-neutral-800 pl-2 w-full rounded-ss-md rounded-se-md border-b border-neutral-700"
                             onClick={handleNewClick}>
                                 <div id="file_dropdown" className="w-full py-1 flex justify-between items-center align-middle pe-2">
                                     New
                                 </div>
                             </div>
-                            <div className="bg-neutral-900 pl-2 w-full border-b border-neutral-700"
+                            <div className="bg-neutral-800 pl-2 w-full border-b border-neutral-700"
                             onClick={()=>handleSave()}>
                                 <div className="w-full py-1 ">Save</div>
                             </div>
-                            <div className="bg-neutral-900 pl-2 w-full border-b border-neutral-700"
+                            <div className="bg-neutral-800 pl-2 w-full border-b border-neutral-700"
                             onClick={()=>themeFunctions[1](activeSelection)}>
                                 <div className="w-full py-1 ">Load</div>
                             </div>
-                            <div id="rename_option" className="bg-neutral-900 pl-2 w-full border-b border-neutral-700"
+                            <div id="rename_option" className="bg-neutral-800 pl-2 w-full border-b border-neutral-700"
                             onClick={(e)=>{e.stopPropagation(); handleRename();}}>
                                 <div id="rename_option" className="w-full py-1 ">Rename</div>
                             </div>
-                            <div className="bg-neutral-900 pl-2 w-full border-b border-neutral-700 rounded-es-md rounded-ee-md"
+                            <div className="bg-neutral-800 pl-2 w-full border-b border-neutral-700 rounded-es-md rounded-ee-md"
                             onClick={handleDelete}>
                                 <div className="w-full py-1 ">Delete</div>
                             </div>
                             
-                        </div>
+                        </motion.div>
                     </div>
-                    {/* <button id="save" className="ml-2 px-4 py-1 dark:bg-neutral-900 rounded-md text-neutral-200 text-sm" onClick={()=>handleSave()}>save</button>
-                    <button id="load" className="ml-2 px-4 py-1 dark:bg-neutral-900 rounded-md text-neutral-200 text-sm" onClick={()=>themeFunctions[1](activeSelection)}>load</button> */}
-                </div>
+                </div> 
+                
             </div>
             <div className="flex flex-col justify-start items-start w-full px-4 py-2 border-t border-neutral-700">
                 
                 
-                <div className=" text-neutral-200 text-sm h-1/10 font-bold">
+                <div className="text-neutral-200 text-xs h-1/10 font-bold">
                     Typography
                 </div>
                 
-                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[30px]">
-                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-300">
+                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[26px] text-xs">
+                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-400">
                         Verse Font Weight                     
                     </div>
-                    <div className="dark:text-neutral-50 w-1/6 h-1/2 my-auto">
+                    <div className="dark:text-neutral-200 w-1/6 h-1/2 my-auto">
                         {config?.verseTextWeight}
                     </div>
 
@@ -370,11 +375,11 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                     </div>
                 </div>
                 
-                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[30px]">
-                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-300">
+                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[26px] text-xs">
+                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-400">
                         Verse Number Weight
                     </div>
-                    <div className="dark:text-neutral-50 w-1/6 h-1/2 my-auto">
+                    <div className="dark:text-neutral-200 w-1/6 h-1/2 my-auto">
                         {config?.verseNumberWeight}
                     </div>
 
@@ -392,11 +397,11 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                     </div>
                 </div>
                 
-                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[30px]">
-                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-300">
+                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[26px] text-xs">
+                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-400">
                         Verse Info Weight
                     </div>
-                    <div className="dark:text-neutral-50 w-1/6 h-1/2 my-auto">
+                    <div className="dark:text-neutral-200 w-1/6 h-1/2 my-auto">
                         {config?.verseInfoWeight}
                     </div>
 
@@ -414,11 +419,11 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                     </div>
                 </div>
 
-                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[30px]">
-                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-300">
+                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[26px] text-xs">
+                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-400">
                         Verse Font Size
                     </div>
-                    <div className="dark:text-neutral-50 w-1/6 h-1/2 my-auto">
+                    <div className="dark:text-neutral-200 w-1/6 h-1/2 my-auto">
                         {config?.fontSize}vw
                     </div>
 
@@ -438,19 +443,19 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
             </div>
 
             <div className="flex flex-col justify-start items-start font-light w-full px-4 py-2 border-t border-neutral-700">
-                <div className=" text-neutral-200 text-sm h-1/10 pb-2 font-bold">
+                <div className=" text-neutral-200 text-xs h-1/10 pb-2 font-bold">
                     Versions
                 </div>
                 <div className="flex flex-col justify-center items-start gap-2">
                     <div className="flex justify-center items-center">
-                        <input className="w-4 h-4 accent-blue-600" type="checkbox" value="esv" checked={config?.translations?.includes("esv")}
+                        <input className="w-4 h-4 accent-[#f3553c]" type="checkbox" value="esv" checked={config?.translations?.includes("esv")}
                         onChange={()=> handleToggleTranslation("esv")}/>
-                        <label className="ps-2 dark:text-neutral-100">ESV</label>
+                        <label className="ps-2 dark:text-neutral-400">ESV</label>
                     </div>
                     <div className="flex justify-center items-center">
-                        <input className="w-4 h-4 accent-blue-600" type="checkbox" value="ro" checked={config?.translations?.includes("ro")}
+                        <input className="w-4 h-4 accent-[#f3553c]" type="checkbox" value="ro" checked={config?.translations?.includes("ro")}
                         onChange={()=> handleToggleTranslation("ro")}/>
-                        <label className="ps-2 dark:text-neutral-100">RO</label>
+                        <label className="ps-2 dark:text-neutral-400">RO</label>
                     </div>
                 </div>
                     {
@@ -463,19 +468,19 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
             </div>
                 
             <div className="w-full px-4 py-2 border-t border-neutral-700">
-                <div className="text-neutral-200 text-sm h-1/10 pb-1 font-bold">
+                <div className="text-neutral-200 text-xs h-1/10 pb-1 font-bold">
                     Color
                 </div>
                 <div className="flex justify-between items-center w-full h-full gap-5">
                     <div className="w-1/2 color_picker">
-                        <div className="dark:text-neutral-200 mb-1">Background Color</div>
-                        <input className="rounded-lg w-full mb-3 text-base outline-none px-1 py-1 ps-2 h-full dark:bg-neutral-900 dark:text-neutral-200" autoComplete="off"
+                        <div className="dark:text-neutral-300 mb-1 text-xs">Background Color</div>
+                        <input className="rounded-lg w-full mb-3 text-sm outline-none px-1 py-1 ps-2 h-full dark:bg-neutral-800 dark:text-neutral-200 border border-neutral-700" autoComplete="off"
                         value={config?.bgColor} onChange={(e)=>handleBgColorChange(e.target.value)}/>
                         <HexColorPicker className="" color={config?.bgColor} onChange={handleBgColorChange} />
                     </div>
                     <div className="w-1/2 color_picker">
-                        <div className="dark:text-neutral-200 mb-1">Text Color</div>
-                        <input className="rounded-lg w-full mb-3 text-base outline-none px-1 py-1 ps-2 h-full dark:bg-neutral-900 dark:text-neutral-200" autoComplete="off"
+                        <div className="dark:text-neutral-300 mb-1 text-xs">Text Color</div>
+                        <input className="rounded-lg w-full mb-3 text-sm outline-none px-1 py-1 ps-2 h-full dark:bg-neutral-800 dark:text-neutral-200 border border-neutral-700" autoComplete="off"
                         value={config?.textColor} onChange={(e)=>handleTextColorChange(e.target.value)}/>
                         <HexColorPicker className="" color={config?.textColor} onChange={handleTextColorChange} />
                     </div>

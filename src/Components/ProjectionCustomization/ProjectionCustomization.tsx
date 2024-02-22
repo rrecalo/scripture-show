@@ -88,7 +88,7 @@ export default function ProjectionCustomization({} : ProjectionCustomizationProp
     }
 
     return (
-    <motion.div initial={{opacity:0.5}} animate={{opacity:1}} className={`${darkMode ? 'dark ' : ''} w-screen h-screen overflow-clip`}>
+    <motion.div initial={{opacity:0.5}} animate={{opacity:1}} className={`${darkMode ? 'dark ' : ''} w-screen h-screen overflow-clip select-none`}>
         <div className="fixed top-0 h-6 w-full" data-tauri-drag-region></div>
 
         <div className='w-full h-full flex justify-start items-center text-sm border-r border-neutral-700'>
