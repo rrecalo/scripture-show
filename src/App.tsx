@@ -69,6 +69,7 @@ function App() {
 
 
   const [remainderVerses, setRemainderVerses] = useState<Verse[]>();
+  const [lastTheme, setLastTheme] = useState<string>("");
 
   useEffect(()=>{
     searchForBook("genesis", true);
@@ -152,8 +153,26 @@ function App() {
   }, [projectionConfig]);
 
   useEffect(()=>{
-    if(projectionConfig && darkMode){
-        savePreferences({...projectionConfig, darkMode});
+    if(lastTheme){
+        const unlisten = listen("last_theme", (event) =>{
+            console.log(event);
+            setLastTheme(event?.payload?.lastTheme);
+        })
+
+        const listen_theme_request = listen("last_theme_request", (event) =>{
+            emit("load_last_theme", {lastTheme: lastTheme});
+        });
+
+        return () =>{
+            unlisten.then(f=>f());
+            listen_theme_request.then(f=>f());
+        }
+    }   
+  }, [lastTheme]);
+
+  useEffect(()=>{
+    if(projectionConfig && darkMode && lastTheme){
+        savePreferences({...projectionConfig, darkMode, lastTheme});
 
         emit('theme_update', darkMode);
 
@@ -178,7 +197,7 @@ function App() {
 
         }
     }
-  }, [projectionConfig, darkMode]);
+  }, [projectionConfig, darkMode, lastTheme]);
 
 
     function loadPreferences(){
@@ -190,6 +209,7 @@ function App() {
             if(res){
             const prefs = JSON.parse(decoder.decode(res));
                 setDarkMode(prefs.darkMode);
+                setLastTheme(prefs.lastTheme);
                 //if default verse count is not found in the preferences, that means there probably aren't any preferences
                 //in this case, set the preferences as the defaults
                 if(prefs.verseCount === undefined || prefs.verseCount === null){

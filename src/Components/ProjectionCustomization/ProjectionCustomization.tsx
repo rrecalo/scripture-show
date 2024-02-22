@@ -7,7 +7,6 @@ import ProjectionDisplay from '../ProjectionDisplay';
 import { motion } from 'framer-motion';
 import { fs } from '@tauri-apps/api';
 import { BaseDirectory, createDir, readBinaryFile, writeBinaryFile } from '@tauri-apps/api/fs';
-import { appName } from '../../App';
 
 type ProjectionCustomizationProps = { }
 export let ThemeDir = "themes"
@@ -78,6 +77,7 @@ export default function ProjectionCustomization({} : ProjectionCustomizationProp
                 //if default verse count is not found in the preferences, that means there probably aren't any preferences
                 //in this case, set the preferences as the defaults
                 setProjectionConfig(prefs as ProjectionConfiguration);
+                emit('last_theme', {lastTheme: themeName});
                 //emit('projection_format', prefs as ProjectionConfiguration);
             }
         });

@@ -5,6 +5,9 @@ import ReactSlider from 'react-slider';
 import "./styles.css";
 import { readDir, BaseDirectory, readBinaryFile } from "@tauri-apps/api/fs";
 import { ThemeDir } from "./ProjectionCustomization";
+import { MdArrowDropDown, MdArrowRight } from "react-icons/md";
+import NewThemeModal from "./NewThemeModal";
+import { emit, listen } from '@tauri-apps/api/event';
 
 type ProjectionControlsProps = {
     config: ProjectionConfiguration,
@@ -19,8 +22,11 @@ type Theme = {
 }
 
 export default function ProjectionControls({config, setConfig, themeFunctions} : ProjectionControlsProps){
-
-    const [themes, setThemes] = useState<Theme[]>();
+    
+    const [showThemeMenu, setShowThemeMenu] = useState<boolean>(false);
+    const [newThemeName, setNewThemeName] = useState<string>("");
+    const [hideModal, setHideModal] = useState<boolean>(true);  
+    const [themes, setThemes] = useState<Theme[]>([]);
     const [activeSelection, setActiveSelection] = useState<string>();
     const [translationCountWarning, setTranslationCountWarning] = useState<boolean>(false);
     const [fontLimitWarning, setFontLimitWarning] = useState<boolean>(false);
@@ -29,15 +35,28 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     const fontUpperLimit = 4;
 
     useEffect(()=>{
-        getAllThemes();
-    }, []);
-
-    useEffect(()=>{
-        if(!activeSelection && themes){
-            //setActiveSelection(themes[0].name);
-            //themeFunctions[1](themes[0].name);
+        emit("last_theme_request");
+        const unlisten = listen("load_last_theme", (event)=>{
+            if(event){
+                getAllThemes(event?.payload?.lastTheme);
+            }
+        });
+        getAllThemes("theme.json");
+        let root = document.getElementById("root");
+        if(root){
+            root.addEventListener("click", (event : MouseEvent)=>{
+                console.log(event);
+                if(event?.target?.id !== "file_menu" && event?.target?.id !== "file_dropdown" && event?.target?.id !== "theme_name_input"){
+                    setShowThemeMenu(false);
+                    setHideModal(true);
+                }
+            });
         }
-    }, [themes])
+        return () => {
+            root?.removeEventListener("click", ()=>{});
+            unlisten.then(f=>f());
+        }
+    }, []);
 
     useEffect(()=>{
         if(translationCountWarning){
@@ -116,6 +135,10 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     function setFontSize(e:any){
         setConfig({...config, fontSize: e});
     }
+
+    function removeExtension(themeName: string){
+        return themeName.replace(".json", "");
+    }
     
     function processEntries(entries: any, themeNames: string[]) {
         for (const entry of entries) {
@@ -126,16 +149,23 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
         }
         }
 
-    function getAllThemes(){
+    async function getAllThemes(initialTheme: string | undefined){
         readDir('themes', { dir: BaseDirectory.AppData, recursive: true }).then(entries => {
-        let themeNames: string[] = [];
-        processEntries(entries, themeNames);
-        readThemeData(themeNames);
+            let themeNames: string[] = [];
+            processEntries(entries, themeNames);
+
+            readThemeData(themeNames).then(res=>{
+                setThemes(res as Theme[]);
+                if(initialTheme){
+                    setActiveSelection(initialTheme);
+                }
+            })
+
         });
         
     }
 
-    function readThemeData(themes: string[]){
+    async function readThemeData(themes: string[]){
         let themeData: Theme[] = [];
         const decoder = new TextDecoder();
         themes.forEach(theme =>{
@@ -148,8 +178,9 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                 });
         });
         if (themeData){
-            setThemes(themeData);
+            return themeData as Theme[];
         }
+
 
     }
 
@@ -176,25 +207,64 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
         */
     }
 
+    function initNewTheme(){
+        let themeName = newThemeName + ".json";
+        themeFunctions[0](themeName);
+        setThemes((themes)=>[...themes, {name:themeName, lastUsed:false, theme:config} as Theme]);
+        setActiveSelection(themeName);
+        setNewThemeName("");
+    }
+
+    function handleNewClick(e: MouseEvent){
+        e.preventDefault();
+        e.stopPropagation();
+        setHideModal(false);
+        setShowThemeMenu(false);
+    }
+
     return (
         <div className="flex flex-col w-full h-full justify-start items-start select-none">
             
-
+            <NewThemeModal newThemeName={newThemeName} setNewThemeName={setNewThemeName} hide={hideModal} setHide={setHideModal} initNewTheme={initNewTheme}/>
             <div className="flex flex-col justify-start items-start w-full px-4 py-2">
                 <div className=" text-neutral-200 text-sm h-1/10 font-bold">
                     Save/Load Theme
                 </div>
-                <div className='w-full h-fit pt-2'>
-                    <select onChange={changeActiveSelection} value={activeSelection}
-                    className="bg-neutral-900 w-1/2 outline-none text-neutral-200 appearance-none pl-2 py-1">
-                        {themes?.map(theme=>(<option value={theme.name}>{theme.name}</option>))}
+                <div className='w-full h-fit pt-2 flex'>
+                    <select onChange={changeActiveSelection} value={activeSelection} onMouseDown={()=>{
+                        setShowThemeMenu(false);
+                    }}
+                    className="bg-neutral-900 min-w-[25%] max-w-[50%] outline-none text-neutral-200 appearance-none pl-2 py-1">
+                        {themes?.map(theme=>(<option value={theme.name}>{removeExtension(theme.name)}</option>))}
                     </select>
                     <div id="changes" className="inline-block text-red-500 text-base min-w-2 min-h-full">
                     {JSON.stringify(config) !== JSON.stringify(themes?.find(theme => theme.name === activeSelection)?.theme) ? 
                     '*' : ''}
                     </div>
-                    <button id="save" className="ml-2 px-4 py-1 dark:bg-neutral-900 rounded-md text-neutral-200 text-sm" onClick={()=>handleSave()}>save</button>
-                    <button id="load" className="ml-2 px-4 py-1 dark:bg-neutral-900 rounded-md text-neutral-200 text-sm" onClick={()=>themeFunctions[1](activeSelection)}>load</button>
+                    <div id="file_dropdown" className="relative w-16 ml-2 pl-3 pe-2 py-1 rounded-md text-neutral-100 text-sm bg-neutral-900 flex justify-between items-center align-middle" 
+                    onClick={()=>setShowThemeMenu(!showThemeMenu)}>
+                        File
+                        <MdArrowDropDown id="file_dropdown" className="w-4 h-4"/>
+                        <div id="file_menu" className="absolute left-0 w-24 top-8 z-10" hidden={!showThemeMenu}>
+                            <div className="bg-neutral-900 pl-2 w-full rounded-ss-md rounded-se-md border-b border-neutral-700"
+                            onClick={handleNewClick}>
+                                <div id="file_dropdown" className="w-full py-1 flex justify-between items-center align-middle pe-2">
+                                    New
+                                </div>
+                            </div>
+                            <div className="bg-neutral-900 pl-2 w-full border-b border-neutral-700"
+                            onClick={()=>handleSave()}>
+                                <div className="w-full py-1 ">Save</div>
+                            </div>
+                            <div className="bg-neutral-900 pl-2 w-full border-b border-neutral-700"
+                            onClick={()=>themeFunctions[1](activeSelection)}>
+                                <div className="w-full py-1 ">Load</div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    {/* <button id="save" className="ml-2 px-4 py-1 dark:bg-neutral-900 rounded-md text-neutral-200 text-sm" onClick={()=>handleSave()}>save</button>
+                    <button id="load" className="ml-2 px-4 py-1 dark:bg-neutral-900 rounded-md text-neutral-200 text-sm" onClick={()=>themeFunctions[1](activeSelection)}>load</button> */}
                 </div>
             </div>
             <div className="flex flex-col justify-start items-start w-full px-4 py-2 border-t border-neutral-700">
