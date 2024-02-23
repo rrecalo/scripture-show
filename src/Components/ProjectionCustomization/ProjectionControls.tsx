@@ -332,7 +332,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                     setShowThemeMenu(false)}/>
                     {
                         editedName !== undefined ?
-                    <div className="z-10 absolute left-0 w-full flex justify-between items-center align-middle bg-transparent border border-neutral-700 rounded-md py-1 px-1 ps-2">
+                    <div className="z-10 left-0 w-full flex justify-between items-center align-middle bg-transparent border border-neutral-700 rounded-md py-1 px-1 ps-2">
                         <input placeholder="name required..." autoCapitalize="off" autoComplete="off" autoCorrect="off"
                         id="edit_name" className="left-0 w-full outline-none text-neutral-200 appearance-none bg-transparent" value={editedName} onChange={(e)=>setEditedName(e.target.value.trimStart())}
                         onKeyDown={handleEditingKeydown as any}/>
