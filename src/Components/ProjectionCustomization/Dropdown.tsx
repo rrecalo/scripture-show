@@ -49,8 +49,8 @@ function Dropdown({hidden, value, options, onChange, onMouseDown, expanded, setE
         {options.map(
             option => {
                 let isSelected = option === value;
-                return (<motion.div onClick={isSelected ? ()=>{} : ()=>handleChange(option)} className={`w-full ps-2 py-1.5 m-1 rounded-md border-neutral-700 ${isSelected ? 'border' :''}`}
-                animate={{backgroundColor:isSelected ? "rgb(38, 38, 38, 0)" : "rgb(38, 38, 38)", pointerEvents: expanded ? 'auto' : 'none',}} whileHover={{backgroundColor: isSelected ? "" : "rgb(64, 64, 64)" }}>
+                return (<motion.div key={option} onClick={isSelected ? ()=>{} : ()=>handleChange(option)} className={`w-full ps-2 py-1.5 m-1 rounded-md border-neutral-700 ${isSelected ? 'border' :''}`}
+                animate={{backgroundColor: "#262626", pointerEvents: expanded ? 'auto' : 'none',}} whileHover={{backgroundColor: isSelected ? "#262626" : "#404040" }}>
                     {removeExtension(option)}
                 </motion.div>
             )
