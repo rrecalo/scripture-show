@@ -11,6 +11,7 @@ import { emit, listen } from '@tauri-apps/api/event';
 import { MdOutlineEditNote } from "react-icons/md";
 import Dropdown from "./Dropdown";
 import { motion } from "framer-motion";
+import OptionSlider from "./OptionSlider";
 
 type ProjectionControlsProps = {
     config: ProjectionConfiguration,
@@ -350,98 +351,22 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
             </div>
             <div className="flex flex-col justify-start items-start w-full px-4 py-2 border-t border-neutral-700">
                 
-                
                 <div className="text-neutral-200 text-xs h-1/10 font-bold">
                     Typography
                 </div>
                 
-                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[26px] text-xs">
-                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-400">
-                        Verse Font Weight                     
-                    </div>
-                    <div className="dark:text-neutral-200 w-1/6 h-1/2 my-auto">
-                        {config?.verseTextWeight}
-                    </div>
-
-                    <div className="w-1/2 h-1/2 dark:text-black">
-                        <ReactSlider
-                            marks min={1} max={9}
-                            value={config?.verseTextWeight/100}
-                            onChange={(e)=>handleVerseTextWeightChange(e*100)}
-                            className="customSlider" 
-                            thumbClassName="customSlider-thumb"
-                            trackClassName="customSlider-track"
-                            markClassName="customSlider-mark"
-                            renderThumb={(props) => <div {...props}></div>}
-                        />
-                    </div>
-                </div>
+                <OptionSlider config={config} range={[1, 9]} onChange={(e : number)=>handleVerseTextWeightChange(e*100)} 
+                sliderLabel={"Verse Font Weight"} displayedValue={config?.verseTextWeight.toString()} calculatedValue={config?.verseTextWeight/100}/>
                 
-                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[26px] text-xs">
-                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-400">
-                        Verse Number Weight
-                    </div>
-                    <div className="dark:text-neutral-200 w-1/6 h-1/2 my-auto">
-                        {config?.verseNumberWeight}
-                    </div>
+                <OptionSlider config={config} range={[1, 9]} onChange={(e : number)=>handleVerseNumberWeightChange(e*100)} 
+                sliderLabel={"Verse Number Weight"} displayedValue={config?.verseNumberWeight.toString()} calculatedValue={config?.verseNumberWeight/100}/>
 
-                    <div className="w-1/2 h-1/2 dark:text-black">
-                        <ReactSlider
-                        marks min={1} max={9}
-                        value={config?.verseNumberWeight/100}
-                        onChange={(e)=>handleVerseNumberWeightChange(e*100)}
-                        className="customSlider" 
-                        thumbClassName="customSlider-thumb"
-                        trackClassName="customSlider-track"
-                        markClassName="customSlider-mark"
-                        renderThumb={(props) => <div {...props}></div>}
-                        />
-                    </div>
-                </div>
+                <OptionSlider config={config} range={[1, 9]} onChange={(e : number)=>handleVerseInfoWeightChange(e*100)} 
+                sliderLabel={"Verse Info Weight"} displayedValue={config?.verseInfoWeight.toString()} calculatedValue={config?.verseInfoWeight/100}/>
+
+                <OptionSlider config={config} range={[1, (fontUpperLimit * 2) + 1]} onChange={(e)=>setFontSize((fontLowerLimit + ((e - 1) / 4)))} 
+                sliderLabel={"Verse Font Size"} displayedValue={config?.fontSize + "vw"} calculatedValue={((config?.fontSize - fontLowerLimit) * 4) + 1}/>
                 
-                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[26px] text-xs">
-                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-400">
-                        Verse Info Weight
-                    </div>
-                    <div className="dark:text-neutral-200 w-1/6 h-1/2 my-auto">
-                        {config?.verseInfoWeight}
-                    </div>
-
-                    <div className="w-1/2 h-1/2 dark:text-black">
-                    <ReactSlider
-                        marks min={1} max={9}
-                        value={config?.verseInfoWeight/100}
-                        onChange={(e)=>handleVerseInfoWeightChange(e*100)}
-                        className="customSlider" 
-                        thumbClassName="customSlider-thumb"
-                        trackClassName="customSlider-track"
-                        markClassName="customSlider-mark"
-                        renderThumb={(props) => <div {...props}></div>}
-                        />
-                    </div>
-                </div>
-
-                <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[26px] text-xs">
-                    <div className="w-1/2 h-1/2 my-auto dark:text-neutral-400">
-                        Verse Font Size
-                    </div>
-                    <div className="dark:text-neutral-200 w-1/6 h-1/2 my-auto">
-                        {config?.fontSize}vw
-                    </div>
-
-                    <div className="w-1/2 h-1/2 dark:text-black">
-                        <ReactSlider
-                        marks min={1} max={(fontUpperLimit * 2) + 1}
-                        value={((config?.fontSize - fontLowerLimit) * 4) + 1}
-                        onChange={(e)=>setFontSize((fontLowerLimit + ((e - 1) / 4)))}
-                        className="customSlider" 
-                        thumbClassName="customSlider-thumb"
-                        trackClassName="customSlider-track"
-                        markClassName="customSlider-mark"
-                        renderThumb={(props) => <div {...props}></div>}
-                        />
-                    </div>
-                </div>
             </div>
 
             <div className="flex flex-col justify-start items-start font-light w-full px-4 py-2 border-t border-neutral-700">
