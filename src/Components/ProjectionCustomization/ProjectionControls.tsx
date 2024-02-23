@@ -67,7 +67,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
         let root = document.getElementById("root");
         if(root){
             root.addEventListener("click", (event : MouseEvent)=>{
-                if(event?.target?.id !== "file_menu" && event?.target?.id !== "file_icons" && event?.target?.id !== "theme_name_input" && event?.target?.id !== "file_dropdown" 
+                if(event?.target?.id !== "file_menu" && event?.target?.id !== "file_icons" && event?.target?.id !== "theme_name_input" && event?.target?.id !== "file_dropdown" && event?.target?.id !== "new_theme_modal" 
                 ){
                     setShowThemeMenu(false);
                     setHideModal(true);
