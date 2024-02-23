@@ -1,17 +1,17 @@
 import { HexColorPicker } from "react-colorful";
 import ProjectionConfiguration from "../../types/ProjectionConfiguration";
 import { useState, useEffect } from "react";
-import ReactSlider from 'react-slider';
 import "./styles.css";
 import { readDir, BaseDirectory, readBinaryFile } from "@tauri-apps/api/fs";
 import { ThemeDir } from "./ProjectionCustomization";
-import { MdArrowDropDown} from "react-icons/md";
 import NewThemeModal from "./NewThemeModal";
 import { emit, listen } from '@tauri-apps/api/event';
-import { MdOutlineEditNote } from "react-icons/md";
 import Dropdown from "./Dropdown";
 import { motion } from "framer-motion";
 import OptionSlider from "./OptionSlider";
+import { BiEditAlt } from "react-icons/bi";
+import { MdOutlineUploadFile, MdOutlineDownload, MdOutlineEdit, MdOutlineDelete, MdAdd } from "react-icons/md";
+import { hide } from "@tauri-apps/api/app";
 
 type ProjectionControlsProps = {
     config: ProjectionConfiguration,
@@ -32,6 +32,7 @@ export function removeExtension(themeName: string){
 export default function ProjectionControls({config, setConfig, themeFunctions} : ProjectionControlsProps){
     
     const [showThemeMenu, setShowThemeMenu] = useState<boolean>(false);
+    const [hasChanges, setHasChanges] = useState<boolean>(false);
     const [expanded, setExpanded] = useState<boolean>(false);
     const [newThemeName, setNewThemeName] = useState<string>("");
     const [hideModal, setHideModal] = useState<boolean>(true); 
@@ -44,6 +45,11 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     const [editedName, setEditedName] = useState<string>();
     const fontLowerLimit = 2;
     const fontUpperLimit = 4;
+
+    useEffect(() => {
+        JSON.stringify(config) !== JSON.stringify(themes?.find(theme => theme.name === activeSelection)?.theme) ?
+        setHasChanges(true) : setHasChanges(false);
+    },[config, themes, activeSelection])
 
     useEffect(()=>{
         emit("last_theme_request");
@@ -61,7 +67,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
         let root = document.getElementById("root");
         if(root){
             root.addEventListener("click", (event : MouseEvent)=>{
-                if(event?.target?.id !== "file_menu" && event?.target?.id !== "file_dropdown" && event?.target?.id !== "theme_name_input"
+                if(event?.target?.id !== "file_menu" && event?.target?.id !== "file_icons" && event?.target?.id !== "theme_name_input" && event?.target?.id !== "file_dropdown" 
                 ){
                     setShowThemeMenu(false);
                     setHideModal(true);
@@ -90,28 +96,34 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
 
         let root = document.getElementById("root");
         if(root){
-            root.addEventListener("click", stopEditingName);
+            root.addEventListener("click", handleNonEditingClick);
         }
         return () => {
-            root?.removeEventListener("click", stopEditingName);
+            root?.removeEventListener("click", handleNonEditingClick);
         }
     }, [editedName, activeSelection]);
     
-    function stopEditingName(event: MouseEvent){
-        if(event?.target?.id !== "edit_name" && event?.target?.id !== "rename_option")
-        {
-            if(editedName && activeSelection) {
-                if(editedName !== removeExtension(activeSelection)){
-                    let themeName = editedName + ".json";
-                    setThemes((themes)=>[...themes.filter(t => t.name !== activeSelection), {name:themeName, lastUsed:false, theme:config} as Theme]);
-                    setActiveSelection(themeName);
-                    setEditedName(undefined);
-                    themeFunctions[2](activeSelection);
-                    themeFunctions[0](themeName);
-                    setLastTheme(themeName);
-                    setExpanded(false);
-                }
+    function stopEditingName(){
+        if(editedName && activeSelection) {
+            if(editedName !== removeExtension(activeSelection)){
+                let themeName = editedName + ".json";
+                setThemes((themes)=>[...themes.filter(t => t.name !== activeSelection), {name:themeName, lastUsed:false, theme:config} as Theme]);
+                setActiveSelection(themeName);
+                themeFunctions[2](activeSelection);
+                themeFunctions[0](themeName);
+                setLastTheme(themeName);
             }
+            setEditedName(undefined);
+            setExpanded(false);
+        }
+    }
+
+    function handleNonEditingClick(event: MouseEvent){
+        event?.preventDefault();
+        event?.stopPropagation();
+        if(event?.target?.id !== "edit_name")
+        {
+            stopEditingName();
         }
     }
 
@@ -221,23 +233,16 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
 
     }
 
-    async function handleSave(){
+    function handleSave(){
+        if(!hideModal || themes?.length === 0  || !hasChanges) return;
         themeFunctions[0](activeSelection);
         let t = themes;
         let savedTheme = t?.find(theme => theme.name === activeSelection);
         if(savedTheme){
             savedTheme.theme = config;
+            setConfig(config);
+            setThemes((old : Theme[])=>[...old.filter(theme => theme.name !== activeSelection), savedTheme] as Theme[]);
         }
-        setConfig(config);
-        setThemes(t);
-        //themeFunctions[1](activeSelection);
-
-        /*
-        let load = document.getElementById("changes");
-        if(load){
-            load.innerHTML = "";
-        }
-        */
     }
 
     function initNewTheme(){
@@ -257,6 +262,8 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     }
 
     function handleRename(){
+        if(editedName && editedName.length > 0){stopEditingName();};
+        if(!hideModal || themes?.length === 0) return;
         if(activeSelection){
             setEditedName(removeExtension(activeSelection));
         }
@@ -282,10 +289,16 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     }
 
     function handleDelete(){
+        if(!hideModal || themes?.length === 0) return;
         setThemes((themes)=>[...themes.filter(t => t.name !== activeSelection)]);
         themeFunctions[2](activeSelection);
         setActiveSelection(themes[0].name || undefined);
         setLastTheme(themes[0].name);
+    }
+
+    function handleLoad(){
+        if(!hideModal || themes?.length === 0) return;
+        themeFunctions[1](activeSelection);
     }
 
     return (
@@ -305,45 +318,43 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                     setShowThemeMenu(false)}/>
                     {
                         editedName !== undefined ?
-                    <input placeholder="name required..." autoCapitalize="off" autoComplete="off" autoCorrect="off"
-                    id="edit_name" className="z-10 absolute left-0 w-full outline-none text-neutral-200 appearance-none pl-2 py-1 bg-transparent border border-neutral-700 rounded-md" value={editedName} onChange={(e)=>setEditedName(e.target.value)}
-                    onKeyDown={handleEditingKeydown}/>
-                    
+                    <div className="z-10 absolute left-0 w-full flex justify-between items-center align-middle bg-transparent border border-neutral-700 rounded-md py-1 px-1 ps-2">
+                        <input placeholder="name required..." autoCapitalize="off" autoComplete="off" autoCorrect="off"
+                        id="edit_name" className="left-0 w-full outline-none text-neutral-200 appearance-none bg-transparent" value={editedName} onChange={(e)=>setEditedName(e.target.value)}
+                        onKeyDown={handleEditingKeydown as any}/>
+                        <motion.div initial={{opacity:0, x:-10}} animate={{opacity:1, x:0, transition:{duration:0.3}}} className="text-xs">
+                            <BiEditAlt className="w-3 h-3 text-neutral-200"/>
+                        </motion.div>
+                    </div>
                     : <></>
                     }
                     </div>
-                    <div id="changes" className="inline-block text-red-500 text-base min-w-2 min-h-full ml-0.5">
                     {JSON.stringify(config) !== JSON.stringify(themes?.find(theme => theme.name === activeSelection)?.theme) ? 
                     '*' : ''}
-                    </div>
-                    <div id="file_dropdown" className="relative w-16 ml-2 pl-3 pe-2 py-1 rounded-md text-neutral-200 text-sm bg-neutral-800 border border-neutral-700 flex justify-between items-center align-middle" 
-                    onClick={()=>setShowThemeMenu(!showThemeMenu)}>
-                        File
-                        <MdArrowDropDown id="file_dropdown" className="w-4 h-4"/>
-                        <motion.div id="file_menu" animate={{opacity: showThemeMenu ? 1 : 0, display: showThemeMenu ? "block" : "none"}} className="absolute left-0 w-24 top-8 z-10 border border-neutral-700 rounded-md text-neutral-200">
-                            <div className="bg-neutral-800 pl-2 w-full rounded-ss-md rounded-se-md border-b border-neutral-700"
-                            onClick={handleNewClick}>
-                                <div id="file_dropdown" className="w-full py-1 flex justify-between items-center align-middle pe-2">
-                                    New
-                                </div>
-                            </div>
-                            <div className="bg-neutral-800 pl-2 w-full border-b border-neutral-700"
-                            onClick={()=>handleSave()}>
-                                <div className="w-full py-1 ">Save</div>
-                            </div>
-                            <div className="bg-neutral-800 pl-2 w-full border-b border-neutral-700"
-                            onClick={()=>themeFunctions[1](activeSelection)}>
-                                <div className="w-full py-1 ">Load</div>
-                            </div>
-                            <div id="rename_option" className="bg-neutral-800 pl-2 w-full border-b border-neutral-700"
-                            onClick={(e)=>{e.stopPropagation(); handleRename();}}>
-                                <div id="rename_option" className="w-full py-1 ">Rename</div>
-                            </div>
-                            <div className="bg-neutral-800 pl-2 w-full border-b border-neutral-700 rounded-es-md rounded-ee-md"
-                            onClick={handleDelete}>
-                                <div className="w-full py-1 ">Delete</div>
-                            </div>
-                            
+                    </div> */}
+                    <div id="file_icons" className="ml-2 flex justify-around items-center align-middle gap-1">
+                        <motion.div id="file_dropdown" onClick={handleNewClick} whileHover={{backgroundColor:'#404040'}}
+                        className="p-1 border rounded-md" animate={{borderColor: themes.length === 0 ? '#a3a3a3' : '#404040', color: themes.length === 0 ? '#d4d4d4' : '#a3a3a3'}}>
+                            <MdAdd id="file_dropdown" className="w-4 h-4"/>
+                        </motion.div>
+                        <motion.div id="save_option" onClick={()=>handleSave()} whileHover={themes.length !== 0 && hasChanges ? {backgroundColor: hasChanges ? '#fafafa' : '#404040', color: hasChanges ? '#f3553c' : '#525252'} : {}}
+                        className="p-1 border border-neutral-700 rounded-md" animate={{backgroundColor: hasChanges && themes.length > 0 ? '#f3553c' : '#262626', color: hasChanges && themes.length > 0 ? '#d4d4d4': '#525252', transition:{duration:0.25}}}>
+                            <MdOutlineUploadFile id="save_option" className="w-4 h-4"/>
+                        </motion.div>
+                        <motion.div id="load_option" className="p-1 border border-neutral-700 rounded-md" whileHover={themes.length !== 0 ? {backgroundColor:'#404040'} : {}}
+                        onClick={handleLoad}
+                        animate={{color: themes.length > 0 ? '#a3a3a3' : '#525252'}}>
+                            <MdOutlineDownload id="load_option" className="w-4 h-4"/>
+                        </motion.div>
+                        {/* onClick={(e)=>{e.stopPropagation(); handleRename();}} */}
+
+                        <motion.div id="rename_option" onClick={(e)=>{e.stopPropagation(); handleRename();}} whileHover={themes.length !== 0 ? {backgroundColor:'#404040'} : {}}
+                        className="p-1 border border-neutral-700 rounded-md " animate={{color: themes.length > 0 ? '#a3a3a3' : '#525252'}}>
+                            <MdOutlineEdit id="rename_option" className="w-4 h-4"/>
+                        </motion.div>
+                        <motion.div id="delete_option" onClick={handleDelete} animate={{color: themes.length > 0 ? '#a3a3a3' : '#525252'}} whileHover={themes.length !== 0 ? {backgroundColor:'#404040'} : {}}
+                        className="p-1 border border-neutral-700 rounded-md text-neutral-300">
+                            <MdOutlineDelete id="delete_option" className="w-4 h-4"/>
                         </motion.div>
                     </div>
                 </div> 
