@@ -355,16 +355,16 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                     Typography
                 </div>
                 
-                <OptionSlider config={config} range={[1, 9]} onChange={(e : number)=>handleVerseTextWeightChange(e*100)} 
+                <OptionSlider range={[1, 9]} onChange={(e : number)=>handleVerseTextWeightChange(e*100)} 
                 sliderLabel={"Verse Font Weight"} displayedValue={config?.verseTextWeight.toString()} calculatedValue={config?.verseTextWeight/100}/>
                 
-                <OptionSlider config={config} range={[1, 9]} onChange={(e : number)=>handleVerseNumberWeightChange(e*100)} 
+                <OptionSlider range={[1, 9]} onChange={(e : number)=>handleVerseNumberWeightChange(e*100)} 
                 sliderLabel={"Verse Number Weight"} displayedValue={config?.verseNumberWeight.toString()} calculatedValue={config?.verseNumberWeight/100}/>
 
-                <OptionSlider config={config} range={[1, 9]} onChange={(e : number)=>handleVerseInfoWeightChange(e*100)} 
+                <OptionSlider range={[1, 9]} onChange={(e : number)=>handleVerseInfoWeightChange(e*100)} 
                 sliderLabel={"Verse Info Weight"} displayedValue={config?.verseInfoWeight.toString()} calculatedValue={config?.verseInfoWeight/100}/>
 
-                <OptionSlider config={config} range={[1, (fontUpperLimit * 2) + 1]} onChange={(e)=>setFontSize((fontLowerLimit + ((e - 1) / 4)))} 
+                <OptionSlider range={[1, (fontUpperLimit * 2) + 1]} onChange={(e)=>setFontSize((fontLowerLimit + ((e - 1) / 4)))} 
                 sliderLabel={"Verse Font Size"} displayedValue={config?.fontSize + "vw"} calculatedValue={((config?.fontSize - fontLowerLimit) * 4) + 1}/>
                 
             </div>

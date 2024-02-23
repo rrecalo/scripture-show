@@ -1,8 +1,6 @@
 import ReactSlider from "react-slider"
-import ProjectionConfiguration from "../../types/ProjectionConfiguration"
 
 type Props = {
-    config: ProjectionConfiguration,
     range: number[],
     onChange: Function,
     sliderLabel: string,
@@ -15,7 +13,7 @@ type Props = {
 //config?.verseTextWeight
 //config?.verseTextWeight/100
 
-function OptionSlider({config, range, onChange, sliderLabel, displayedValue, calculatedValue} : Props) {
+function OptionSlider({range, onChange, sliderLabel, displayedValue, calculatedValue} : Props) {
   return (
     <div className="dark:text-neutral-50 w-full flex justify-start items-center gap-3 h-[26px] text-xs">
         <div className="w-1/2 h-1/2 my-auto dark:text-neutral-400">
