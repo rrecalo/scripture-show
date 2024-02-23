@@ -11,7 +11,6 @@ import { motion } from "framer-motion";
 import OptionSlider from "./OptionSlider";
 import { BiEditAlt } from "react-icons/bi";
 import { MdOutlineUploadFile, MdOutlineDownload, MdOutlineEdit, MdOutlineDelete, MdAdd } from "react-icons/md";
-import { hide } from "@tauri-apps/api/app";
 
 type ProjectionControlsProps = {
     config: ProjectionConfiguration,
@@ -32,6 +31,7 @@ export function removeExtension(themeName: string){
 export default function ProjectionControls({config, setConfig, themeFunctions} : ProjectionControlsProps){
     
     const [showThemeMenu, setShowThemeMenu] = useState<boolean>(false);
+    const [themeSwitched, setThemeSwitched] = useState<boolean>(false);
     const [hasChanges, setHasChanges] = useState<boolean>(false);
     const [expanded, setExpanded] = useState<boolean>(false);
     const [newThemeName, setNewThemeName] = useState<string>("");
@@ -47,9 +47,19 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     const fontUpperLimit = 4;
 
     useEffect(() => {
-        JSON.stringify(config) !== JSON.stringify(themes?.find(theme => theme.name === activeSelection)?.theme) ?
-        setHasChanges(true) : setHasChanges(false);
-    },[config, themes, activeSelection])
+        if(JSON.stringify(config) !== JSON.stringify(themes?.find(theme => theme.name === activeSelection)?.theme)){
+            setHasChanges(true)
+            //setThemeSwitched(true);
+        }
+        else {
+            setHasChanges(false); 
+            setThemeSwitched(false);
+        }
+    },[config, themes, activeSelection])   
+
+    useEffect(()=>{
+        if(activeSelection){setThemeSwitched(true);}
+    }, [activeSelection]);
 
     useEffect(()=>{
         emit("last_theme_request");
@@ -342,9 +352,9 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                         className="p-1 border border-neutral-700 rounded-md" animate={{backgroundColor: hasChanges && themes.length > 0 ? '#f3553c' : '#262626', color: hasChanges && themes.length > 0 ? '#d4d4d4': '#525252', transition:{duration:0.25}}}>
                             <MdOutlineUploadFile id="save_option" className="w-4 h-4"/>
                         </motion.div>
-                        <motion.div id="load_option" className="p-1 border border-neutral-700 rounded-md" whileHover={themes.length !== 0 ? {backgroundColor:'#404040'} : {}}
+                        <motion.div id="load_option" className="p-1 border border-neutral-700 rounded-md" whileHover={themes.length !== 0 ? {backgroundColor: themeSwitched ? '#f3553c': '#404040', color: themeSwitched ? '#d4d4d4' : '#a3a3a3'} : {}}
                         onClick={handleLoad}
-                        animate={{color: themes.length > 0 ? '#a3a3a3' : '#525252'}}>
+                        animate={{color: themes.length === 0 ? '#a3a3a3' : themeSwitched ? '#f3553c' : '#525252', backgroundColor: themeSwitched ? '#fafafa' : '#262626'}}>
                             <MdOutlineDownload id="load_option" className="w-4 h-4"/>
                         </motion.div>
 
