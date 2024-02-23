@@ -164,15 +164,18 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     }, [verseLimitWarning]);
 
     function handleToggleTranslation(translation: string){
+        console.log('cile1');
         if(config?.translations.length == 1 && config?.translations.includes(translation)){
             setTranslationCountWarning(true);
             return;
         }
         else setTranslationCountWarning(false);
         if(config?.translations.includes(translation)){
+            console.log('has translation : ', translation);
             setConfig({...config, translations: config?.translations.filter(t => t !== translation)});
         }
         else {
+            console.log('does NOT have translation : ', translation);
             setConfig({...config, translations: [...config.translations, translation]});
         }
     }
@@ -396,12 +399,12 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                 </div>
                 <div className="flex flex-col justify-center items-start gap-2">
                     <div className="flex justify-center items-center">
-                        <input className="w-4 h-4 accent-[#f3553c]" type="checkbox" value="esv" checked={config?.translations?.includes("esv")}
+                        <input className="w-4 h-4 accent-[#f3553c]" key={Math.random()} type="checkbox" checked={config?.translations?.includes("esv")}
                         onChange={()=> handleToggleTranslation("esv")}/>
                         <label className="ps-2 dark:text-neutral-400">ESV</label>
                     </div>
                     <div className="flex justify-center items-center">
-                        <input className="w-4 h-4 accent-[#f3553c]" type="checkbox" value="ro" checked={config?.translations?.includes("ro")}
+                        <input className="w-4 h-4 accent-[#f3553c]" key={Math.random()} type="checkbox" checked={config?.translations?.includes("ro")}
                         onChange={()=> handleToggleTranslation("ro")}/>
                         <label className="ps-2 dark:text-neutral-400">RO</label>
                     </div>
