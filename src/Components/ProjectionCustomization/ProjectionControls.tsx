@@ -114,7 +114,6 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                 setLastTheme(themeName);
             }
             setEditedName(undefined);
-            setExpanded(false);
         }
     }
 
@@ -246,7 +245,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     }
 
     function initNewTheme(){
-        let themeName = newThemeName + ".json";
+        let themeName = newThemeName.trimEnd() + ".json";
         themeFunctions[0](themeName);
         setThemes((themes)=>[...themes, {name:themeName, lastUsed:false, theme:config} as Theme]);
         setActiveSelection(themeName);
@@ -257,11 +256,15 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     function handleNewClick(e: MouseEvent){
         e.preventDefault();
         e.stopPropagation();
+        setExpanded(false);
         setHideModal(false);
         setShowThemeMenu(false);
+        let input = document.getElementById("theme_name_input");
+        input ? input.focus() : {};
     }
 
     function handleRename(){
+        setExpanded(false);
         if(editedName && editedName.length > 0){stopEditingName();};
         if(!hideModal || themes?.length === 0) return;
         if(activeSelection){
@@ -275,7 +278,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
             e.stopPropagation();
             if(editedName && activeSelection) {
                 if(editedName !== removeExtension(activeSelection)){
-                    let themeName = editedName + ".json";
+                    let themeName = editedName.trimEnd() + ".json";
                     setThemes((themes)=>[...themes.filter(t => t.name !== activeSelection), {name:themeName, lastUsed:false, theme:config} as Theme]);
                     setActiveSelection(themeName);
                     themeFunctions[2](activeSelection);
@@ -290,10 +293,11 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
 
     function handleDelete(){
         if(!hideModal || themes?.length === 0) return;
+        setExpanded(false);
         setThemes((themes)=>[...themes.filter(t => t.name !== activeSelection)]);
         themeFunctions[2](activeSelection);
         setActiveSelection(themes[0].name || undefined);
-        setLastTheme(themes[0].name);
+        setLastTheme(themes.find(t => t.name !== activeSelection)?.name);
     }
 
     function handleLoad(){
@@ -320,7 +324,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                         editedName !== undefined ?
                     <div className="z-10 absolute left-0 w-full flex justify-between items-center align-middle bg-transparent border border-neutral-700 rounded-md py-1 px-1 ps-2">
                         <input placeholder="name required..." autoCapitalize="off" autoComplete="off" autoCorrect="off"
-                        id="edit_name" className="left-0 w-full outline-none text-neutral-200 appearance-none bg-transparent" value={editedName} onChange={(e)=>setEditedName(e.target.value)}
+                        id="edit_name" className="left-0 w-full outline-none text-neutral-200 appearance-none bg-transparent" value={editedName} onChange={(e)=>setEditedName(e.target.value.trimStart())}
                         onKeyDown={handleEditingKeydown as any}/>
                         <motion.div initial={{opacity:0, x:-10}} animate={{opacity:1, x:0, transition:{duration:0.3}}} className="text-xs">
                             <BiEditAlt className="w-3 h-3 text-neutral-200"/>

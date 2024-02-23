@@ -29,7 +29,7 @@ function NewThemeModal({hide, setHide, newThemeName, setNewThemeName, initNewThe
                 Enter a theme name
             <input id="theme_name_input" placeholder='Student Night...' className="mt-2 rounded-md w-full border border-neutral-700 outline-none ps-2 py-1 dark:bg-neutral-800 dark:text-neutral-200 "
             value={newThemeName} autoCorrect="off" autoComplete="off" autoCapitalize="off"
-            onChange={(e)=>setNewThemeName(e.target.value)}/>
+            onChange={(e)=>setNewThemeName(e.target.value.trimStart())}/>
             <div className='mt-5 flex w-full justify-around items-center gap-5'>
                 <motion.button className='bg-neutral-200 text-[#f3553c] rounded md text-xs w-20 h-8' disabled={newThemeName.length < 1 ? true : false}
                 whileHover={{backgroundColor:"#f3553c", color:"#d4d4d4"}} animate={newThemeName.length < 1 ? {backgroundColor:"#404040", color:"#737373"} : {backgroundColor:"#525252", color: "#d4d4d4"}}
