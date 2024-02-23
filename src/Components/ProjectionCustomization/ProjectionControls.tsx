@@ -329,9 +329,6 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                     : <></>
                     }
                     </div>
-                    {JSON.stringify(config) !== JSON.stringify(themes?.find(theme => theme.name === activeSelection)?.theme) ? 
-                    '*' : ''}
-                    </div> */}
                     <div id="file_icons" className="ml-2 flex justify-around items-center align-middle gap-1">
                         <motion.div id="file_dropdown" onClick={handleNewClick} whileHover={{backgroundColor:'#404040'}}
                         className="p-1 border rounded-md" animate={{borderColor: themes.length === 0 ? '#a3a3a3' : '#404040', color: themes.length === 0 ? '#d4d4d4' : '#a3a3a3'}}>
@@ -346,7 +343,6 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                         animate={{color: themes.length > 0 ? '#a3a3a3' : '#525252'}}>
                             <MdOutlineDownload id="load_option" className="w-4 h-4"/>
                         </motion.div>
-                        {/* onClick={(e)=>{e.stopPropagation(); handleRename();}} */}
 
                         <motion.div id="rename_option" onClick={(e)=>{e.stopPropagation(); handleRename();}} whileHover={themes.length !== 0 ? {backgroundColor:'#404040'} : {}}
                         className="p-1 border border-neutral-700 rounded-md " animate={{color: themes.length > 0 ? '#a3a3a3' : '#525252'}}>
