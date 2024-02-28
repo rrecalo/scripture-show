@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { CustomScreen } from './ChooseMonitor'
+import { CustomScreen } from './ConfigureScreens'
 import { motion } from 'framer-motion'
 import { MdOutlineEdit, MdOutlineDelete } from 'react-icons/md'
 

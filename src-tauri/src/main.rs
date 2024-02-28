@@ -47,23 +47,23 @@ fn main() {
             .inner_size(1280.0, 720.0)
             .focused(true)
             .build()?;
-            #[cfg(not(target_os="macos"))]
-            WindowBuilder::new(app, "configure_screens",
-                tauri::WindowUrl::App("../configure_screens.html".into()),)
-                .title("Configure Screens")
-                .min_inner_size(400.0, 200.0)
-                .inner_size(200.0, 100.0)
-                .always_on_top(true)
-                .build()?;
-            #[cfg(target_os="macos")]
-            tauri::WindowBuilder::new(app, "configure_screens",
-                tauri::WindowUrl::App("../configure_screens.html".into()),)
-                .min_inner_size(400.0, 200.0)
-                .inner_size(400.0, 200.0)
-                .title_bar_style(tauri::TitleBarStyle::Overlay)
-                .hidden_title(true)
-                .always_on_top(true)
-                .build()?;
+            // #[cfg(not(target_os="macos"))]
+            // WindowBuilder::new(app, "configure_screens",
+            //     tauri::WindowUrl::App("../configure_screens.html".into()),)
+            //     .title("Configure Screens")
+            //     .min_inner_size(400.0, 200.0)
+            //     .inner_size(200.0, 100.0)
+            //     .always_on_top(true)
+            //     .build()?;
+            // #[cfg(target_os="macos")]
+            // tauri::WindowBuilder::new(app, "configure_screens",
+            //     tauri::WindowUrl::App("../configure_screens.html".into()),)
+            //     .min_inner_size(600.0, 400.0)
+            //     .inner_size(600.0, 400.0)
+            //     .title_bar_style(tauri::TitleBarStyle::Overlay)
+            //     .hidden_title(true)
+            //     .always_on_top(true)
+            //     .build()?;
             let app_handle = app.handle();
             main_window.on_menu_event(move |event| {
                 match event.menu_item_id() {

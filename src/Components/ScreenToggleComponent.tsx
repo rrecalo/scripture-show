@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ConvertLabelToName, ConvertMonitorNameToLabel, CustomScreen, Screen } from './ChooseMonitor'
+import { ConvertLabelToName, ConvertMonitorNameToLabel, CustomScreen, Screen } from './ConfigureScreens'
 import { Monitor, availableMonitors } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api';
 import { AnimatePresence, motion } from 'framer-motion';

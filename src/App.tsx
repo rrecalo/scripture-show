@@ -15,7 +15,7 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import VerseHistory from "./Components/VerseHistory";
 import ProjectionConfiguration from "./types/ProjectionConfiguration";
 import { motion } from "framer-motion";
-import { CustomScreen } from "./Components/ChooseMonitor";
+import { CustomScreen } from "./Components/ConfigureScreens";
 import ScreenToggleComponent from "./Components/ScreenToggleComponent";
 import ThemeChangeComponent from "./Components/ThemeChangeComponent";
 

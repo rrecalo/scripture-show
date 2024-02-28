@@ -205,8 +205,8 @@ async fn open_configure_screens_window(app: tauri::AppHandle) -> Result<bool, Ap
     let new_window = tauri::WindowBuilder::new(&app, "configure_screens",
         tauri::WindowUrl::App("../configure_screens.html".into()),)
         .title("Configure Screens")
-        .min_inner_size(400.0, 200.0)
-        .inner_size(400.0, 200.0)
+        .min_inner_size(600.0, 400.0)
+        .inner_size(600.0, 400.0)
         .always_on_top(true)
         .focused(true)
         .build();
@@ -215,8 +215,8 @@ async fn open_configure_screens_window(app: tauri::AppHandle) -> Result<bool, Ap
     let new_window = tauri::WindowBuilder::new(&app, "configure_screens",
         tauri::WindowUrl::App("../configure_screens.html".into()),)
         .title("Configure Screens")
-        .min_inner_size(400.0, 200.0)
-        .inner_size(400.0, 200.0)
+        .min_inner_size(600.0, 400.0)
+        .inner_size(600.0, 400.0)
         .always_on_top(true)
         .title_bar_style(tauri::TitleBarStyle::Overlay)
         .hidden_title(true)

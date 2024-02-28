@@ -1,6 +1,6 @@
 
 import { motion } from 'framer-motion';
-import { CustomScreen } from './ChooseMonitor';
+import { CustomScreen } from './ConfigureScreens';
 
 type BookmarkModalProps = {
     shown: Boolean,
