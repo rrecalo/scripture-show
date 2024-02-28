@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { ConvertLabelToName, ConvertMonitorNameToLabel, CustomScreen, Screen } from './ConfigureScreens'
+import { useEffect } from 'react';
+import { ConvertMonitorNameToLabel, CustomScreen, Screen } from './ConfigureScreens'
 import { Monitor, availableMonitors } from '@tauri-apps/api/window';
 import { invoke } from '@tauri-apps/api';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { listen, TauriEvent } from '@tauri-apps/api/event';
 
 type Props = {
@@ -12,8 +12,6 @@ type Props = {
 }
 
 function ScreenToggleComponent({customScreens, setCustomScreens} : Props) {
-
-    const [activeScreens, setActiveScreens] = useState<Screen[]>();
 
     useEffect(() => {
         availableMonitors().then(result =>
@@ -27,7 +25,6 @@ function ScreenToggleComponent({customScreens, setCustomScreens} : Props) {
                         size: monitor.size, position: monitor.position, scaleFactor: monitor.scaleFactor} as Screen);
                 })
                 });
-                setActiveScreens(screens as Screen[]);
         });
     },[]);
 
@@ -35,13 +32,13 @@ function ScreenToggleComponent({customScreens, setCustomScreens} : Props) {
 
         const unlisten_created_window = listen(TauriEvent.WINDOW_CREATED, ()=>{
             invoke("get_open_windows").then((result: any) => {
-                refreshActiveScreens(result.windows, activeScreens);
+                refreshActiveScreens(result.windows);
             })
         });
 
         const unlisten_destroyed_window = listen(TauriEvent.WINDOW_DESTROYED, ()=>{
             invoke("get_open_windows").then((result: any) => {
-                refreshActiveScreens(result.windows, activeScreens);
+                refreshActiveScreens(result.windows);
             });
         });
 
@@ -49,7 +46,7 @@ function ScreenToggleComponent({customScreens, setCustomScreens} : Props) {
             unlisten_destroyed_window.then(f=>f());}
     }, [customScreens]);
 
-    function refreshActiveScreens(windows: String[], allScreens: Screen[] | undefined){
+    function refreshActiveScreens(windows: String[]){
         
         let screensToUpdate = customScreens;
         let newScreens: CustomScreen[] = [];
@@ -81,24 +78,22 @@ function ScreenToggleComponent({customScreens, setCustomScreens} : Props) {
         {
             customScreens?.map(s=>
                 {
-                return <motion.div key={s.customName} layout initial={{opacity:0, x:10}} animate={{opacity:1, x:0, y:0}} className=" w-full py-0.5 ps-2 pe-3 border border-neutral-700 rounded-md text-neutral-200 text-sm flex justify-between items-center">
-                {s.customName}
-                <motion.div className="w-fit h-fit" >
-                    <motion.span className="border rounded-full border-neutral-500 inline-flex items-center cursor-pointer w-11 h-6 justify-start mt-2 mx-auto"
-                    onClick={()=>toggleScreen(s.screen.name)}
-                    initial={{background: s.screen.active ? "#f3553c" : ""}}
-                    animate={{background: s.screen.active ? "#f3553c" : ""}}
-                    transition={{delay:0.15, duration:0}}
-                    
-                    >
-    
-                        <motion.span className="rounded-full size-5 bg-neutral-50 shadow" 
-                        initial={{x: s.screen.active ? "100%" : "0%"}}
-                        animate={{x: s.screen.active ? "100%" : "0%"}}
-                        transition={{duration:0.15, ease:"linear"}}/>
-                    </motion.span>
+                return(
+                <motion.div key={s.customName} layout initial={{opacity:0, x:10}} animate={{opacity:1, x:0, y:0}} className=" w-full py-0.5 ps-2 pe-3 border border-neutral-700 rounded-md text-neutral-200 text-sm flex justify-between items-center">
+                    {s.customName}
+                    <motion.div className="w-fit h-fit" >
+                        <motion.span className="border rounded-full border-neutral-500 inline-flex items-center cursor-pointer w-11 h-6 justify-start mt-2 mx-auto"
+                        onClick={()=>toggleScreen(s.screen.name)}
+                        initial={{background: s.screen.active ? "#f3553c" : ""}}
+                        animate={{background: s.screen.active ? "#f3553c" : ""}}
+                        transition={{delay:0.15, duration:0}}>
+                            <motion.span className="rounded-full size-5 bg-neutral-50 shadow" 
+                            initial={{x: s.screen.active ? "100%" : "0%"}}
+                            animate={{x: s.screen.active ? "100%" : "0%"}}
+                            transition={{duration:0.15, ease:"linear"}}/>
+                        </motion.span>
                     </motion.div>
-                </motion.div>
+                </motion.div>)
                 }
             )
         }

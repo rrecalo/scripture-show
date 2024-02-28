@@ -5,14 +5,13 @@ import { MdOutlineEdit, MdOutlineDelete } from 'react-icons/md'
 
 type Props = {
     s: CustomScreen,
-    isActive?: boolean,
     toggleScreen: Function
     renameCustomScreen: Function,
     setIsEditing: Function,
     setScreenToDelete: Function,
 }
 
-function ScreenListItem({s, isActive, toggleScreen, renameCustomScreen, setIsEditing, setScreenToDelete} : Props){
+function ScreenListItem({s, toggleScreen, renameCustomScreen, setIsEditing, setScreenToDelete} : Props){
 
     const [hover, setHover] = useState<boolean>();
     const [editing, setEditing] = useState<boolean>(false);
@@ -61,8 +60,7 @@ function ScreenListItem({s, isActive, toggleScreen, renameCustomScreen, setIsEdi
             <div className='flex flex-row justify-between gap-1 items-center align-middle w-full text-neutral-300'>
                 {!editing ?
                 <div className='w-full'>
-                {s.customName}
-                
+                    {s.customName}
                 </div>
                 :
                 <motion.input onKeyDown={handleKeyDown as any} className="text-neutral-100 outline-none bg-transparent" initial={{opacity:0}} animate={{opacity:1}} id="screen_name_edit" value={nameInput} onChange={(e)=>setNameInput(e.target.value.trimStart())} autoCapitalize='off' autoComplete='off' autoCorrect='off' maxLength={20}/>
@@ -90,13 +88,13 @@ function ScreenListItem({s, isActive, toggleScreen, renameCustomScreen, setIsEdi
                     <div className="w-fit">
                         <motion.span className="border rounded-full border-neutral-500 inline-flex items-center cursor-pointer w-11 h-6 justify-start mt-2 mx-auto"
                         onClick={()=>toggleScreen(s.screen.name)}
-                        initial={{background: isActive ? "#f3553c" : ""}}
-                        animate={{background: isActive ? "#f3553c" : ""}}
+                        initial={{background: s.screen.active ? "#f3553c" : ""}}
+                        animate={{background: s.screen.active ? "#f3553c" : ""}}
                         transition={{delay:0.15, duration:0}}
                         >
                         <motion.span className="rounded-full size-5 bg-neutral-50 shadow" 
-                            initial={{x: isActive ? "100%" : "0%"}}
-                            animate={{x: isActive ? "100%" : "0%"}}
+                            initial={{x: s.screen.active ? "100%" : "0%"}}
+                            animate={{x: s.screen.active ? "100%" : "0%"}}
                             transition={{duration:0.15, ease:"linear"}}/>
                         </motion.span>
                     </div>

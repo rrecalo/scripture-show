@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import { AiOutlinePlus } from "react-icons/ai";
 import '../App.css';
 import NewScreenModal from "./NewScreenModal";
-import {BiEditAlt} from 'react-icons/bi';
 import ScreenListItem from "./ScreenListItem";
 import ConfirmScreenDeletionModal from "./ConfirmScreenDeletionModal";
 
@@ -40,7 +39,7 @@ export default function ConfigureScreens(){
     const [primary, setPrimary] = useState<Monitor>();
     const [darkMode, setDarkMode] = useState<Boolean>();
     const [windows, setWindows] = useState<String[]>();
-    const [activeScreens, setActiveScreens] = useState<Screen[]>();
+    const [availableDisplays, setAvailableDisplays] = useState<Screen[]>();
     const [screens, setScreens] = useState<CustomScreen[]>([]);
     const [screenToDelete, setScreenToDelete] = useState<CustomScreen>();
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
@@ -60,8 +59,7 @@ export default function ConfigureScreens(){
                 setMonitors(result);
                 setWindows(result2.windows);
                 });
-                setActiveScreens(screens as Screen[]);
-                console.log(screens);
+                setAvailableDisplays(screens as Screen[]);
             });
         
         primaryMonitor().then((result : any) =>setPrimary(result));
@@ -85,20 +83,20 @@ export default function ConfigureScreens(){
         const unlisten_created_window = listen(TauriEvent.WINDOW_CREATED, ()=>{
             invoke("get_open_windows").then((result: any) => {
                 setWindows(result.windows);
-                refreshActiveScreens(result.windows, activeScreens);
+                refreshCustomScreens(result.windows);
             })
         });
 
         const unlisten_destroyed_window = listen(TauriEvent.WINDOW_DESTROYED, ()=>{
             invoke("get_open_windows").then((result: any) => {
                 setWindows(result.windows);
-                refreshActiveScreens(result.windows, activeScreens);
+                refreshCustomScreens(result.windows);
             });
         });
 
         return ()=>{unlisten_created_window.then(f=>f());
             unlisten_destroyed_window.then(f=>f());}
-    }, [windows, monitors]);
+    }, [windows, monitors, screens]);
 
     useEffect(()=>{
         if(screens && screens.length > 0){
@@ -116,28 +114,30 @@ export default function ConfigureScreens(){
         }
     }, [isEditingName])
 
-    function handleMonitorChoice(monitor: Monitor){
-        invoke("open_display_monitor", {monitorName: monitor.name});
-    }
-
-    function refreshActiveScreens(windows: String[], allScreens: Screen[] | undefined){
-        let screens = allScreens;
-        activeScreens?.forEach((screen : Screen) => {
-            if(windows?.includes(screen.name)){
-                screen.active = true;
-            }
-            else screen.active= false;
+    function refreshCustomScreens(windows: String[]){
+        
+        let screensToUpdate = screens;
+        let newScreens: CustomScreen[] = [];
+        screensToUpdate?.forEach((screen : CustomScreen)=>{
+            windows?.includes(ConvertMonitorNameToLabel(screen.screen.name)) ?
+            screen.screen.active = true
+            :
+            screen.screen.active = false;
+            newScreens.push(screen);
         });
-        setActiveScreens(screens);
+        if(screensToUpdate){
+            setScreens(newScreens);
+        }
+     
     }
 
     function toggleScreen(screenName : String){
-        let screens = activeScreens;
-        let screenToUpdate = screens?.find(screen => screen.name === ConvertMonitorNameToLabel(screenName));
+        let updatedScreens = screens;
+        let screenToUpdate = updatedScreens?.find(screen => screen.screen.name === screenName);
         if(screenToUpdate){
-            screenToUpdate.active = !screenToUpdate?.active;
+            screenToUpdate.screen.active = !screenToUpdate?.screen.active;
             invoke("open_display_monitor", {monitorName: ConvertLabelToName(screenName)});
-            setActiveScreens(screens); //
+            setScreens(updatedScreens);
         }
     }
 
@@ -159,7 +159,6 @@ export default function ConfigureScreens(){
         setIsEditingName(false);
     }
 
-
     return(
         <motion.div initial={{opacity:0.5}} animate={{opacity:1}} className={`select-none cursor-default overflow-y-hidden min-w-screen min-h-screen h-screen max-w-screen ${darkMode ? 'dark bg-neutral-800' : ''}`}>
             <div className="fixed top-0 h-6 w-full" data-tauri-drag-region></div>
@@ -176,7 +175,7 @@ export default function ConfigureScreens(){
                     </motion.div>
                     </div>
                     <div id="screen_list" className="flex flex-col justify-start items-start gap-2 w-full h-full overflow-y-scroll pe-2">
-                    {screens?.map(s => <ScreenListItem key={s.customName} setScreenToDelete={setScreenToDelete} setIsEditing={setIsEditingName} renameCustomScreen={renameScreenObject} toggleScreen={toggleScreen} s={s} isActive={activeScreens?.find(ss=>ss.name === ConvertMonitorNameToLabel(s.screen.name))?.active}/>)}
+                    {screens?.map(s => <ScreenListItem key={s.customName} setScreenToDelete={setScreenToDelete} setIsEditing={setIsEditingName} renameCustomScreen={renameScreenObject} toggleScreen={toggleScreen} s={s} />)}
                     </div>
                 </div>
                 <div id="display_list" className="pt-6 flex flex-col justify-start items-start w-5/12 px-4 h-full">
@@ -184,7 +183,7 @@ export default function ConfigureScreens(){
                         Available Displays
                     </div>
                     <div className="w-full flex flex-col gap-2 h-[full] pb-2 pe-2 overflow-scroll overflow-x-clip">
-                        {activeScreens?.map((screen : Screen) =>
+                        {availableDisplays?.map((screen : Screen) =>
                         <div className="flex justify-center items-center gap-2">
                             <div className="ps-2 pe-5 py-2 text-sm w-full flex justify-between items-center h-fit bg-neutral-800 border border-neutral-700 rounded-md">
                                 <div className="flex justify-start items-center align-middle gap-1">
