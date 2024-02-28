@@ -7,6 +7,9 @@ import { motion } from "framer-motion";
 import { AiOutlinePlus } from "react-icons/ai";
 import '../App.css';
 import NewScreenModal from "./NewScreenModal";
+import {BiEditAlt} from 'react-icons/bi';
+import ScreenListItem from "./ScreenListItem";
+import ConfirmScreenDeletionModal from "./ConfirmScreenDeletionModal";
 
 export function ConvertMonitorNameToLabel(monitorName: any) {
     return monitorName.replace(" #", "_");
@@ -32,12 +35,15 @@ export type CustomScreen = {
 export default function ConfigureScreens(){
 
     const [monitors, setMonitors] = useState<Monitor[]>();
+    const [isEditingName, setIsEditingName] = useState<boolean>(false);
     const [shown, setShown] = useState<boolean>(false);
     const [primary, setPrimary] = useState<Monitor>();
     const [darkMode, setDarkMode] = useState<Boolean>();
     const [windows, setWindows] = useState<String[]>();
     const [activeScreens, setActiveScreens] = useState<Screen[]>();
     const [screens, setScreens] = useState<CustomScreen[]>([]);
+    const [screenToDelete, setScreenToDelete] = useState<CustomScreen>();
+    const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
 
     useEffect(()=>{
@@ -100,6 +106,16 @@ export default function ConfigureScreens(){
         }
     }, [screens]);
 
+    useEffect(()=>{
+        screenToDelete ? setShowDeleteModal(true) : setShowDeleteModal(false);
+    }, [screenToDelete])
+
+    useEffect(()=>{
+        if(isEditingName){
+            setScreenToDelete(undefined);
+        }
+    }, [isEditingName])
+
     function handleMonitorChoice(monitor: Monitor){
         invoke("open_display_monitor", {monitorName: monitor.name});
     }
@@ -133,11 +149,22 @@ export default function ConfigureScreens(){
         setScreens(screens=>[...screens as CustomScreen[], newScreenObject])
     }
 
+    function deleteScreenObject(name: string){
+        setScreens(screens=>screens.filter(s=> s.customName !== name));
+        setScreenToDelete(undefined);
+    }
+
+    function renameScreenObject(screenToRename: CustomScreen, newName: string){
+        setScreens(screens=>[...screens.filter(s=>s.customName!==screenToRename.customName), {...screenToRename, customName: newName}]);
+        setIsEditingName(false);
+    }
+
 
     return(
         <motion.div initial={{opacity:0.5}} animate={{opacity:1}} className={`select-none cursor-default overflow-y-hidden min-w-screen min-h-screen h-screen max-w-screen ${darkMode ? 'dark bg-neutral-800' : ''}`}>
             <div className="fixed top-0 h-6 w-full" data-tauri-drag-region></div>
             <NewScreenModal shown={shown} setShown={setShown} makeNewScreenObject={makeNewScreenObject} monitors={monitors} customScreens={screens}/>
+            <ConfirmScreenDeletionModal shown={showDeleteModal} s={screenToDelete} clearDeleteSelection={()=>setScreenToDelete(undefined)} deleteScreen={deleteScreenObject}/>
             <div className="flex justify-start items-start w-full h-full">
                 <div id="output_list" className="pt-6 flex flex-col justify-start items-start w-7/12 h-[100%] ps-4 border-r border-neutral-700">
                     <div className="flex w-full justify-between items-center pe-4">
@@ -149,30 +176,7 @@ export default function ConfigureScreens(){
                     </motion.div>
                     </div>
                     <div id="screen_list" className="flex flex-col justify-start items-start gap-2 w-full h-full overflow-y-scroll pe-2">
-                    {screens?.map(s => {
-                        let isActive = activeScreens?.find(ss=>ss.name === ConvertMonitorNameToLabel(s.screen.name))?.active;
-                        return <div className="w-full py-2 ps-2 pe-3 border border-neutral-700 rounded-md text-neutral-200 text-sm flex justify-between items-center">
-                            {s.customName}
-                            <div className="flex jutify-between items-center gap-2">
-                            <div className="ml-2 text-neutral-400 text-xs">{s.screen.name}</div>
-                            <div className="w-fit">
-                                <motion.span className="border rounded-full border-neutral-500 inline-flex items-center cursor-pointer w-11 h-6 justify-start mt-2 mx-auto"
-                                onClick={()=>toggleScreen(s.screen.name)}
-                                initial={{background: isActive ? "#f3553c" : ""}}
-                                animate={{background: isActive ? "#f3553c" : ""}}
-                                transition={{delay:0.15, duration:0}}
-                                layout="preserve-aspect"
-                                >
-                
-                                    <motion.span className="rounded-full size-5 bg-neutral-50 shadow" 
-                                    initial={{x: isActive ? "100%" : "0%"}}
-                                    animate={{x: isActive ? "100%" : "0%"}}
-                                    transition={{duration:0.15, ease:"linear"}}/>
-                                </motion.span>
-                                </div>
-                            </div>
-                        </div>
-                        })}
+                    {screens?.map(s => <ScreenListItem key={s.customName} setScreenToDelete={setScreenToDelete} setIsEditing={setIsEditingName} renameCustomScreen={renameScreenObject} toggleScreen={toggleScreen} s={s} isActive={activeScreens?.find(ss=>ss.name === ConvertMonitorNameToLabel(s.screen.name))?.active}/>)}
                     </div>
                 </div>
                 <div id="display_list" className="pt-6 flex flex-col justify-start items-start w-5/12 px-4 h-full">
