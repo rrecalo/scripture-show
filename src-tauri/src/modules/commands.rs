@@ -113,7 +113,6 @@ async fn open_display_monitor(app: tauri::AppHandle, monitor_name: String) -> bo
         .always_on_top(true)
         .hidden_title(true)
         .decorations(false)
-        .fullscreen(false)
         .inner_size(800.0, 600.0)
         .build().expect("Failed to create window!"))
         }
@@ -130,9 +129,16 @@ async fn open_display_monitor(app: tauri::AppHandle, monitor_name: String) -> bo
                 y: pos.y / 2
             })
         ).expect("Could not set new window's position");
-        let _ = win.set_focus();
-        let _ = win.set_fullscreen(true);
-        
+
+        #[cfg(target_os = "macos")]
+        {
+            use cocoa::base::id;
+            use cocoa::appkit::{ NSWindow, NSMainMenuWindowLevel };
+            let ns_win = win.ns_window().unwrap() as id;
+            unsafe { 
+                ns_win.setLevel_((NSMainMenuWindowLevel + 1) as i64);
+            }
+        }
         //println!("window is : {0} x {1}", win.inner_size().unwrap().width, win.inner_size().unwrap().height);
         //println!("placed at : x : {0} y : {1}", win.outer_position().unwrap().x, win.outer_position().unwrap().y);
         //unsafe {
@@ -211,6 +217,7 @@ async fn open_configure_screens_window(app: tauri::AppHandle) -> Result<bool, Ap
         .title("Configure Screens")
         .min_inner_size(400.0, 200.0)
         .inner_size(400.0, 200.0)
+        .always_on_top(true)
         .title_bar_style(tauri::TitleBarStyle::Overlay)
         .hidden_title(true)
         .focused(true)
@@ -232,6 +239,7 @@ async fn open_projection_customization_window(app: tauri::AppHandle) -> Result<b
         .title("Projection Theme Customization")
         .min_inner_size(800.0, 600.0)
         .inner_size(800.0, 600.0)
+        .always_on_top(true)
         .focused(true)
         .build();
 
@@ -241,6 +249,7 @@ async fn open_projection_customization_window(app: tauri::AppHandle) -> Result<b
         .title("Projection Theme Customization")
         .min_inner_size(800.0, 600.0)
         .inner_size(800.0, 600.0)
+        .always_on_top(true)
         .title_bar_style(tauri::TitleBarStyle::Overlay)
         .hidden_title(true)
         .focused(true)
@@ -261,6 +270,7 @@ async fn open_new_bookmark_window(app: tauri::AppHandle) -> Result<bool, Applica
         .title("Create a Bookmark")
         .min_inner_size(600.0, 500.0)
         .inner_size(600.0, 500.0)
+        .always_on_top(true)
         .focused(true)
         .build();
 
@@ -270,6 +280,7 @@ async fn open_new_bookmark_window(app: tauri::AppHandle) -> Result<bool, Applica
         .title("Create a Bookmark")
         .min_inner_size(600.0, 500.0)
         .inner_size(600.0, 500.0)
+        .always_on_top(true)
         .title_bar_style(tauri::TitleBarStyle::Overlay)
         .hidden_title(true)
         .focused(true)

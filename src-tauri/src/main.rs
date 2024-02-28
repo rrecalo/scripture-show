@@ -7,7 +7,7 @@ use modules::commands;
 use modules::menu::init_menu;
 use modules::bible_reader::create_from_xml;
 
-use tauri::{CustomMenuItem, Manager, Menu, Position,  State, Submenu, Window, WindowBuilder};
+use tauri::{ Manager, WindowBuilder};
 struct Bibles{
     esv: Bible,
     ro: Bible,
@@ -45,6 +45,7 @@ fn main() {
             //.transparent(true)
             .min_inner_size(1280.0, 720.0)
             .inner_size(1280.0, 720.0)
+            .focused(true)
             .build()?;
             #[cfg(not(target_os="macos"))]
             WindowBuilder::new(app, "configure_screens",

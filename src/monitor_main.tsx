@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom/client";
 import "./styles.css";
-import ProjectionDisplay from './Components/ProjectionDisplay';
+import ProjectionWebviewWindow from "./Components/ProjectionWebviewWindow";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-    <ProjectionDisplay audience={true}/>
+    <ProjectionWebviewWindow />
 );
