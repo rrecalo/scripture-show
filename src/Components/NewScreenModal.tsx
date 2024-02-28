@@ -38,7 +38,7 @@ function NewScreenModal({shown, setShown, makeNewScreenObject, monitors, customS
 
                 {/* Enter a Screen name */}
             <input id="screen_name_input" placeholder='Audience-main...' className="mt-2 rounded-md w-full border border-neutral-700 outline-none ps-2 py-1 dark:bg-neutral-800 dark:text-neutral-200"
-            value={screenName} autoCorrect="off" autoComplete="off" autoCapitalize="off"
+            value={screenName} autoCorrect="off" autoComplete="off" autoCapitalize="off" maxLength={20}
             onChange={(e)=>setScreenName(e.target.value.trimStart())}/>
             <div className='mt-5 flex w-full justify-around items-center gap-5'>
                 <motion.button className='bg-neutral-200 text-[#f3553c] rounded md text-xs w-20 h-8' disabled={screenName.length < 1 ? true : false}

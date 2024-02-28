@@ -438,28 +438,33 @@ function App() {
                 
             </div>
             <div className="flex w-full h-full">
-            <div className="text-neutral-400 ps-3 flex-col justify-start items-center h-full w-1/2 border-r border-neutral-700">
-                <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
-                    Themes
-                </div>
-                <div>
-                    <ThemeChangeComponent />
-                </div>
-                
-            </div>
-            <div className="text-neutral-400flex-col justify-start items-center h-full w-1/2  border-neutral-700">
-                <div className="w-full h-1/2 ps-3 pe-2">
+                <div className="text-neutral-400 ps-3 flex-col justify-start items-center h-full w-1/2 border-r border-neutral-700">
                     <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
-                        Screens 
+                        Themes
                     </div>
-                    <ScreenToggleComponent customScreens={customScreens} setCustomScreens={setCustomScreens}/>
+                    <div>
+                        <ThemeChangeComponent />
+                    </div>
+                    
                 </div>
-                <div className="w-full h-1/2 border-t border-neutral-700 ps-3 pe-2">
-                <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
-                        Category
+                <div className="text-neutral-400 flex-col justify-start items-center w-1/2 h-full border-neutral-700">
+                    <div className="w-full ps-3 pe-2 h-3/4">
+                        <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
+                            Screens 
+                        </div>
+                        <div className="h-[85%] overflow-y-scroll">
+                        <ScreenToggleComponent customScreens={customScreens} setCustomScreens={setCustomScreens}/>
+                        </div>
+                    </div>
+                    <div className="w-full border-t border-neutral-700 ps-3 pe-2 h-1/4">
+                        <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
+                            Category
+                        </div>
+                        <div className="h-[90%]">
+                            
+                        </div>
                     </div>
                 </div>
-            </div>
             </div>
         </div>
     </motion.div>
