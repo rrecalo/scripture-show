@@ -330,9 +330,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                 <div className='w-full h-fit pt-2 flex'>
                     <div className="relative min-w-[50%] max-w-[50%] w-fit rounded-md">
                     <Dropdown expanded={expanded} setExpanded={setExpanded} hidden={editedName !== undefined ? true : false} value={activeSelection} onChange={(e : string)=>{setActiveSelection(e)}} 
-                    options={themes.map(theme=>theme.name)}
-                    onMouseDown={()=>
-                    setShowThemeMenu(false)}/>
+                    options={themes.map(theme=>theme.name)}/>
                     {
                         editedName !== undefined ?
                     <div className="z-10 left-0 w-full flex justify-between items-center align-middle bg-transparent border border-neutral-700 rounded-md py-1 px-1 ps-2">

@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import { useEffect } from 'react';
 
 type Props = {
     hide: boolean,

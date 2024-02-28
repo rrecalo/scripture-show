@@ -7,17 +7,17 @@ type Props = {
     hidden: boolean,
     setExpanded: Function,
     expanded: boolean,
-    value: string,
+    value?: string,
     onChange: Function,
     options: string[],
-    onMouseDown: Function
+    placeholderText?: string,
     
 }
 
-function Dropdown({hidden, value, options, onChange, onMouseDown, expanded, setExpanded} : Props) {
+function Dropdown({hidden, value, options, onChange, expanded, setExpanded, placeholderText} : Props) {
 
     function showOptions(){
-        if(options.length > 0){
+        if(options?.length > 0){
             setExpanded(!expanded);
         }
     }
@@ -30,7 +30,7 @@ function Dropdown({hidden, value, options, onChange, onMouseDown, expanded, setE
   return (
     <div hidden={hidden} className="relative bg-neutral-800 border border-neutral-700 text-neutral-300 rounded-md min-w-full">
         <div onMouseDown={showOptions} className="flex gap-1 justify-between items-center align-middle py-1 px-1 ps-2">
-            {options.length > 0 ?
+            {options?.length > 0 ?
             <>
                 <motion.div key={value} initial={{opacity:0}} animate={{opacity:1}}>
                     {removeExtension(value || "")}
@@ -39,14 +39,14 @@ function Dropdown({hidden, value, options, onChange, onMouseDown, expanded, setE
             </>
             :   
             <motion.div key={value} initial={{opacity:0}} animate={{opacity:1}} className="text-neutral-400">
-                No themes
+                {placeholderText || "No Themes"}
             </motion.div>
             }
         </div>
 
-        <motion.div id="options" initial={{opacity:0}} animate={{opacity: expanded ? 1 : 0,  transition:{duration:0.25}}} className="absolute px-1 pe-3 bg-neutral-800 top-full border border-neutral-700 w-full h-fit max-h-[150px] mt-1.5 rounded-md">
+        <motion.div id="options" initial={{opacity:0}} animate={{opacity: expanded ? 1 : 0, display: expanded ? "block" : "none",  transition:{duration:0.25}}} className="absolute px-1 pe-3 bg-neutral-800 top-full border border-neutral-700 w-full h-fit max-h-[150px] mt-1.5 rounded-md">
         <div className="pt-1"></div>
-        {options.map(
+        {options?.map(
             option => {
                 let isSelected = option === value;
                 return (<motion.div key={option} onClick={isSelected ? ()=>{} : ()=>handleChange(option)} className={`w-full ps-2 py-1.5 m-1 rounded-md border-neutral-700 ${isSelected ? 'border' :''}`}

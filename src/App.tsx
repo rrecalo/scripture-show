@@ -15,7 +15,9 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import VerseHistory from "./Components/VerseHistory";
 import ProjectionConfiguration from "./types/ProjectionConfiguration";
 import { motion } from "framer-motion";
-import { appConfigDir } from '@tauri-apps/api/path';
+import { CustomScreen } from "./Components/ChooseMonitor";
+import ScreenToggleComponent from "./Components/ScreenToggleComponent";
+import ThemeChangeComponent from "./Components/ThemeChangeComponent";
 
 export type GetVersesResult = {
     book_name: String,
@@ -55,6 +57,7 @@ function App() {
   const [displayOpened, setDisplayOpened] = useState<Boolean>(false);
   const [darkMode, setDarkMode] = useState<Boolean>();
   const [bookList, setBookList] = useState<String[]>();
+  const [customScreens, setCustomScreens] = useState<CustomScreen[]>();
   const [projectionConfig, setProjectionConfig] = useState<ProjectionConfiguration>(
   {
       verseCount: defaultVerseCount,
@@ -100,8 +103,13 @@ function App() {
         invoke("open_projection_customization_window").then((response)=>{console.log(response)});
     });
     
+    const unlisten_screens = listen("custom_screens_changed", (event)=>{
+        setCustomScreens((event?.payload as any).screens);
+    });
+
     emit('theme_update', darkMode);
     emit("load_projection_customization", projectionConfig);
+
     
     // const unlisten_projection_customization_updates = listen('projection_format', (event: any) => {
     //         if(event){
@@ -114,6 +122,7 @@ function App() {
     return () => {
         unlisten_configure_screens.then(f=>f());
         unlisten_projection_customization.then(f=>f());
+        unlisten_screens.then(f=>f());
         // unlisten_projection_customization_updates.then(f=>f());
         };
     },[]);
@@ -170,8 +179,23 @@ function App() {
   }, [lastTheme]);
 
   useEffect(()=>{
-    if(projectionConfig && darkMode && lastTheme){
-        savePreferences({...projectionConfig, darkMode, lastTheme});
+    if(customScreens){
+        const listen_screen_request = listen("request_custom_screens", (event)=>{
+            emit("send_screens", {screens: customScreens});
+        });
+        const unlisten_screens = listen("custom_screens_changed", (event)=>{
+            setCustomScreens((event?.payload as any).screens);
+        });
+        return ()=>{
+            unlisten_screens.then(f=>f());
+            listen_screen_request.then(f=>f());
+        }
+    }
+  }, [customScreens])
+
+  useEffect(()=>{
+    if(projectionConfig && darkMode && lastTheme && customScreens){
+        savePreferences({...projectionConfig, darkMode, lastTheme, customScreens});
 
         emit('theme_update', darkMode);
 
@@ -196,12 +220,12 @@ function App() {
 
         }
     }
-  }, [projectionConfig, darkMode, lastTheme]);
+  }, [projectionConfig, darkMode, lastTheme, customScreens]);
 
 
     function loadPreferences(){
         const decoder = new TextDecoder();
-        appConfigDir().then(res=>{console.log(res)});
+        //appConfigDir().then(res=>{console.log(res)});
         //console.log(BaseDirectory.Config);
         readBinaryFile(jsonConfigName, {dir:BaseDirectory.AppConfig}).then(
         res => {
@@ -209,6 +233,8 @@ function App() {
             const prefs = JSON.parse(decoder.decode(res));
                 setDarkMode(prefs.darkMode);
                 setLastTheme(prefs.lastTheme);
+                setCustomScreens(prefs.customScreens);
+                emit('send_screens', {screens:prefs.customScreens});
                 //if default verse count is not found in the preferences, that means there probably aren't any preferences
                 //in this case, set the preferences as the defaults
                 if(prefs.verseCount === undefined || prefs.verseCount === null){
@@ -401,23 +427,40 @@ function App() {
         </div>
         
         <div id="monitoring_area" className="pt-2 flex flex-col w-5/12 h-full dark:bg-neutral-800 border border-neutral-700">
-            <div className="pt-1 pl-2 pb-1 ps-1 text-neutral-200 text-sm font-bold">
+            <div className="pt-1 pl-2 pb-1 ps-3 text-neutral-200 text-sm font-bold">
                 Display Monitor
             </div>
             {/* <MonitoringDisplay verseToDisplay={shownVerses?.slice(0, 1)[0]}/> */}
-            <div className="w-full h-1/2 flex justify-center items-center">
+            <div className="w-full h-1/2 flex justify-center items-center border-b border-neutral-700">
                 <div className="w-fit scale-[0.35] aspect-video">
                     <ProjectionDisplay audience={false}/>
                 </div>
+                
             </div>
-            {/*
-            <div className="pt-1 pl-1 text-neutral-500 border-b border-neutral-700 text-sm bg-neutral-100 dark:bg-neutral-900">
-                    Projection configuration
+            <div className="flex w-full h-full">
+            <div className="text-neutral-400 ps-3 flex-col justify-start items-center h-full w-1/2 border-r border-neutral-700">
+                <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
+                    Themes
                 </div>
-            <div className="p-5 w-full h-full flex justify-start items-start dark:bg-neutral-900">
-                <ProjectionControls config={projectionConfig} setConfig={setProjectionConfig}/>
+                <div>
+                    <ThemeChangeComponent />
+                </div>
+                
             </div>
-            */}
+            <div className="text-neutral-400flex-col justify-start items-center h-full w-1/2  border-neutral-700">
+                <div className="w-full h-1/2 ps-3 pe-2">
+                    <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
+                        Screens 
+                    </div>
+                    <ScreenToggleComponent customScreens={customScreens} setCustomScreens={setCustomScreens}/>
+                </div>
+                <div className="w-full h-1/2 border-t border-neutral-700 ps-3 pe-2">
+                <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
+                        Category
+                    </div>
+                </div>
+            </div>
+            </div>
         </div>
     </motion.div>
   );
