@@ -1,6 +1,13 @@
 import ScriptureSearchBox from "./ScriptureSearchBox";
 
-export default function ScriptureSearch({performSearch, currentBook, currentChapter, getChapterCount}){
+type Props = {
+    performSearch: Function,
+    currentBook: String,
+    currentChapter: number,
+    getChapterCount: Function,
+}
+
+export default function ScriptureSearch({performSearch, currentBook, currentChapter, getChapterCount} : Props){
 
 
     function decrementChapter(){

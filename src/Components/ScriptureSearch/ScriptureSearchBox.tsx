@@ -2,20 +2,16 @@ import { useEffect, useState } from "react";
 import { GetVersesResult } from './../../App';
 import { IoSearch } from "react-icons/io5";
 import { easeInOut, motion } from "framer-motion";
+import { listen } from "@tauri-apps/api/event";
 // import { register } from "@tauri-apps/api/globalShortcut";
 
 type ScriptureSearchBoxProps = {
     performSearch : Function,
     getChapterCount : Function,
+    searchBoxId?: string,
 }
 
-// await register('F5', () => {
-//     let input = document.getElementById("search_box");
-//     input?.click();
-//     input?.focus();
-// });
-
-export default function ScriptureSearchBox({performSearch, getChapterCount} : ScriptureSearchBoxProps){
+    export default function ScriptureSearchBox({performSearch, getChapterCount, searchBoxId} : ScriptureSearchBoxProps){
 
     const [searchValue, setSearchValue] = useState("");
     const [queryResult, setQueryResult] = useState<String>("");
@@ -29,11 +25,12 @@ export default function ScriptureSearchBox({performSearch, getChapterCount} : Sc
 
             return () => {root?.removeEventListener("click", stopSearch);}
         }
+
     }, [])
 
     function stopSearch(e: any){
         if(e.target.id !== "search_container" && e.target.id !== "search_box" && e.target.id !== "search_icon" && e.target.id !== "search_icon_container" 
-        && e.target.id !== "search_box_container"){
+        && e.target.id !== "search_box_container" && e.target.id !== searchBoxId){
             setSearching(false);
             setSearchValue("");
         }
@@ -46,7 +43,7 @@ export default function ScriptureSearchBox({performSearch, getChapterCount} : Sc
             performSearch(searchValue, true);
             setSearching(false);
             setSearchValue("");
-            let input = document.getElementById("search_box");
+            let input = document.getElementById(searchBoxId || "search_box");
             input?.blur();
         }
         else if(e.key === "Tab"){
@@ -79,12 +76,9 @@ export default function ScriptureSearchBox({performSearch, getChapterCount} : Sc
             });
         },[searchValue]);
 
-    //justifyContent: isSearching ? "left" : "center",
-    //width: isSearching ? "100%" : "50%",
-
     function handleSearchDivClick(){
         setSearching(true);
-        let searchBox = document.getElementById("search_box");
+        let searchBox = document.getElementById(searchBoxId || "search_box");
         if(searchBox){
             searchBox.focus();
         }
@@ -103,7 +97,7 @@ export default function ScriptureSearchBox({performSearch, getChapterCount} : Sc
                         transition:{duration:0.5}}}>
                         <IoSearch id="search_icon" className="w-4 h-4 text-neutral-400"/> 
                     </motion.div>
-                    <input id="search_box" className={`text-left outline-none w-full h-full bg-inherit py-1 ${isSearching ? "cursor-text": "cursor-default" }`}
+                    <input id={searchBoxId || "search_box"} className={`text-left outline-none w-full h-full bg-inherit py-1 ${isSearching ? "cursor-text": "cursor-default" }`}
                     autoComplete="off"
                     autoCorrect="off"
                     autoCapitalize="off"

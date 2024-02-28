@@ -7,6 +7,8 @@ use modules::commands;
 use modules::menu::init_menu;
 use modules::bible_reader::create_from_xml;
 
+use tauri::AppHandle;
+use tauri::GlobalShortcutManager;
 use tauri::{ Manager, WindowBuilder};
 struct Bibles{
     esv: Bible,
@@ -64,7 +66,17 @@ fn main() {
             //     .hidden_title(true)
             //     .always_on_top(true)
             //     .build()?;
-            let app_handle = app.handle();
+            let app_handle: AppHandle = app.handle();
+
+            let mut shortcut = app.global_shortcut_manager();
+            let c_app = app_handle.clone();
+            shortcut
+                .register("Alt+R",  move || {
+                    let _ = c_app.get_window("main").expect("No main window to focus!").set_focus();
+                    let _ = c_app.emit_to("main", "search_hotkey", true);
+                })
+                .unwrap_or_else(|err| println!("{:?}", err));
+
             main_window.on_menu_event(move |event| {
                 match event.menu_item_id() {
                 "quit" => {

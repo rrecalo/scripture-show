@@ -41,7 +41,6 @@ export async function getChapterCount(bookName: string){
 
 export const appName = "scripture-show";
 
-
 function App() {
 
   const jsonConfigName = "scripture-show-config.json";
@@ -110,12 +109,13 @@ function App() {
     emit('theme_update', darkMode);
     emit("load_projection_customization", projectionConfig);
 
-    
-    // const unlisten_projection_customization_updates = listen('projection_format', (event: any) => {
-    //         if(event){
-    //             //setProjectionConfig(event.payload);
-    //         }
-    //     });
+    listen("search_hotkey", ()=>{
+        let input = document.getElementById("search_box");
+        if(input){
+            input.click();
+            input.focus();
+        }
+    })
 
     loadPreferences();
     
@@ -415,9 +415,9 @@ function App() {
         </div>
         <div className="relative flex flex-col w-7/12 h-full overflow-y-auto overflow-x-hidden dark:bg-neutral-900">
 
-            <ScriptureSearch performSearch={searchForBook} currentBook={book} currentChapter={chapter} getChapterCount={getChapterCount}/>
+            <ScriptureSearch performSearch={searchForBook} currentBook={book || ""} currentChapter={chapter || 1} getChapterCount={getChapterCount}/>
             <div id="search_results" className="pt-24 h-full flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900 overflow-x-clip">
-                <ScriptureSearchResults book={book} verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
+                <ScriptureSearchResults book={book || ""} verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
                 {
                     remainderVerses !== undefined && remainderVerses?.length > 0 ? 
                     <div className="w-fit mx-auto text-neutral-50 text-xs" onClick={handleShowRestVerses}> show {remainderVerses.length} more verses..</div>

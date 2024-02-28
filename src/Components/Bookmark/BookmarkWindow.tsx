@@ -20,7 +20,6 @@ export default function BookmarkWindow({}){
     const [chapter, setChapter] = useState<number>();
     const [chosenVerseNums, setChosenVerseNums] = useState<number[]>();
 
-
     useEffect(()=>{
         
         listen('theme_update', (event : any) =>{
@@ -129,7 +128,7 @@ export default function BookmarkWindow({}){
                     <div className="pl-3">Book and Chapter</div>
                 </div>
                 <div className="dark:text-neutral-300 w-full ps-2 pt-2 bg-neutral-900 pb-1">
-                    <ScriptureSearchBox performSearch={performSearch} getChapterCount={getChapterCount}/>  
+                    <ScriptureSearchBox searchBoxId="bookmark_search" performSearch={performSearch} getChapterCount={getChapterCount}/>  
                 </div>
 
                 <div className="ps-1 pt-3 pl-1 text-neutral-500 border-b border-neutral-700 text-sm w-full">

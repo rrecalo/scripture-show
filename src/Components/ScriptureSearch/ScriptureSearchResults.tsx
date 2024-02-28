@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 import { AnimatePresence } from 'framer-motion';
 
 type ScriptureSearchResultsProps = {
-    book: string,
+    book: String,
     verses: Verse[],
     changeSelectedVerse: Function,
     verseCount: number,
