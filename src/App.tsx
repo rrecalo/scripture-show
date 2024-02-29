@@ -380,7 +380,7 @@ function App() {
 
   return (
     <motion.div initial={{opacity:0}} animate={{opacity:1}} className={`container flex flex-row min-w-screen w-screen h-screen overflow-clip border border-neutral-950 
-    dark:bg-neutral-800 bg-neutral-100
+    dark:bg-neutral-800 bg-neutral-100 select-none 
     rounded-lg mx-auto ${darkMode ? 'dark bg-neutral-900' : ''}`}>
         <div className="fixed top-0 h-6 w-full" data-tauri-drag-region></div>
         <div className="pt-6 flex flex-col justify-start items-center dark:bg-neutral-800 bg-neutral-100 border border-l-0 border-neutral-700">
