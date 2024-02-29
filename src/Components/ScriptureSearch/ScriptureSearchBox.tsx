@@ -102,7 +102,7 @@ type ScriptureSearchBoxProps = {
                     autoCorrect="off"
                     autoCapitalize="off"
                     onKeyDown={(e)=>handleKeyDown(e)}
-                    value={searchValue} onChange={(e)=>setSearchValue(e.target.value)}
+                    value={searchValue} onChange={(e)=>setSearchValue(e.target.value.trimStart())}
                     placeholder="Search"></input>
                     {
                     queryResult

@@ -2,6 +2,7 @@ import VerseComponent from '../VerseComponent';
 import Verse from '../../types/Verse';
 import {useEffect, useState} from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { listen } from '@tauri-apps/api/event';
 
 type ScriptureSearchResultsProps = {
     book: String,
@@ -14,6 +15,15 @@ export default function ScriptureSearchResults({book, verses, changeSelectedVers
 
     const [selectedVerse, setSelectedVerse] = useState<Verse>();
     const [startAtFirst, setStartAtFirst] = useState<Boolean>(false);
+
+    useEffect(()=>{
+        const listen_for_verse = listen("select_verse", (event : any )=>{
+            if(event?.payload?.verse){
+                setSelectedVerse(event?.payload?.verse);
+            }
+        });
+        return ()=>{listen_for_verse.then(f=>f());}
+    }, [])
 
     useEffect(()=>{
         setStartAtFirst(true);

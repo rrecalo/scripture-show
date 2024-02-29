@@ -287,58 +287,98 @@ function App() {
     }
 
     async function searchForBook(searchQuery: String, acceptChoice: boolean){
-    searchQuery = searchQuery.toLowerCase();
-    let starts_with_num = false;
-    if(!isNaN(parseInt(searchQuery.charAt(0)))){
-        starts_with_num = true;
-    }   
-    
-    let first_space = searchQuery.indexOf(" ");
-    let last_space = searchQuery.lastIndexOf(" ");
-    //default values if somehow the query string won't match any of the
-    //filtering below
-    let ch_num = "1";
-    let book_name = "genesis";
+        searchQuery = searchQuery.trimEnd();
+        searchQuery = searchQuery.toLowerCase();
+        let starts_with_num = false;
+        if(!isNaN(parseInt(searchQuery.charAt(0)))){
+            starts_with_num = true;
+        }   
+        
+        
+        let first_space = searchQuery.indexOf(" ");
 
-    //if there is more than one space, there must be a chapter number and the
-    //book_name can be extrapolated from slice of 0->last_space
-    //example input value : '1 john 3' 
-    //'1 jo 3' will also work since the string is split as shown
-    //{book_name}[space]{ch_num}
-    if(first_space > 0 && last_space > 0 && first_space !== last_space){
-        //ch_num = searchQuery.slice(last_space+1, last_space+2);
-        ch_num = searchQuery.slice(last_space+1, searchQuery.length);
-        book_name = searchQuery.slice(0, last_space);
-    }
-    //if there is only ONE space, get the ch num provided (if any);
-    else{
-        //catches queries for non-numbered book names followed by a chapter number
-        //{book_name (non number start)}[space]{ch_num}
-        if(!starts_with_num && first_space > 0){
-        //ch_num = searchQuery.slice(first_space+1, first_space+2);
-        ch_num = searchQuery.slice(last_space+1, searchQuery.length);
-        book_name = searchQuery.slice(0, first_space);
+        let ch_space = searchQuery.substring(first_space+1, searchQuery.length).indexOf(" ")+first_space+1;
+
+        let verse_space = searchQuery.lastIndexOf(" ");
+
+        console.log(first_space, ch_space, verse_space);
+
+        //default values if somehow the query string won't match any of the
+        //filtering below
+        let ch_num = "1";
+        let book_name = "genesis";
+
+        //if there is more than one space, there must be a chapter number and the
+        //book_name can be extrapolated from slice of 0->ch_space
+        //example input value : '1 john 3' 
+        //'1 jo 3' will also work since the string is split as shown
+        //{book_name}[space]{ch_num}
+        if(first_space > 0 && ch_space > 0 && first_space !== ch_space && (ch_space !== verse_space || starts_with_num)){
+            //ch_num = searchQuery.slice(ch_space+1, ch_space+2);
+            ch_num = searchQuery.slice(ch_space+1, searchQuery.length);
+            book_name = searchQuery.slice(0, ch_space);
+            console.log('1');
         }
-        //catches just book name queries that have no spaces
-        //'proverbs' 'Revelations
+        //if there is only ONE space, get the ch num provided (if any);
         else{
-            book_name = searchQuery.toString();
+            //catches queries for non-numbered book names followed by a chapter number
+            //{book_name (non number start)}[space]{ch_num}
+            if(!starts_with_num && first_space > 0){
+            //ch_num = searchQuery.slice(first_space+1, first_space+2);
+                if(ch_space !== first_space){
+                    ch_num = searchQuery.slice(first_space, ch_space);
+                    //console.log(ch_num);
+                    //console.log(searchQuery.substring(verse_space+1, searchQuery.length));
+                    book_name = searchQuery.slice(0, first_space);
+                    console.log('2');
+                }
+                else{
+                    ch_num = searchQuery.slice(ch_space+1, searchQuery.length);
+                    //console.log(ch_num);
+                    //console.log(searchQuery.substring(verse_space+1, searchQuery.length));
+                    book_name = searchQuery.slice(0, first_space);
+                    console.log('3');
+                }
+            }
+            //catches just book name queries that have no spaces
+            //'proverbs' 'Revelations
+            else{
+                book_name = searchQuery.toString();
+            }
         }
-    }
-
-    let new_verses = await invoke("get_verses", {bookName: book_name, chNum: parseInt(ch_num), translations:["ro"]}) as GetVersesResult;
-    if(acceptChoice){
-        if(new_verses){
-        setTranslatedVerseData(new_verses?.translation as TranslatedVerseData);
-        setVerses(new_verses?.verses);
-        setBook(new_verses?.book_name);
-        setChapter(new_verses?.chapter_num);
-        setRemainderVerses([]);
+        console.log(book_name, ch_num);
+        let new_verses = await invoke("get_verses", {bookName: book_name, chNum: parseInt(ch_num), translations:["ro"]}) as GetVersesResult;
+        if(acceptChoice){
+            if(new_verses){
+                setTranslatedVerseData(new_verses?.translation as TranslatedVerseData);
+                setVerses(new_verses?.verses);
+                setBook(new_verses?.book_name);
+                setChapter(new_verses?.chapter_num);
+                setRemainderVerses([]);
+                //if there is a space, there will be a verse number followed by the chapter number (since .trimEnd is being used on inputs)
+                if(verse_space !== ch_space || (!starts_with_num && ch_space)){
+                    let verse_num_to_select = parseInt(searchQuery.substring(verse_space+1, searchQuery.length));
+                    let verse_to_select = new_verses?.verses[verse_num_to_select-1];
+                    if(verse_to_select){
+                        console.log(verse_to_select);
+                        emit("select_verse", {verse: verse_to_select})
+                        setShownVerses([verse_to_select]);
+                    }
+                    else {
+                        emit("select_verse", {verse: new_verses?.verses[0]})
+                        setShownVerses([new_verses?.verses[0]]);
+                    }
+                }
+                else {
+                    // if there is no verse_space, set the first verse as shown
+                    emit("select_verse", {verse: new_verses?.verses[0]})
+                    setShownVerses([new_verses?.verses[0]]);
+                }
+            }
         }
-    }
-    else{
-        return searchQuery === "" ? undefined : new_verses;
-    }
+        else{
+            return searchQuery === "" ? undefined : new_verses;
+        }
   }
 
   
