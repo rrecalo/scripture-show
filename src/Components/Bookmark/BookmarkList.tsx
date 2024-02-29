@@ -7,11 +7,12 @@ import { AnimatePresence } from 'framer-motion';
 
 type BookmarkListProps = {
     selectBookmark: Function,
+    bookmarks: BookmarkType[],
+    setBookmarks: Function,
     }
 
-export default function BookmarkList({selectBookmark}: BookmarkListProps){
+export default function BookmarkList({selectBookmark, bookmarks, setBookmarks}: BookmarkListProps){
 
-    const [bookmarks, setBookmarks] = useState<BookmarkType[]>([]);
     const [bookmarkToDelete, setBookmarkToDelete] = useState<BookmarkType>();
     const [showModal, setShowModal] = useState<Boolean>(false);
 

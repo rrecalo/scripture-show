@@ -57,6 +57,7 @@ function App() {
   const [darkMode, setDarkMode] = useState<Boolean>();
   const [bookList, setBookList] = useState<String[]>();
   const [customScreens, setCustomScreens] = useState<CustomScreen[]>();
+  const [bookmarks, setBookmarks] = useState<BookmarkType[]>([]);
   const [projectionConfig, setProjectionConfig] = useState<ProjectionConfiguration>(
   {
       verseCount: defaultVerseCount,
@@ -194,8 +195,8 @@ function App() {
   }, [customScreens])
 
   useEffect(()=>{
-    if(projectionConfig && darkMode && lastTheme && customScreens){
-        savePreferences({...projectionConfig, darkMode, lastTheme, customScreens});
+    if(projectionConfig && darkMode && lastTheme && customScreens && bookmarks){
+        savePreferences({...projectionConfig, darkMode, lastTheme, customScreens, bookmarks});
 
         emit('theme_update', darkMode);
 
@@ -220,7 +221,7 @@ function App() {
 
         }
     }
-  }, [projectionConfig, darkMode, lastTheme, customScreens]);
+  }, [projectionConfig, darkMode, lastTheme, customScreens, bookmarks]);
 
 
     function loadPreferences(){
@@ -234,6 +235,8 @@ function App() {
                 setDarkMode(prefs.darkMode);
                 setLastTheme(prefs.lastTheme);
                 setCustomScreens(prefs.customScreens);
+                prefs.bookmarks ? setBookmarks(prefs.bookmarks) : setBookmarks([]);
+                
                 emit('send_screens', {screens:prefs.customScreens});
                 //if default verse count is not found in the preferences, that means there probably aren't any preferences
                 //in this case, set the preferences as the defaults
@@ -390,7 +393,7 @@ function App() {
                     </motion.div>
                 </div>
                 <div className="w-full border-black dark:border-neutral-700 border-r-0 overflow-y-auto overflow-x-clip h-9/10 ">
-                    <BookmarkList selectBookmark={openBookmark}/>
+                    <BookmarkList selectBookmark={openBookmark} bookmarks={bookmarks} setBookmarks={setBookmarks}/>
                 </div>
             </div>  
             
