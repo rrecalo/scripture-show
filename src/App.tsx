@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { emit, listen } from '@tauri-apps/api/event';
 import "./App.css";
@@ -58,6 +58,7 @@ function App() {
   const [bookList, setBookList] = useState<String[]>();
   const [customScreens, setCustomScreens] = useState<CustomScreen[]>();
   const [bookmarks, setBookmarks] = useState<BookmarkType[]>([]);
+  const containerRef = useRef(null);
   const [projectionConfig, setProjectionConfig] = useState<ProjectionConfiguration>(
   {
       verseCount: defaultVerseCount,
@@ -192,6 +193,23 @@ function App() {
         }
     }
   }, [customScreens])
+
+  function scrollToVerse(){
+    if(shownVerses && containerRef.current){
+        setTimeout(()=>{
+            if(containerRef.current){
+                const itemRef = containerRef.current.childNodes[shownVerses[0].number-1];
+                if (itemRef) {
+                    itemRef.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }, 25);
+    }
+}
+
+useEffect(()=>{
+    scrollToVerse();
+}, [shownVerses])
 
   useEffect(()=>{
     if(projectionConfig && darkMode && lastTheme && customScreens && bookmarks){
@@ -434,7 +452,7 @@ function App() {
         <div className="relative flex flex-col w-7/12 h-full overflow-y-auto overflow-x-hidden dark:bg-neutral-900">
 
             <ScriptureSearch performSearch={searchForBook} currentBook={book || ""} currentChapter={chapter || 1} getChapterCount={getChapterCount}/>
-            <div id="search_results" className="pt-24 h-full flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900 overflow-x-clip">
+            <div id="search_results" ref={containerRef} className="pt-24 pb-6 h-full flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900 overflow-x-clip">
                 <ScriptureSearchResults book={book || ""} verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
             </div>
         </div>
