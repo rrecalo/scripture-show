@@ -23,7 +23,6 @@ export default function VerseHistory({} : VerseHistoryProps){
                     let oldHistory = history;
 
                     if(history.findIndex(v=>v.text === newVerses[0].text)){
-                        console.log('already has that verse in history!');
                         oldHistory = oldHistory.filter(v=>v.text !== newVerses[0].text);
                     }
 

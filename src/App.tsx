@@ -287,6 +287,7 @@ function App() {
     }
 
     async function searchForBook(searchQuery: String, acceptChoice: boolean){
+        
         searchQuery = searchQuery.trimEnd();
         searchQuery = searchQuery.toLowerCase();
         let starts_with_num = false;
@@ -294,14 +295,11 @@ function App() {
             starts_with_num = true;
         }   
         
-        
         let first_space = searchQuery.indexOf(" ");
 
         let ch_space = searchQuery.substring(first_space+1, searchQuery.length).indexOf(" ")+first_space+1;
 
         let verse_space = searchQuery.lastIndexOf(" ");
-
-        console.log(first_space, ch_space, verse_space);
 
         //default values if somehow the query string won't match any of the
         //filtering below
@@ -314,30 +312,21 @@ function App() {
         //'1 jo 3' will also work since the string is split as shown
         //{book_name}[space]{ch_num}
         if(first_space > 0 && ch_space > 0 && first_space !== ch_space && (ch_space !== verse_space || starts_with_num)){
-            //ch_num = searchQuery.slice(ch_space+1, ch_space+2);
             ch_num = searchQuery.slice(ch_space+1, searchQuery.length);
             book_name = searchQuery.slice(0, ch_space);
-            console.log('1');
         }
         //if there is only ONE space, get the ch num provided (if any);
         else{
             //catches queries for non-numbered book names followed by a chapter number
             //{book_name (non number start)}[space]{ch_num}
             if(!starts_with_num && first_space > 0){
-            //ch_num = searchQuery.slice(first_space+1, first_space+2);
                 if(ch_space !== first_space){
                     ch_num = searchQuery.slice(first_space, ch_space);
-                    //console.log(ch_num);
-                    //console.log(searchQuery.substring(verse_space+1, searchQuery.length));
                     book_name = searchQuery.slice(0, first_space);
-                    console.log('2');
                 }
                 else{
                     ch_num = searchQuery.slice(ch_space+1, searchQuery.length);
-                    //console.log(ch_num);
-                    //console.log(searchQuery.substring(verse_space+1, searchQuery.length));
                     book_name = searchQuery.slice(0, first_space);
-                    console.log('3');
                 }
             }
             //catches just book name queries that have no spaces
@@ -356,11 +345,11 @@ function App() {
                 setChapter(new_verses?.chapter_num);
                 setRemainderVerses([]);
                 //if there is a space, there will be a verse number followed by the chapter number (since .trimEnd is being used on inputs)
-                if(verse_space !== ch_space || (!starts_with_num && ch_space)){
+                //console.log(first_space, ch_space, verse_space);
+                if((verse_space !== ch_space) || (!starts_with_num && ch_space !== first_space)){
                     let verse_num_to_select = parseInt(searchQuery.substring(verse_space+1, searchQuery.length));
                     let verse_to_select = new_verses?.verses[verse_num_to_select-1];
                     if(verse_to_select){
-                        console.log(verse_to_select);
                         emit("select_verse", {verse: verse_to_select})
                         setShownVerses([verse_to_select]);
                     }

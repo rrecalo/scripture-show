@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/tauri";
 import { listen } from "@tauri-apps/api/event";
 import { emit } from "@tauri-apps/api/event";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {v4 as uuid} from 'uuid';
 import ScriptureSearchBox from "../ScriptureSearch/ScriptureSearchBox";
 import { getChapterCount } from "../../App";
@@ -19,6 +19,8 @@ export default function BookmarkWindow({}){
     const [book, setBook] = useState<String>();
     const [chapter, setChapter] = useState<number>();
     const [chosenVerseNums, setChosenVerseNums] = useState<number[]>();
+    const [startingVerseNum, setStartingVerseNum] = useState<number>(1);
+    const containerRef = useRef(null);
 
     useEffect(()=>{
         
@@ -28,6 +30,23 @@ export default function BookmarkWindow({}){
         
         emit("theme_request", "choose_output");
     },[]);
+
+    function scrollToVerse(){
+        if(startingVerseNum && containerRef.current){
+            setTimeout(()=>{
+                if(containerRef.current){
+                    const itemRef = containerRef.current.childNodes[startingVerseNum-1];
+                    if (itemRef) {
+                        itemRef.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }, 50);
+        }
+    }
+
+    useEffect(()=>{
+        scrollToVerse();
+    }, [startingVerseNum])
 
     useEffect(()=>{
         if(verseRange.length > 0){
@@ -40,13 +59,14 @@ export default function BookmarkWindow({}){
                     nums.push(i);
                 };
                 setChosenVerseNums(nums);
-                console.log(nums);
 
             }
         }   
-    },[verseRange]);
+    },[verses, verseRange]);
 
     async function performSearch(searchQuery: String, acceptChoice: boolean){
+
+        searchQuery = searchQuery.trimEnd();
         searchQuery = searchQuery.toLowerCase();
         let starts_with_num = false;
         if(!isNaN(parseInt(searchQuery.charAt(0)))){
@@ -54,30 +74,40 @@ export default function BookmarkWindow({}){
         }   
         
         let first_space = searchQuery.indexOf(" ");
-        let last_space = searchQuery.lastIndexOf(" ");
+
+        let ch_space = searchQuery.substring(first_space+1, searchQuery.length).indexOf(" ")+first_space+1;
+
+        let verse_space = searchQuery.lastIndexOf(" ");
+
+        //console.log(first_space, ch_space, verse_space);
+
         //default values if somehow the query string won't match any of the
         //filtering below
         let ch_num = "1";
         let book_name = "genesis";
 
         //if there is more than one space, there must be a chapter number and the
-        //book_name can be extrapolated from slice of 0->last_space
+        //book_name can be extrapolated from slice of 0->ch_space
         //example input value : '1 john 3' 
         //'1 jo 3' will also work since the string is split as shown
         //{book_name}[space]{ch_num}
-        if(first_space > 0 && last_space > 0 && first_space !== last_space){
-            //ch_num = searchQuery.slice(last_space+1, last_space+2);
-            ch_num = searchQuery.slice(last_space+1, searchQuery.length);
-            book_name = searchQuery.slice(0, last_space);
+        if(first_space > 0 && ch_space > 0 && first_space !== ch_space && (ch_space !== verse_space || starts_with_num)){
+            ch_num = searchQuery.slice(ch_space+1, searchQuery.length);
+            book_name = searchQuery.slice(0, ch_space);
         }
         //if there is only ONE space, get the ch num provided (if any);
         else{
             //catches queries for non-numbered book names followed by a chapter number
             //{book_name (non number start)}[space]{ch_num}
             if(!starts_with_num && first_space > 0){
-            //ch_num = searchQuery.slice(first_space+1, first_space+2);
-            ch_num = searchQuery.slice(last_space+1, searchQuery.length);
-            book_name = searchQuery.slice(0, first_space);
+                if(ch_space !== first_space){
+                    ch_num = searchQuery.slice(first_space, ch_space);
+                    book_name = searchQuery.slice(0, first_space);
+                }
+                else{
+                    ch_num = searchQuery.slice(ch_space+1, searchQuery.length);
+                    book_name = searchQuery.slice(0, first_space);
+                }
             }
             //catches just book name queries that have no spaces
             //'proverbs' 'Revelations
@@ -89,20 +119,28 @@ export default function BookmarkWindow({}){
         let new_verses = await invoke("get_verses", {bookName: book_name, chNum: parseInt(ch_num), translations:["ro"]}) as GetVersesResult;
         if(acceptChoice){
             if(new_verses){
-            
-            setVerses(new_verses?.verses);
-            setBook(new_verses?.book_name);
-            setChapter(new_verses?.chapter_num);
-            setVerseRange("1-"+new_verses?.verses.length);
-            setChosenVerseNums(undefined); 
-            
+                //setTranslatedVerseData(new_verses?.translation as TranslatedVerseData);
+                setVerses(new_verses?.verses);
+                setBook(new_verses?.book_name);
+                setChapter(new_verses?.chapter_num);
+                //setVerseRange("1-"+new_verses?.verses.length);
+                setVerseRange("1-"+new_verses?.verses.length);
+                setChosenVerseNums(undefined);
+                //setRemainderVerses([]);
+                //if there is a space, there will be a verse number followed by the chapter number (since .trimEnd is being used on inputs)
+                if((verse_space !== ch_space) || (!starts_with_num && ch_space !== first_space)){
+                    let verse_num_to_select = parseInt(searchQuery.substring(verse_space+1, searchQuery.length));
+                    setStartingVerseNum(verse_num_to_select);
+                }
+                else {
+                    setStartingVerseNum(1);
+                }
             }
         }
         else{
             return searchQuery === "" ? undefined : new_verses;
         }
-
-    }
+  }
 
     function createBookmark(){
         if(chosenVerseNums){
@@ -144,17 +182,16 @@ export default function BookmarkWindow({}){
             </div>
 
             <div className="w-full h-[50%] flex flex-col justify-start items-start">
-                <div className="absolute w-full ">
-                 
+                <div className="w-full">
                     <div className="w-full pl-3 py-2 dark:text-neutral-300 b backdrop-blur-2xl">
                         {book} {chapter}{verses.length > 0 ? ':' : ''}{verseRange}
                     </div>
                 </div>
-                <div className="overflow-y-auto h-[200px] pt-10">
+                <div ref={containerRef} className="overflow-y-auto h-[200px] overflow-x-hidden">
                 {
                     verses
                     .filter((v: Verse) => chosenVerseNums?.includes(v.number))
-                    ?.map((verse : Verse) => <VerseComponent key={verse.number} verse={verse} selectVerse={()=>{}} selectedVerse={undefined}/>)
+                    ?.map((verse : Verse) => <VerseComponent id={verse.number.toString()} key={verse.number} verse={verse} selectVerse={()=>{}} selectedVerse={verses[startingVerseNum-1]}/>)
                 }
                 </div>
 
