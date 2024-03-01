@@ -164,14 +164,14 @@ export default function BookmarkWindow({}){
                     Create Bookmark
                 </div>
                 <div className="ps-1 pt-1 pl-1 text-neutral-500 border-b border-neutral-700 text-sm w-full">
-                    <div className="pl-3">Book and Chapter</div>
+                    <div className="pl-3">Select a Book, chapter number, and starting verse</div>
                 </div>
                 <div className="dark:text-neutral-300 w-full ps-2 pt-2 bg-neutral-900 pb-1">
                     <ScriptureSearchBox searchBoxId="bookmark_search" performSearch={performSearch} getChapterCount={getChapterCount}/>  
                 </div>
 
-                <div className="ps-1 pt-3 pl-1 text-neutral-500 border-b border-neutral-700 text-sm w-full">
-                <div className="pl-3">Verse range</div>
+                {/* <div className="ps-1 pt-3 pl-1 text-neutral-500 border-b border-neutral-700 text-sm w-full">
+                    <div className="pl-3">Verse range</div>
                 </div>
                 <div className="flex justify-start items-center dark:text-neutral-300 w-full ps-2 pt-2 bg-neutral-900 pb-1">
                     <input className="outline-none w-1/2 h-full bg-inherit p-1 ps-2" autoComplete="off"
@@ -179,20 +179,20 @@ export default function BookmarkWindow({}){
                     <div className="bg-inherit dark:text-neutral-400 w-1/2 h-full p-1">
                         {verses.length > 0 ? "Verses 1-" : ""}{verses.length > 0 ? verses.length : ''}                    
                     </div>
-                </div>
+                </div> */}
             </div>
 
-            <div className="w-full h-[50%] flex flex-col justify-start items-start">
+            <div className="w-full h-[50%] flex flex-col justify-start items-start pt-2">
                 <div className="w-full">
                     <div className="w-full pl-3 py-1 dark:text-neutral-300 b backdrop-blur-2xl">
                         {book} {chapter}{verses.length > 0 ? ':' : ''}{verseRange}
                     </div>
                 </div>
-                <div ref={containerRef} className="overflow-y-auto h-[175px] overflow-x-hidden">
+                <div ref={containerRef} className="overflow-y-auto h-[250px] overflow-x-hidden">
                 {
                     verses
                     .filter((v: Verse) => chosenVerseNums?.includes(v.number))
-                    ?.map((verse : Verse) => <VerseComponent id={verse.number.toString()} key={verse.number} verse={verse} selectVerse={()=>{}} selectedVerse={verses[startingVerseNum-1]}/>)
+                    ?.map((verse : Verse) => <VerseComponent id={verse.number.toString()} key={verse.number} verse={verse} selectVerse={()=>{setStartingVerseNum(verse.number)}} selectedVerse={verses[startingVerseNum-1]}/>)
                 }
                 </div>
 
