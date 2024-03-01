@@ -1,7 +1,8 @@
 import {listen} from '@tauri-apps/api/event';
-import { useEffect, useState } from 'react';
+import { Key, useEffect, useState } from 'react';
 import Verse from '../types/Verse';
 import { LayoutGroup, motion } from 'framer-motion';
+import { DisplayVerseEvent } from '../types/ProjectionConfiguration';
 
 type VerseHistoryProps = {
 
@@ -10,7 +11,7 @@ type VerseHistoryProps = {
 
 export default function VerseHistory({} : VerseHistoryProps){
 
-    const [historyLength, setHistoryLength] = useState<number>(25);
+    const [historyLength] = useState<number>(25);
     const [history, setHistory] = useState<Verse[]>();
 
     useEffect(()=>{
@@ -18,12 +19,18 @@ export default function VerseHistory({} : VerseHistoryProps){
             if(event){
                 let newVerses = event.payload.eng as Verse[];
                 if(history !== undefined && history.length > 0){
-                    if(history.length <  historyLength){
-                        setHistory((oldVerses)=> [...newVerses, ...oldVerses]);
+
+                    let oldHistory = history;
+
+                    if(history.findIndex(v=>v.text === newVerses[0].text)){
+                        console.log('already has that verse in history!');
+                        oldHistory = oldHistory.filter(v=>v.text !== newVerses[0].text);
                     }
-                    else{
-                        setHistory((oldVerses) => [...newVerses, ...oldVerses.slice(0, -1)]);
+
+                    if(history.length > historyLength){
+                        oldHistory = oldHistory.slice(0, -1);
                     }
+                    setHistory([...newVerses, ...oldHistory]);
 
                 }
                 else{
@@ -42,7 +49,7 @@ export default function VerseHistory({} : VerseHistoryProps){
     return (
         <LayoutGroup id="verse_history">
             {history?.map((item : Verse, index: number) =>
-            <motion.div layout layoutId={item.text+index.toString()}
+            <motion.div key={(item.text+index.toString()) as Key} layout layoutId={item.text+index.toString()}
             initial={{y:-1, opacity:0.9}} animate={{y:0, opacity:1}}
             className='ps-1 font-light text-sm w-full pe-4 whitespace-nowrap select-none cursor-default text-neutral-400 overflow-y-auto h-full overflow-x-hidden'
             >{item.book_name} {item.chapter}:{item.number}</motion.div>)}
