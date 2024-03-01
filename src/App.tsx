@@ -164,11 +164,11 @@ function App() {
 
   useEffect(()=>{
     if(lastTheme){
-        const unlisten = listen("last_theme", (event) =>{
+        const unlisten = listen("last_theme", (event as any) =>{
             setLastTheme(event?.payload?.lastTheme);
         })
 
-        const listen_theme_request = listen("last_theme_request", (event) =>{
+        const listen_theme_request = listen("last_theme_request", () =>{
             emit("load_last_theme", {lastTheme: lastTheme});
         });
 
@@ -181,7 +181,7 @@ function App() {
 
   useEffect(()=>{
     if(customScreens){
-        const listen_screen_request = listen("request_custom_screens", (event)=>{
+        const listen_screen_request = listen("request_custom_screens", ()=>{
             emit("send_screens", {screens: customScreens});
         });
         const unlisten_screens = listen("custom_screens_changed", (event)=>{
@@ -435,7 +435,7 @@ useEffect(()=>{
                     Books
                 </div>
                 <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-[85%]">
-                    {bookList?.map(bookName => <BookSelection key={bookName} bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
+                    {bookList?.map(bookName => <BookSelection key={bookName as any} bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
                 </div>
             </div>
             
