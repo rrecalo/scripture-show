@@ -79,10 +79,10 @@ function ScreenToggleComponent({customScreens, setCustomScreens} : Props) {
             customScreens?.map(s=>
                 {
                 return(
-                <motion.div key={s.customName} layout initial={{opacity:0, x:10}} animate={{opacity:1, x:0, y:0}} className=" w-full py-0.5 ps-2 pe-3 border border-neutral-700 rounded-md text-neutral-200 text-sm flex justify-between items-center">
+                <motion.div key={s.customName} layout initial={{opacity:0, x:10}} animate={{opacity:1, x:0, y:0}} className="w-full py-0.5 ps-2 pe-3 border border-neutral-700 rounded-md text-neutral-200 text-sm flex justify-between items-center">
                     {s.customName}
-                    <motion.div className="w-fit h-fit" >
-                        <motion.span className="border rounded-full border-neutral-500 inline-flex items-center cursor-pointer w-11 h-6 justify-start mt-2 mx-auto"
+                    <motion.div className="w-fit h-fit mb-1">
+                        <motion.div className="border rounded-full border-neutral-500 inline-flex items-center cursor-pointer w-11 h-6 justify-start mt-2 mx-auto"
                         onClick={()=>toggleScreen(s.screen.name)}
                         initial={{background: s.screen.active ? "#f3553c" : ""}}
                         animate={{background: s.screen.active ? "#f3553c" : ""}}
@@ -91,7 +91,7 @@ function ScreenToggleComponent({customScreens, setCustomScreens} : Props) {
                             initial={{x: s.screen.active ? "100%" : "0%"}}
                             animate={{x: s.screen.active ? "100%" : "0%"}}
                             transition={{duration:0.15, ease:"linear"}}/>
-                        </motion.span>
+                        </motion.div>
                     </motion.div>
                 </motion.div>)
                 }

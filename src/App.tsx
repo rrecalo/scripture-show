@@ -488,11 +488,11 @@ useEffect(()=>{
                             <ThemeChangeComponent lastTheme={lastTheme} setProjectionConfig={setProjectionConfig}/>
                         </div>
                     </div>
-                    <div className="w-full ps-3 pe-2 h-3/4">
+                    <div className="w-full ps-3 pe-2 h-3/4 bg-neutral-900">
                         <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
                             Screens 
                         </div>
-                        <div className="h-[85%] overflow-y-scroll">
+                        <div className="h-[85%] overflow-y-auto pt-1">
                         <ScreenToggleComponent customScreens={customScreens} setCustomScreens={setCustomScreens}/>
                         </div>
                     </div>
