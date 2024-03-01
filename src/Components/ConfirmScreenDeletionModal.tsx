@@ -20,7 +20,7 @@ export default function ConfirmScreenDeletionModal({shown, s, deleteScreen, clea
 
     return (
 
-        <motion.div initial={{opacity:0}} animate={{opacity: shown ? 1 : 0, display: shown ? 'block' : 'none'}} className={`p-5 absolute z-10 w-100 h-40 dark:bg-neutral-800
+        <motion.div initial={{opacity:0}} animate={{opacity: shown ? 1 : 0, display: shown ? 'block' : 'none'}} className={`p-5 absolute z-10 w-100 h-fit dark:bg-neutral-800
         rounded-md border border-neutral-700 shadow-2xl shadow-neutral-900 text-neutral-500 text-xs flex flex-col justify-start items-center origin-center top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 `}>
             Are you sure you want to delete this screen?
             <div className='mt-3 text-base italic dark:text-neutral-300 text-center'>
