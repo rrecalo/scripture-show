@@ -471,14 +471,23 @@ useEffect(()=>{
             <div className="flex w-full h-full">
                 <div className="text-neutral-400 ps-3 flex-col justify-start items-center h-full w-1/2 border-r border-neutral-700">
                     <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
-                        Themes
+                        Category
                     </div>
-                    <div>
-                        <ThemeChangeComponent />
+                    <div className="h-[90%]">
+                        
                     </div>
                     
                 </div>
+                
                 <div className="text-neutral-400 flex-col justify-start items-center w-1/2 h-full border-neutral-700">
+                    <div className="w-full border-b border-neutral-700 ps-3 pe-2 h-1/4">
+                        <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
+                            Quick Themes
+                        </div>
+                        <div className="w-full pt-1">
+                            <ThemeChangeComponent lastTheme={lastTheme} setProjectionConfig={setProjectionConfig}/>
+                        </div>
+                    </div>
                     <div className="w-full ps-3 pe-2 h-3/4">
                         <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
                             Screens 
@@ -487,14 +496,7 @@ useEffect(()=>{
                         <ScreenToggleComponent customScreens={customScreens} setCustomScreens={setCustomScreens}/>
                         </div>
                     </div>
-                    <div className="w-full border-t border-neutral-700 ps-3 pe-2 h-1/4">
-                        <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
-                            Category
-                        </div>
-                        <div className="h-[90%]">
-                            
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </div>

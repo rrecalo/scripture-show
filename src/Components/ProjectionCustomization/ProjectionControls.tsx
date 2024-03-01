@@ -18,7 +18,7 @@ type ProjectionControlsProps = {
     //0 = save, 1 = load, 2 = clear/delete
     themeFunctions: Function[]
 }
-type Theme = { 
+export type Theme = { 
     name: string,
     theme: ProjectionConfiguration,
     lastUsed: boolean,
@@ -28,9 +28,49 @@ export function removeExtension(themeName: string){
     return themeName.replace(".json", "");
 }
 
+export async function getAllThemes(){
+    return readDir('themes', { dir: BaseDirectory.AppData, recursive: true }).then(entries => {
+        let themeNames: string[] = [];
+        processEntries(entries, themeNames);
+
+        return readThemeData(themeNames);
+
+    })
+    
+}
+
+export function processEntries(entries: any, themeNames: string[]) {
+    for (const entry of entries) {
+        themeNames.push(entry.name);
+        if (entry.children) {
+            processEntries(entry.children, themeNames);
+        }
+    }
+}
+
+export  async function readThemeData(themes: string[]){
+    let themeData: Theme[] = [];
+    const decoder = new TextDecoder();
+    themes.forEach(theme =>{
+        readBinaryFile(ThemeDir+'/'+theme, {dir:BaseDirectory.AppConfig}).then(
+            res => {
+                if(res){
+                const prefs = JSON.parse(decoder.decode(res));
+                    themeData.push({name: theme, theme: prefs, lastUsed: false} as Theme);
+                }
+            });
+    });
+    if (themeData){
+        return themeData as Theme[];
+    }
+
+
+}
+
 export default function ProjectionControls({config, setConfig, themeFunctions} : ProjectionControlsProps){
     
     const [showThemeMenu, setShowThemeMenu] = useState<boolean>(false);
+    const [shouldLoadTheme, setShouldLoadTheme] = useState<boolean>(false);
     const [themeSwitched, setThemeSwitched] = useState<boolean>(false);
     const [hasChanges, setHasChanges] = useState<boolean>(false);
     const [expanded, setExpanded] = useState<boolean>(false);
@@ -58,20 +98,28 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     },[config, themes, activeSelection])   
 
     useEffect(()=>{
-        if(activeSelection){setThemeSwitched(true);}
-    }, [activeSelection]);
+        if(activeSelection){
+            setThemeSwitched(true);
+            if(shouldLoadTheme){
+                handleLoad();
+                setShouldLoadTheme(false);
+            }
+        }
+    }, [activeSelection, shouldLoadTheme]);
 
     useEffect(()=>{
         emit("last_theme_request");
-        const unlisten = listen("load_last_theme", (event)=>{
-            let lastTheme = event?.payload?.lastTheme;
-            setLastTheme(lastTheme);
+        const unlisten = listen("load_last_theme", (event : any)=>{
             if(event){
-                getAllThemes().then(res=>{
-                    setThemes(res as Theme[]);
-                    setActiveSelection(lastTheme);
-                });
-            }
+                let lastTheme = event?.payload?.lastTheme;
+                setLastTheme(lastTheme);
+                setShouldLoadTheme(true);
+                setActiveSelection(lastTheme);
+                    getAllThemes().then(res=>{
+                        setThemes(res as Theme[]);
+                        //setActiveSelection(lastTheme);
+                    });
+                }
         });
         
         let root = document.getElementById("root");
@@ -206,44 +254,7 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
 
 
     
-    function processEntries(entries: any, themeNames: string[]) {
-        for (const entry of entries) {
-            themeNames.push(entry.name);
-            if (entry.children) {
-                processEntries(entry.children, themeNames);
-            }
-        }
-    }
-
-    async function getAllThemes(){
-        return readDir('themes', { dir: BaseDirectory.AppData, recursive: true }).then(entries => {
-            let themeNames: string[] = [];
-            processEntries(entries, themeNames);
-
-            return readThemeData(themeNames);
-
-        })
-        
-    }
-
-    async function readThemeData(themes: string[]){
-        let themeData: Theme[] = [];
-        const decoder = new TextDecoder();
-        themes.forEach(theme =>{
-            readBinaryFile(ThemeDir+'/'+theme, {dir:BaseDirectory.AppConfig}).then(
-                res => {
-                    if(res){
-                    const prefs = JSON.parse(decoder.decode(res));
-                        themeData.push({name: theme, theme: prefs, lastUsed: false} as Theme);
-                    }
-                });
-        });
-        if (themeData){
-            return themeData as Theme[];
-        }
-
-
-    }
+    
 
     function handleSave(){
         if(!hideModal || themes?.length === 0  || !hasChanges) return;
