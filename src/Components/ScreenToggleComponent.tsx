@@ -68,7 +68,7 @@ function ScreenToggleComponent({customScreens, setCustomScreens} : Props) {
         let screenToUpdate = screens?.find(screen => screen.screen.name === screenName);
         if(screenToUpdate){
             screenToUpdate.screen.active = !screenToUpdate?.screen.active;
-            invoke("open_display_monitor", {monitorName: ConvertMonitorNameToLabel(screenName)});
+            invoke("open_display_monitor", {monitorName: screenName});
             setCustomScreens(screens);
         }
     }

@@ -99,12 +99,13 @@ async fn open_display_monitor(app: tauri::AppHandle, monitor_name: String) -> bo
     let mut chosen_monitor: tauri::Monitor = app.get_window("main").expect("bad!!").primary_monitor().unwrap().unwrap();
     for monitor in app.get_window("main").expect("uhoh!").available_monitors().expect("could not fetch available monitors!"){
             //println!("{0} x:{1}, | y:{2}", monitor.name().unwrap(), monitor.position().x, monitor.position().y);
+            println!("Available Monitors : {0}, {1}", monitor.name().unwrap(), &monitor_name);
             if monitor.name().unwrap() == &monitor_name {
                 chosen_monitor = monitor.clone();
             }
     }
 
-    println!("Chosen Monitor : {0} | Size : {1} x {2}", monitor_name, chosen_monitor.size().width, chosen_monitor.size().height);
+    println!("Opened on monitor : {0} | Size : {1} x {2}", chosen_monitor.name().unwrap(), chosen_monitor.size().width, chosen_monitor.size().height);
 
   let window: Option<Window> = match new_window {
     Some(win) => {let _ = win.close(); None},
