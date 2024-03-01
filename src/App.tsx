@@ -71,7 +71,6 @@ function App() {
   });
 
 
-  const [remainderVerses, setRemainderVerses] = useState<Verse[]>();
   const [lastTheme, setLastTheme] = useState<string>("");
 
   useEffect(()=>{
@@ -287,7 +286,7 @@ function App() {
     }
 
     async function searchForBook(searchQuery: String, acceptChoice: boolean){
-        
+
         searchQuery = searchQuery.trimEnd();
         searchQuery = searchQuery.toLowerCase();
         let starts_with_num = false;
@@ -335,7 +334,7 @@ function App() {
                 book_name = searchQuery.toString();
             }
         }
-        console.log(book_name, ch_num);
+        //console.log(book_name, ch_num);
         let new_verses = await invoke("get_verses", {bookName: book_name, chNum: parseInt(ch_num), translations:["ro"]}) as GetVersesResult;
         if(acceptChoice){
             if(new_verses){
@@ -343,7 +342,6 @@ function App() {
                 setVerses(new_verses?.verses);
                 setBook(new_verses?.book_name);
                 setChapter(new_verses?.chapter_num);
-                setRemainderVerses([]);
                 //if there is a space, there will be a verse number followed by the chapter number (since .trimEnd is being used on inputs)
                 //console.log(first_space, ch_space, verse_space);
                 if((verse_space !== ch_space) || (!starts_with_num && ch_space !== first_space)){
@@ -379,16 +377,10 @@ function App() {
   async function openBookmark(bookmark: BookmarkType){
     let fullChapter = await invoke("get_verses", {bookName: bookmark.book.toLowerCase(), chNum: bookmark.chapter, translations:["ro"]}) as GetVersesResult;
 
-    let newVerses = fullChapter?.verses.splice(bookmark.verseStart-1, bookmark.verseEnd-bookmark.verseStart+1);
+    let newVerses = fullChapter?.verses;
    
-    let verseNums:number[] = [];
-
-    for(let i = bookmark.verseStart; i<= bookmark.verseEnd; i++){
-        verseNums.push(i);
-    }
-    
-    setRemainderVerses(fullChapter.verses.filter(v => !verseNums.includes(v.number)));
-    
+    setShownVerses([newVerses[bookmark.verseStart-1]]);
+    emit("select_verse", {verse: newVerses[bookmark.verseStart-1]});
     setVerses(newVerses);
     setTranslatedVerseData(fullChapter.translation as TranslatedVerseData);
     setBook(fullChapter?.book_name);
@@ -396,12 +388,6 @@ function App() {
 
   }
     
-  function handleShowRestVerses(){
-    if(remainderVerses){
-        setVerses([...verses, ...remainderVerses].sort((a:Verse, b:Verse) => a.number - b.number));
-        setRemainderVerses([]);
-    }
-  }
 
   async function openBookmarkWindow(){
     await invoke("open_new_bookmark_window");
@@ -450,11 +436,6 @@ function App() {
             <ScriptureSearch performSearch={searchForBook} currentBook={book || ""} currentChapter={chapter || 1} getChapterCount={getChapterCount}/>
             <div id="search_results" className="pt-24 h-full flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900 overflow-x-clip">
                 <ScriptureSearchResults book={book || ""} verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
-                {
-                    remainderVerses !== undefined && remainderVerses?.length > 0 ? 
-                    <div className="w-fit mx-auto text-neutral-50 text-xs" onClick={handleShowRestVerses}> show {remainderVerses.length} more verses..</div>
-                    :<></>
-                }
             </div>
         </div>
         

@@ -8,7 +8,6 @@ export type BookmarkType = {
     book: String,
     chapter: number,
     verseStart: number,
-    verseEnd: number,
 }
 
 type BookmarkProps = {
@@ -42,7 +41,7 @@ export default function Bookmark({bookmark, selectBookmark, deleteBookmark} : Bo
         <motion.div onClick={(e:any) => handleClick(e, bookmark)} onMouseOver={()=>{setHover(true);}} onMouseOut={()=>setHover(false)}
         animate={controls}  onHoverStart={()=>controls.start(hoverBookmark)} onHoverEnd={()=>{controls.start(endHover)}}
         className={`flex justify-between items-baseline ps-1 font-light text-sm w-full pe-4 whitespace-nowrap select-none cursor-default text-neutral-400 overflow-y-clip`}>
-            {bookmark.book + " " + bookmark.chapter+":"+bookmark.verseStart + "-" + bookmark.verseEnd}
+            {bookmark.book + " " + bookmark.chapter+":"+bookmark.verseStart}
             <motion.div className="w-3 h-3 text-[#f3553c] overflow-y-clip" initial={{opacity:0}} animate={{ opacity: isHover ? 1 : 0}} transition={{duration:0.25}}
             >
                 <AiOutlineDelete className="overflow-clip" onClick={(e: MouseEvent) => deleteBookmark(e, bookmark)}/>

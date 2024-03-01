@@ -144,7 +144,8 @@ export default function BookmarkWindow({}){
 
     function createBookmark(){
         if(chosenVerseNums){
-            emit("create_bookmark", {id: uuid(), book: book, chapter:chapter, verseStart:chosenVerseNums[0], verseEnd:chosenVerseNums[chosenVerseNums.length-1]} as BookmarkType);
+            //emit("create_bookmark", {id: uuid(), book: book, chapter:chapter, verseStart:chosenVerseNums[0], verseEnd:chosenVerseNums[chosenVerseNums.length-1]} as BookmarkType);
+            emit("create_bookmark", {id: uuid(), book: book, chapter:chapter, verseStart:startingVerseNum} as BookmarkType);
             setVerseRange("");
             setVerses([]);
             setBook(undefined);
@@ -183,11 +184,11 @@ export default function BookmarkWindow({}){
 
             <div className="w-full h-[50%] flex flex-col justify-start items-start">
                 <div className="w-full">
-                    <div className="w-full pl-3 py-2 dark:text-neutral-300 b backdrop-blur-2xl">
+                    <div className="w-full pl-3 py-1 dark:text-neutral-300 b backdrop-blur-2xl">
                         {book} {chapter}{verses.length > 0 ? ':' : ''}{verseRange}
                     </div>
                 </div>
-                <div ref={containerRef} className="overflow-y-auto h-[200px] overflow-x-hidden">
+                <div ref={containerRef} className="overflow-y-auto h-[175px] overflow-x-hidden">
                 {
                     verses
                     .filter((v: Verse) => chosenVerseNums?.includes(v.number))
