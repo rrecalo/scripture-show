@@ -411,6 +411,19 @@ useEffect(()=>{
     await invoke("open_new_bookmark_window");
   }
 
+  function toggleAllScreens(){
+    let screens = customScreens;
+    if(!screens){return;}
+    for(let i = 0; i < screens.length; i++){
+        let screenToUpdate = screens?.find(screen => screen.screen.name === screens[i].screen.name);
+        if(screenToUpdate){
+            screenToUpdate.screen.active = !screenToUpdate?.screen.active;
+            invoke("open_display_monitor", {monitorName: screens[i].screen.name});
+        }
+    }
+    setCustomScreens(screens);
+}
+
   return (
     <motion.div initial={{opacity:0}} animate={{opacity:1}} className={`container flex flex-row min-w-screen w-screen h-screen overflow-clip border border-neutral-950 
     dark:bg-neutral-800 bg-neutral-100 select-none 
@@ -489,8 +502,12 @@ useEffect(()=>{
                         </div>
                     </div>
                     <div className="w-full ps-3 pe-2 h-3/4 bg-neutral-900">
-                        <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
-                            Screens 
+                        <div className="flex justify-between items-center h-1/10 pt-2 pb-1">
+                            <div className=" text-neutral-200 text-sm h-fit font-bold">
+                                Screens 
+                                
+                            </div>
+                            <motion.button whileHover={{backgroundColor: "#262626", color:"#f5f5f5"}} animate={{backgroundColor:"#171717", color:"#d4d4d4"}} className='w-fit px-2 h-fit py-1 rounded-lg text-sm border border-neutral-800' onClick={()=>toggleAllScreens()}>Master Toggle</motion.button>
                         </div>
                         <div className="h-[85%] overflow-y-auto pt-1">
                         <ScreenToggleComponent customScreens={customScreens} setCustomScreens={setCustomScreens}/>
