@@ -1,3 +1,4 @@
+import { emit } from '@tauri-apps/api/event';
 import { motion, useAnimationControls } from 'framer-motion';
 import { useState } from 'react';
 import {AiOutlineDelete} from 'react-icons/ai';
@@ -35,6 +36,7 @@ export default function Bookmark({bookmark, selectBookmark, deleteBookmark} : Bo
     function handleClick(e: any, bookmark : BookmarkType){
         controls.start({x:[0, 5, 0], transition:{duration:0.25}})
         selectBookmark(e, bookmark);
+        emit("search_result", {book: bookmark.book, chapter: bookmark.chapter, verseStart: bookmark.verseStart});
     }
 
     return(
