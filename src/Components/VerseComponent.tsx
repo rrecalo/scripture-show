@@ -1,4 +1,4 @@
-import { motion, useAnimationControls } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Verse from '../types/Verse';
 
 type VerseComponentProps = {
@@ -10,20 +10,25 @@ type VerseComponentProps = {
 
 export default function VerseComponent({verse, selectVerse, selectedVerse, id} : VerseComponentProps){
 
-    const controls = useAnimationControls();
-
-    const startHover = {
-        color: selectedVerse === verse ? [] : ["#a3a3a3", "#d4d4d4"],
-        transition:{duration:0.25}
+    const selectedAnim = {
+        color: "#f3553c",
+        backgroundColor:"#262626",
     }
 
-    const endHover = {
-        color: selectedVerse === verse ? [] : ["#d4d4d4", "#a3a3a3"],
+    const unselectedAnim = {
+        color: "#a3a3a3",
+        backgroundColor:"#171717",
+    }
+    
+    const unselectedHover = {
+        color: ["#a3a3a3", "#d4d4d4"],
         transition:{duration:0.25}
     }
 
     return (
-        <motion.div id={id} initial={{}} animate={controls} onHoverStart={()=>controls.start(startHover)} onHoverEnd={()=>{controls.start(endHover)}} className={`${verse?.text === selectedVerse?.text ? 'bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-50' : 'dark:bg-neutral-900 dark:text-neutral-400'} py-2 font-light select-none cursor-default flex flex-row justify-start items-center text-black`} onClick={()=>selectVerse(verse)}>
+        <motion.div id={id} initial={{}} animate={verse.text === selectedVerse?.text ? selectedAnim : unselectedAnim} 
+        whileHover={verse.text === selectedVerse?.text ? {} : unselectedHover}
+        className={` py-2 font-light select-none cursor-default flex flex-row justify-start items-center text-black`} onClick={()=>selectVerse(verse)}>
            <div className='w-1/12 max-w-[35px] border-black dark:border-neutral-700 border-r h-full flex justify-center items-center'>
                 <div className='w-1/2 h-1/2 flex justify-center items-center text-sm'>
                 {verse.number}
