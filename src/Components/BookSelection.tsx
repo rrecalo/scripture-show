@@ -33,10 +33,12 @@ export default function BookSelection({bookName, activeBookName, openBook} : Boo
     return (
         <motion.div 
         initial={{}} animate={controls} onHoverStart={()=>controls.start(startHover)} onHoverEnd={()=>{controls.start(endHover)}}
-        className={`ps-2 font-light text-sm w-full pe-8 whitespace-nowrap select-none cursor-default rounded-sm `}
+        className={`font-light text-sm w-full pe-8 whitespace-nowrap select-none cursor-default`}
         onClick={()=>{bookName.startsWith("Song") ? openBook("song", true) : openBook(bookName, true);
-        controls.start({x:[0, 2.5, 0], transition:{duration:0.25}})}}
-        >{bookName}</motion.div>
+        controls.start({x:[0, 2.5, 0], transition:{duration:0.25}})}}>
+        <div className="ps-2">
+            {bookName}
+        </div></motion.div>
     )
 }
 

@@ -58,7 +58,8 @@ function App() {
   const [bookList, setBookList] = useState<String[]>();
   const [customScreens, setCustomScreens] = useState<CustomScreen[]>();
   const [bookmarks, setBookmarks] = useState<BookmarkType[]>([]);
-  const containerRef = useRef(null);
+  const verseContainerRef = useRef(null);
+  const bookContainerRef = useRef(null);
   const [projectionConfig, setProjectionConfig] = useState<ProjectionConfiguration>(
   {
       verseCount: defaultVerseCount,
@@ -194,22 +195,40 @@ function App() {
     }
   }, [customScreens])
 
-  function scrollToVerse(){
-    if(shownVerses && containerRef.current){
-        setTimeout(()=>{
-            if(containerRef.current){
-                const itemRef = containerRef.current.childNodes[shownVerses[0].number-1];
-                if (itemRef) {
-                    itemRef.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    function scrollToVerse(){
+        if(shownVerses && verseContainerRef.current){
+            setTimeout(()=>{
+                if(verseContainerRef.current){
+                    const itemRef = verseContainerRef.current.childNodes[shownVerses[0].number-1];
+                    if (itemRef) {
+                        itemRef.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
                 }
-            }
-        }, 25);
+            }, 25);
+        }
     }
-}
+
+    function scrollToBook(){
+        if(shownVerses && bookContainerRef.current){
+            setTimeout(()=>{
+                if(bookContainerRef.current && bookList){
+                    let index = bookList.findIndex(b=>b===book);
+                    const itemRef = bookContainerRef.current.childNodes[index];
+                    if (itemRef) {
+                        itemRef.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }, 25);
+        }
+    }
 
 useEffect(()=>{
     scrollToVerse();
 }, [shownVerses])
+
+useEffect(()=>{
+    scrollToBook();
+}, [book, bookList])
 
   useEffect(()=>{
     if(projectionConfig && darkMode && lastTheme && customScreens && bookmarks){
@@ -441,16 +460,16 @@ useEffect(()=>{
                         <AiOutlinePlus />
                     </motion.div>
                 </div>
-                <div className="w-full border-black dark:border-neutral-700 border-r-0 overflow-y-auto overflow-x-clip h-9/10 ">
+                <div  className="w-full border-black dark:border-neutral-700 border-r-0 overflow-y-auto overflow-x-clip h-9/10 ">
                     <BookmarkList selectBookmark={openBookmark} bookmarks={bookmarks} setBookmarks={setBookmarks}/>
                 </div>
             </div>  
             
-            <div className="w-full h-1/3 ps-1 border-t border-neutral-700">
-                <div className="pt-1 pl-1 text-neutral-200 text-sm px-1 h-1/10 pb-1 font-bold">
+            <div className="w-full h-1/3  border-t border-neutral-700">
+                <div className="pt-1 pl-3 text-neutral-200 text-sm px-1 h-1/10 pb-1 font-bold">
                     Books
                 </div>
-                <div id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-[85%]">
+                <div ref={bookContainerRef} id="book_list_container" className="border-black dark:border-neutral-700 border-r-0 overflow-y-auto w-fit overflow-x-hidden h-[85%]">
                     {bookList?.map(bookName => <BookSelection key={bookName as any} bookName={bookName} activeBookName={verses[0].book_name} openBook={searchForBook} />)}
                 </div>
             </div>
@@ -468,7 +487,7 @@ useEffect(()=>{
         <div className="relative flex flex-col w-7/12 h-full overflow-y-auto overflow-x-hidden dark:bg-neutral-900">
 
             <ScriptureSearch performSearch={searchForBook} currentBook={book || ""} currentChapter={chapter || 1} getChapterCount={getChapterCount}/>
-            <div id="search_results" ref={containerRef} className="pt-2 pb-6 h-full flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900 overflow-x-clip">
+            <div id="search_results" ref={verseContainerRef} className="pt-2 pb-6 h-full flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900 overflow-x-clip">
                 <ScriptureSearchResults book={book || ""} verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
             </div>
         </div>
