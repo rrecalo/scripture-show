@@ -19,7 +19,7 @@ export default function ScriptureSearch({performSearch, currentBook, currentChap
     }
 
     return (
-        <div className="absolute pt-4 w-full flex flex-col h-fit p-2 dark:text-neutral-300 backdrop-blur-2xl">
+        <div className="pt-4 w-full flex flex-col h-fit p-2 dark:text-neutral-300">
             <ScriptureSearchBox performSearch={performSearch} getChapterCount={getChapterCount}/>
             <div className="w-full flex flex-row justify-between items-center px-2 pt-2 pb-1 border-black">
                 <div className=" select-none cursor-default">{currentBook} {currentChapter}</div>

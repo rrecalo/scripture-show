@@ -468,7 +468,7 @@ useEffect(()=>{
         <div className="relative flex flex-col w-7/12 h-full overflow-y-auto overflow-x-hidden dark:bg-neutral-900">
 
             <ScriptureSearch performSearch={searchForBook} currentBook={book || ""} currentChapter={chapter || 1} getChapterCount={getChapterCount}/>
-            <div id="search_results" ref={containerRef} className="pt-24 pb-6 h-full flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900 overflow-x-clip">
+            <div id="search_results" ref={containerRef} className="pt-2 pb-6 h-full flex flex-col px-0 w-full overflow-y-auto select-none dark:bg-neutral-900 overflow-x-clip">
                 <ScriptureSearchResults book={book || ""} verses={verses} changeSelectedVerse={handleChangeShownVerse} verseCount={verseCount}/>
             </div>
         </div>
