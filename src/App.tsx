@@ -362,8 +362,9 @@ useEffect(()=>{
                 setChapter(new_verses?.chapter_num);
                 //if there is a space, there will be a verse number followed by the chapter number (since .trimEnd is being used on inputs)
                 //console.log(first_space, ch_space, verse_space);
+                let verse_num_to_select = 1;
                 if((verse_space !== ch_space) || (!starts_with_num && ch_space !== first_space)){
-                    let verse_num_to_select = parseInt(searchQuery.substring(verse_space+1, searchQuery.length));
+                    verse_num_to_select = parseInt(searchQuery.substring(verse_space+1, searchQuery.length));
                     let verse_to_select = new_verses?.verses[verse_num_to_select-1];
                     if(verse_to_select){
                         emit("select_verse", {verse: verse_to_select})
@@ -379,6 +380,8 @@ useEffect(()=>{
                     emit("select_verse", {verse: new_verses?.verses[0]})
                     setShownVerses([new_verses?.verses[0]]);
                 }
+                emit("search_result", {book: new_verses?.book_name, chapter: new_verses?.chapter_num, verseStart: verse_num_to_select});
+
             }
         }
         else{
