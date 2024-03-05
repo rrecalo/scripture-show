@@ -460,7 +460,7 @@ useEffect(()=>{
                     History 
                 </div>
                 <div id="verse_history_container" className="border-black dark:border-neutral-700 border-r-0 overflow-x-hidden h-9/10 max-h-[90%] w-full pb-5">
-                    <VerseHistory />
+                    <VerseHistory selectHistoryItem={openBookmark}/>
                 </div>
             </div>
 
