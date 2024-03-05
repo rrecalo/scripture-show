@@ -17,12 +17,12 @@ export default function BookSelection({bookName, activeBookName, openBook} : Boo
     }
 
     const startHover = {
-        color: activeBookName === bookName ? [] : ["#a3a3a3", "#d4d4d4"],
+        color: activeBookName === bookName ? "#a3a3a3" : ["#a3a3a3", "#d4d4d4"],
         transition:{duration:0.25}
     }
 
     const endHover = {
-        color: activeBookName === bookName ? [] : ["#d4d4d4", "#a3a3a3"],
+        color: activeBookName === bookName ? "#d4d4d4" : ["#d4d4d4", "#a3a3a3"],
         transition:{duration:0.25}
     }
 
