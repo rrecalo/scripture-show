@@ -103,10 +103,6 @@ export default function ScriptureSearchResults({book, verses, changeSelectedVers
     }
 
     return (
-        <AnimatePresence mode="wait">
-            {
-                verses?.map((verse : Verse) => <VerseComponent key={verse.text+verse.number.toString()} verse={verse} selectVerse={selectVerse} selectedVerse={selectedVerse}/>)
-            }
-        </AnimatePresence>
+        verses?.map((verse : Verse) => <VerseComponent key={verse.text+verse.number.toString()} verse={verse} selectVerse={selectVerse} selectedVerse={selectedVerse}/>)
     )
 }

@@ -1,6 +1,5 @@
 import { motion, useAnimationControls } from "framer-motion"
-import { useEffect, useState } from "react";
-import { BookmarkType } from "./Bookmark/Bookmark";
+import { useEffect } from "react";
 
 type BookSelectionProps = {
     bookName: String,
