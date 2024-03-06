@@ -27,6 +27,10 @@ function ThemeChangeComponent({lastTheme} : Props) {
         
     }, [lastTheme]);
 
+    useEffect(()=>{
+      handleLoad();
+    }, [activeSelection])
+
     function handleLoad(){
       if(activeSelection){
         let themeName = activeSelection;
@@ -60,11 +64,6 @@ function ThemeChangeComponent({lastTheme} : Props) {
           <Dropdown expanded={expanded} setExpanded={setExpanded} hidden={false} value={activeSelection} onChange={(e : string) => handleSelectionChange(e)} 
             options={themes?.map(theme=>theme.name)}/>
         </div>
-        <motion.div id="load_option" className="flex justify-center items-center w-8 h-full p-1 border border-neutral-700 rounded-md" whileHover={themes.length !== 0 ? {backgroundColor: themeSwitched ? '#f3553c': '#404040', color: themeSwitched ? '#d4d4d4' : '#a3a3a3'} : {}}
-          onClick={handleLoad}
-          animate={{color: themes.length === 0 ? '#525252' : themeSwitched ? '#f3553c' : '#a3a3a3', backgroundColor: themeSwitched && themes.length > 0 ? '#fafafa' : '#262626'}}>
-              <MdOutlineDownload id="load_option" className="w-full h-full"/>
-        </motion.div>
     </div>
   )
 }
