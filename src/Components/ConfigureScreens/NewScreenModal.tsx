@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react';
 import { CustomScreen, Screen } from './ConfigureScreens';
-import Dropdown from './ProjectionCustomization/Dropdown';
+import Dropdown from '../ProjectionCustomization/Dropdown';
 import { Monitor } from '@tauri-apps/api/window';
 
 type Props = {

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import Verse from '../types/Verse';
+import Verse from '../../types/Verse';
 
 type VerseComponentProps = {
     verse : Verse,

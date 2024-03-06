@@ -3,7 +3,7 @@ import {listen, emit} from '@tauri-apps/api/event';
 import ProjectionControls from './ProjectionControls';
 import ProjectionConfiguration from '../../types/ProjectionConfiguration';
 import './styles.css';
-import ProjectionDisplay from '../ProjectionDisplay';
+import ProjectionDisplay from '../ProjectionView/ProjectionDisplay';
 import { motion } from 'framer-motion';
 import { fs } from '@tauri-apps/api';
 import { BaseDirectory, createDir, readBinaryFile, writeBinaryFile } from '@tauri-apps/api/fs';

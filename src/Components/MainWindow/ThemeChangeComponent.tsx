@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Theme, getAllThemes } from './ProjectionCustomization/ProjectionControls';
+import { Theme, getAllThemes } from '../ProjectionCustomization/ProjectionControls';
 import { emit } from '@tauri-apps/api/event';
-import Dropdown from './ProjectionCustomization/Dropdown';
+import Dropdown from '../ProjectionCustomization/Dropdown';
 import { motion } from 'framer-motion';
 import { MdOutlineDownload } from 'react-icons/md';
 import { readBinaryFile, BaseDirectory } from '@tauri-apps/api/fs';
-import { ThemeDir } from './ProjectionCustomization/ProjectionCustomization';
+import { ThemeDir } from '../ProjectionCustomization/ProjectionCustomization';
 
 type Props = {
   lastTheme?: string,

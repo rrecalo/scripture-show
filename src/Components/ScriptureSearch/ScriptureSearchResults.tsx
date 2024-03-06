@@ -1,4 +1,4 @@
-import VerseComponent from '../VerseComponent';
+import VerseComponent from './VerseComponent';
 import Verse from '../../types/Verse';
 import {useEffect, useState} from 'react';
 import { AnimatePresence } from 'framer-motion';

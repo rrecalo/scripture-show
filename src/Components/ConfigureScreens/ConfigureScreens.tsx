@@ -5,7 +5,7 @@ import { emit } from "@tauri-apps/api/event";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { AiOutlinePlus } from "react-icons/ai";
-import '../App.css';
+import '../../App.css';
 import NewScreenModal from "./NewScreenModal";
 import ScreenListItem from "./ScreenListItem";
 import ConfirmScreenDeletionModal from "./ConfirmScreenDeletionModal";

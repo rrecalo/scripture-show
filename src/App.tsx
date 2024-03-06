@@ -6,18 +6,18 @@ import {BaseDirectory, createDir, readBinaryFile, writeBinaryFile} from '@tauri-
 import Verse from "./types/Verse";
 import ScriptureSearch from './Components/ScriptureSearch/ScriptureSearch';
 import ScriptureSearchResults from "./Components/ScriptureSearch/ScriptureSearchResults";
-import BookSelection from "./Components/BookSelection";
+import BookSelection from "./Components/MainWindow/BookSelection";
 import { fs } from "@tauri-apps/api";
-import ProjectionDisplay from "./Components/ProjectionDisplay";
+import ProjectionDisplay from "./Components/ProjectionView/ProjectionDisplay";
 import BookmarkList from "./Components/Bookmark/BookmarkList";
 import { BookmarkType } from "./Components/Bookmark/Bookmark";
 import { AiOutlinePlus } from 'react-icons/ai';
-import VerseHistory from "./Components/VerseHistory";
+import VerseHistory from "./Components/History/VerseHistory";
 import ProjectionConfiguration from "./types/ProjectionConfiguration";
 import { motion } from "framer-motion";
-import { CustomScreen } from "./Components/ConfigureScreens";
-import ScreenToggleComponent from "./Components/ScreenToggleComponent";
-import ThemeChangeComponent from "./Components/ThemeChangeComponent";
+import { CustomScreen } from "./Components/ConfigureScreens/ConfigureScreens";
+import ScreenToggleComponent from "./Components/MainWindow/ScreenToggleComponent";
+import ThemeChangeComponent from "./Components/MainWindow/ThemeChangeComponent";
 
 export type GetVersesResult = {
     book_name: String,

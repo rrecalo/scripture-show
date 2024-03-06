@@ -6,7 +6,7 @@ import {v4 as uuid} from 'uuid';
 import ScriptureSearchBox from "../ScriptureSearch/ScriptureSearchBox";
 import { getChapterCount } from "../../App";
 import { GetVersesResult } from "../../App";
-import VerseComponent from "../VerseComponent";
+import VerseComponent from "../ScriptureSearch/VerseComponent";
 import Verse from '../../types/Verse';
 import { BookmarkType } from "./Bookmark";
 import { motion } from "framer-motion";

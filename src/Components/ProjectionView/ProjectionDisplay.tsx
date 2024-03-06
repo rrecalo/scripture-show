@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import Verse from '../types/Verse'
+import Verse from '../../types/Verse'
 import { listen, emit } from '@tauri-apps/api/event'
 import { getCurrent } from '@tauri-apps/api/window'
-import ProjectionConfiguration from '../types/ProjectionConfiguration'
-import { DisplayVerseEvent } from '../types/ProjectionConfiguration'
-import { ProjectionFormatEvent } from '../types/ProjectionConfiguration'
+import ProjectionConfiguration from '../../types/ProjectionConfiguration'
+import { DisplayVerseEvent } from '../../types/ProjectionConfiguration'
+import { ProjectionFormatEvent } from '../../types/ProjectionConfiguration'
 
 type MonitorProps = {
     audience: boolean
