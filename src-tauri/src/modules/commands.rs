@@ -112,7 +112,6 @@ async fn open_display_monitor(app: tauri::AppHandle, monitor_name: String) -> bo
     None => {
         Some(tauri::WindowBuilder::new(&app, window_label, tauri::WindowUrl::App("monitor.html".into()))
         .always_on_top(true)
-        .hidden_title(true)
         .decorations(false)
         .inner_size(800.0, 600.0)
         .build().expect("Failed to create window!"))
