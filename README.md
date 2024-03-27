@@ -8,7 +8,7 @@
    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/rrecalo/scripture-show"/>
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/t/rrecalo/scripture-show"/>
    <br/>
-      <a align="center" href="https://www.scripture.show">scripture.show </a>
+      <a align="center" href="https://www.scripture.show">scripture.show</a>
 <br/>
 </p>
    <p align="center">
