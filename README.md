@@ -4,14 +4,20 @@
   </p>
 	<h1 align="center"><b>ScriptureShow</b></h1>
  <p align="center">
+	 
    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/rrecalo/scripture-show"/>
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/t/rrecalo/scripture-show"/>
+   <br/>
+      <a align="center" href="https://www.scripture.show">scripture.show </a>
+<br/>
 </p>
-	<p align="center">
+   <p align="center">
 		Cross-platform desktop application for projecting religious scriptures live
     <br />
     <br />
     Downloads for macOS, Linux, and Windows <i>coming soon™</i>
+    
+  
   </p>
 </p>
 
