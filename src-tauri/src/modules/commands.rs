@@ -1,7 +1,7 @@
 use serde::Serialize;
 use tauri::{Manager, Position, State, Window};
 
-use crate::{Bible, Bibles, Book, Verse};
+use crate::{Bible, Bibles, Book, SearchMatch, Verse};
 
 #[derive(Serialize)]
 struct VerseTranslation{
@@ -299,6 +299,34 @@ async fn get_open_windows(app: tauri::AppHandle) -> Result<GetOpenWindowsResult,
     Ok(GetOpenWindowsResult { windows: open_windows })
 }
 
+#[tauri::command]
+fn search_for_match(bible: State<Bibles>, version: &str, query: &str) -> Result<Vec<SearchMatch>, ApplicationError> {
+    let start = std::time::Instant::now();
+    // let mut books_to_search: Option<Vec<Book>> = None;
+    // match version {
+    //     "esv" => {
+    //         books_to_search = Some(bible.esv.books.clone());
+    //     }
+    //     "ro" => {
+    //         books_to_search = Some(bible.esv.books.clone());
+    //     }
+    //     _ => {
+    //         return Err(ApplicationError::BadVersionName("Bad bible version name received!"));
+    //     }
+    // }
+    let esv = &bible.esv;
+    let res: Option<Vec<SearchMatch>> = esv.match_str(query);
+    let end = std::time::Instant::now();
+    println!("took : {}ms", (end-start).as_millis());
+    Ok(res.unwrap())
+
+    // for v in res.unwrap(){
+    //     println!("{0} -> {1}", v.reference, v.similarity);
+    // }
+    
+   
+}
+
 pub fn get_handlers() -> Box<dyn Fn(tauri::Invoke<tauri::Wry>) + Send + Sync> {
     Box::new(tauri::generate_handler![
         get_verses,
@@ -308,6 +336,7 @@ pub fn get_handlers() -> Box<dyn Fn(tauri::Invoke<tauri::Wry>) + Send + Sync> {
         open_configure_screens_window,
         open_projection_customization_window,
         open_new_bookmark_window,
-        get_open_windows
+        get_open_windows,
+        search_for_match
     ])
 }

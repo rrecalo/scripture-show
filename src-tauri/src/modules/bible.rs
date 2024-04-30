@@ -62,6 +62,22 @@ impl Chapter {
     }
 }
 
+fn jaccard_similarity(s1: &str, s2: &str) -> f64 {
+    let set1: std::collections::HashSet<char> = s1.chars().collect();
+    let set2: std::collections::HashSet<char> = s2.chars().collect();
+    
+    let intersection_size = set1.intersection(&set2).count() as f64;
+    let union_size = set1.union(&set2).count() as f64;
+    
+    intersection_size / union_size
+}
+
+#[derive(Clone, Serialize)]
+pub struct SearchMatch {
+    pub reference: String,
+    pub similarity: f64,
+}
+
 impl Bible {
     
     pub fn get_book_by_name(&self, query: &str) -> Option<Book> {
@@ -77,6 +93,25 @@ impl Bible {
 
         book_match
     }
+
+        pub fn match_str(&self, query: &str) -> Option<Vec<SearchMatch>> {
+
+            let mut matching_verses: Vec<SearchMatch> = Vec::new();
+            for book in &self.books{
+                for chapter in &book.chapters{
+                    for verse in &chapter.verses{
+                        if verse.text.to_lowercase().contains(query){
+                            let similarity = jaccard_similarity(&verse.text.to_lowercase(), query);
+                            matching_verses.push(SearchMatch {reference: String::from(book.name.clone()+" "+&chapter.number.to_string()+":"+&verse.number.to_string()),
+                        similarity: similarity});
+                        }
+                    }
+                }
+            }
+            matching_verses.sort_by(|a, b| a.similarity.partial_cmp(&b.similarity).unwrap());
+
+            Some(matching_verses)
+        }
 
 }
 
