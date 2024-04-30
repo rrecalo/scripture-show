@@ -6,7 +6,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "scripture-show",
+    "productName": "Scripture Show",
     "version": "0.0.0"
   },
   "tauri": {
