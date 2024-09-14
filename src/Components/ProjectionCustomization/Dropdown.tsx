@@ -2,19 +2,30 @@ import { motion } from "framer-motion";
 import { BiExpandVertical } from "react-icons/bi"
 import { removeExtension } from "./ProjectionControls";
 import "../../App.css"
+import { useEffect } from "react";
 
 type Props = {
     hidden: boolean,
     setExpanded: Function,
     expanded: boolean,
     value?: string,
-    onChange: Function,
     options: string[],
     placeholderText?: string,
-    
+    hasChanges: boolean,
+    setSelection : Function,
+    tempTheme? : string,
+    setTempTheme : Function,
 }
 
-function Dropdown({hidden, value, options, onChange, expanded, setExpanded, placeholderText} : Props) {
+function Dropdown({hidden, value, options, expanded, setExpanded, placeholderText, 
+    tempTheme, setTempTheme,
+    hasChanges, setSelection} : Props) {
+
+    useEffect(()=>{
+        if(tempTheme === undefined){
+            setExpanded(false);
+        }
+    }, [tempTheme])
 
     function showOptions(){
         if(options?.length > 0){
@@ -23,8 +34,13 @@ function Dropdown({hidden, value, options, onChange, expanded, setExpanded, plac
     }
 
     function handleChange(optionToSelect: string){
-        onChange(optionToSelect);
+        if(hasChanges == false){
+        setSelection(optionToSelect);
         setExpanded(!expanded);
+        }
+        else{
+            setTempTheme(optionToSelect);
+        }
     }
 
   return (

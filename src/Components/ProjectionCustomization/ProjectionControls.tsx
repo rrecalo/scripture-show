@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import OptionSlider from "./OptionSlider";
 import { BiEditAlt } from "react-icons/bi";
 import { MdOutlineUploadFile, MdOutlineDownload, MdOutlineEdit, MdOutlineDelete, MdAdd } from "react-icons/md";
+import ConfirmChangeModal from "./ConfirmChangeModal";
 
 type ProjectionControlsProps = {
     config: ProjectionConfiguration,
@@ -69,8 +70,7 @@ export  async function readThemeData(themes: string[]){
 
 export default function ProjectionControls({config, setConfig, themeFunctions} : ProjectionControlsProps){
     
-    const [showThemeMenu, setShowThemeMenu] = useState<boolean>(false);
-    const [shouldLoadTheme, setShouldLoadTheme] = useState<boolean>(false);
+    const [tempTheme, setTempTheme] = useState<string>();
     const [themeSwitched, setThemeSwitched] = useState<boolean>(false);
     const [hasChanges, setHasChanges] = useState<boolean>(false);
     const [expanded, setExpanded] = useState<boolean>(false);
@@ -83,8 +83,15 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     const [fontLimitWarning, setFontLimitWarning] = useState<boolean>(false);
     const [verseLimitWarning, setVerseLimitWarning] = useState<boolean>(false);
     const [editedName, setEditedName] = useState<string>();
+    const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
     const fontLowerLimit = 2;
     const fontUpperLimit = 4;
+
+    useEffect(()=>{
+        if(tempTheme && tempTheme.length > 0){
+            setShowConfirmModal(true);
+        }
+    }, [tempTheme])
 
     useEffect(() => {
         if(JSON.stringify(config) !== JSON.stringify(themes?.find(theme => theme.name === activeSelection)?.theme)){
@@ -100,12 +107,14 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
     useEffect(()=>{
         if(activeSelection){
             setThemeSwitched(true);
-            if(shouldLoadTheme){
+            //handleLoad();
+            //if(shouldLoadTheme){
                 handleLoad();
-                setShouldLoadTheme(false);
-            }
+                //setShouldLoadTheme(false);
+            //}
         }
-    }, [activeSelection, shouldLoadTheme]);
+        //shouldLoadTheme
+    }, [activeSelection]);
 
     useEffect(()=>{
         emit("last_theme_request");
@@ -113,12 +122,15 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
             if(event){
                 let lastTheme = event?.payload?.lastTheme;
                 setLastTheme(lastTheme);
-                setShouldLoadTheme(true);
+                //setShouldLoadTheme(true);
                 setActiveSelection(lastTheme);
-                    getAllThemes().then(res=>{
-                        setThemes(res as Theme[]);
-                        //setActiveSelection(lastTheme);
-                    });
+                    if(themes.length == 0 ){
+                        getAllThemes().then(res=>{
+                            console.log('getAllThemes returned : ', res);
+                            setThemes(res as Theme[]);
+                            //setActiveSelection(lastTheme);
+                        });
+                    }
                 }
         });
         
@@ -127,7 +139,6 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
             root.addEventListener("click", (event : MouseEvent)=>{
                 if(event?.target?.id !== "file_menu" && event?.target?.id !== "file_icons" && event?.target?.id !== "theme_name_input" && event?.target?.id !== "file_dropdown" && event?.target?.id !== "new_theme_modal" 
                 ){
-                    setShowThemeMenu(false);
                     setHideModal(true);
                 }
             });
@@ -252,10 +263,6 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
         setConfig({...config, fontSize: e});
     }
 
-
-    
-    
-
     function handleSave(){
         if(!hideModal || themes?.length === 0  || !hasChanges) return;
         themeFunctions[0](activeSelection);
@@ -282,7 +289,6 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
         e.stopPropagation();
         setExpanded(false);
         setHideModal(false);
-        setShowThemeMenu(false);
         let input = document.getElementById("theme_name_input");
         input ? input.focus() : {};
     }
@@ -333,6 +339,8 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
         <div className="flex flex-col w-full h-full justify-start items-start select-none">
             
             <NewThemeModal newThemeName={newThemeName} setNewThemeName={setNewThemeName} hide={hideModal} setHide={setHideModal} initNewTheme={initNewTheme}/>
+            <ConfirmChangeModal display={showConfirmModal} setDisplay={setShowConfirmModal} confirmChange={()=>{setActiveSelection(tempTheme); setTempTheme(undefined);}}
+            cancelChange={()=>{setTempTheme(undefined)}}/>
             <div className="flex flex-col justify-start items-start w-full px-4 py-2">
                 <div className=" text-neutral-200 text-sm h-1/10 font-bold mb-1">
                     Themes
@@ -340,7 +348,10 @@ export default function ProjectionControls({config, setConfig, themeFunctions} :
                 
                 <div className='w-full h-fit pt-2 flex'>
                     <div className="relative min-w-[50%] max-w-[50%] w-fit rounded-md">
-                    <Dropdown expanded={expanded} setExpanded={setExpanded} hidden={editedName !== undefined ? true : false} value={activeSelection} onChange={(e : string)=>{setActiveSelection(e)}} 
+                    <Dropdown expanded={expanded} setExpanded={setExpanded} hidden={editedName !== undefined ? true : false} value={activeSelection} 
+                    hasChanges={hasChanges} setSelection={(e : string) => {setActiveSelection(e);}} setConfirmDisplay={setShowConfirmModal}
+                    tempTheme={tempTheme}
+                    setTempTheme={setTempTheme}
                     options={themes.map(theme=>theme.name)}/>
                     {
                         editedName !== undefined ?
