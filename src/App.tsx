@@ -516,14 +516,14 @@ useEffect(()=>{
                 </div>
                 
                 <div className="text-neutral-400 flex-col justify-start items-center w-1/2 h-full border-neutral-700">
-                    <div className="w-full border-b border-neutral-700 ps-3 pe-2 h-[12.5%]">
+                    {/* <div className="w-full border-b border-neutral-700 ps-3 pe-2 h-[12.5%]">
                         <div className="pt-2 pb-1 text-neutral-200 text-sm h-1/10 font-bold">
                             Quick Themes
                         </div>
                         <div className="w-full pt-1">
                             <ThemeChangeComponent lastTheme={lastTheme} setProjectionConfig={setProjectionConfig}/>
                         </div>
-                    </div>
+                    </div> */}
                     <div className="w-full ps-3 pe-2 h-5/6 bg-neutral-900">
                         <div className="flex justify-between items-center h-1/10 pt-2 pb-1">
                             <div className=" text-neutral-200 text-sm h-fit font-bold">
