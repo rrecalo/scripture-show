@@ -4,7 +4,7 @@
   </p>
 	<h1 align="center"><b>ScriptureShow</b></h1>
  <p align="center">
-	 
+   <img alt="Website" src="https://img.shields.io/website?url=https%3A%2F%2Fwww.scripture.show&up_message=live&label=production">
    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/rrecalo/scripture-show"/>
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/t/rrecalo/scripture-show"/>
    <br/>
